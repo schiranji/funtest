@@ -8,7 +8,7 @@ function App() {
   useEffect(() => {
 
     const getEvents = async () => {
-      const req = await fetch("https://funzippy.com/event/search?csrftkn=kmdDO", {
+      const req = await fetch("https://funzippy.com/event/search", {
         method: "post",
         body: JSON.stringify({
           "pageNo":1,

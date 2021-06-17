@@ -1,0 +1,602 @@
+@import "constants";
+@import "nav";
+@import "single";
+@import "manageEvent";
+
+footer {
+  background: $color-dark-bg;
+  color: $color-primary-text;
+  padding: 50px 0 0 0;
+
+  h2, h3, h4, h5, h6, p {
+    color: $color-light-text;
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+
+    .copyright {
+      flex: 1;
+      font-size: 15px;
+      margin-top: 15px;
+    }
+
+    p {
+      margin-bottom: 0;
+    }
+  }
+
+  .footer-low {
+    margin-top: 25px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-top: 2px solid $color-darker-bg;
+
+    .col {
+      display: flex;
+      justify-content: center;
+
+      a {
+        margin: 0 15px;
+      }
+    }
+  }
+
+  a {
+    color: $color-primary-bg;
+    transition: all .2s ease;
+    border-bottom: 1px solid transparent;
+    &:hover {
+      color: $color-light-text;
+      border-bottom-color: $color-light-text;
+      text-decoration: none;
+    }
+  }
+  .links {
+    a {
+      font-size: 16px;
+    }
+  }
+}
+
+.btn-action {
+  padding: 5px 15px;
+  margin: 0 5px;
+  transition: all .2s ease;
+
+  border: 2px solid $color-darker-bg;
+  background: $color-primary-bg;
+  color: $color-dark-text;
+  
+  &:hover {
+    color: $color-dark-text;
+    background: transparent;
+    border: 2px solid $color-dark-bg;
+  }
+}
+
+.btn-action-yellow {
+  @extend .btn-action;
+  background: $color-primary-bg;
+  color: $color-darker-bg;
+  
+  &:hover {
+    color: $color-primary-bg;
+    background: transparent;
+    border: 2px solid $color-primary-bg;
+  }
+}
+
+.btn-action-outline {
+  @extend .btn-action;
+  background: transparent;
+  border: 2px solid $color-dark-bg;
+  color: $color-dark-text;
+
+  &:hover {
+    background: $color-dark-bg-hover;
+  }
+  &:focus {
+    box-shadow: none;
+    background: $color-dark-bg-hover;
+  }
+}
+
+.home-search-header {
+  background: linear-gradient(to bottom, rgba(30, 30, 30, 0.72), rgba(30, 30, 30, 0.43)),
+  url("../images/crown-raising-hands-during-performance-1652353.jpg");
+  background-size: cover;
+  background-position: center center;
+}
+
+#banner-message {
+  font-size: 90px;
+  color: $color-primary-text;
+  padding: 50px 0;
+  font-family: $bebas;
+  text-shadow: 0 0 15px rgba(50, 50, 50, 0.4);
+}
+
+.home-search-header {
+  padding: 50px 15px;
+}
+
+.search-center-item-container {
+  padding: 15px;
+}
+
+.search-center-item {
+  padding: 25px;
+  border-radius: 5px;
+  background: $color-primary-bg;
+  box-shadow: 0 5px 30px rgba($color-dark-bg, 0.25);
+  label {
+    font-size: 18px;
+  }
+
+  #city {
+    flex: 1
+  }
+
+  #dateRange {
+    color: $color-dark-text;
+    background-color: rgba(50, 50, 50, 0.4);
+    border: none;
+    outline: none;
+    border-bottom: 3px solid $color-dark-bg;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    appearance: none;
+    border-radius: 0;
+    
+    &:focus {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      background: rgba(50, 50, 50, 0.4);
+      border: none;
+      outline: none;
+      border-bottom: 3px solid $color-dark-bg;
+      border-radius: 0;
+    }
+  }
+
+  input {
+    padding: 5px 10px;
+    background: rgba(50, 50, 50, 0.4);
+    border: none;
+    outline: none;
+    border-radius: 0;
+    border-bottom: 3px solid $color-dark-bg;
+    width: 100%;
+    color: $color-dark-text;
+    
+    &:focus {
+      border: none;
+      border-bottom: 3px solid $color-dark-bg;
+    }
+  }
+
+  #onlineCheck {
+    margin-left: 15px;
+    width: inherit;
+    margin-right: 10px;
+  }
+}
+
+.dashed-decoration {
+  display: block;
+  border-style: dotted;
+  border-color: $color-primary-bg;
+  height: 10px;
+}
+
+.dashed-decoration-dark {
+  @extend .dashed-decoration;
+  border-color: $color-darker-bg;
+}
+$header-negative-margin: -225;
+
+.header-image-container {
+  @media (min-width: $md) {
+    margin-top: $header-negative-margin + 0px;  
+  }
+
+  margin-top: 25px;
+
+  img {
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba($color-dark-bg, 0.25);
+  }
+
+  .secondary-header-image {
+    @media(min-width: $md) {
+      margin-top: $header-negative-margin * -1px + 25px;
+    }
+    margin-top: 25px;
+  }
+}
+
+.home-create-event-banner {
+  margin: 50px 0;
+
+  h2 {
+    font-size: 36px;
+    text-align: center;
+    @media (min-width: $md) {
+      text-align: left;
+    }
+  }
+
+  .create-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 25px;
+
+    @media (min-width: $md) {
+      justify-content: flex-end;
+      margin-top: 0;
+    }
+
+    button {
+      display: block
+    }
+  }
+}
+
+.home-featured-items {
+  margin-bottom: 50px;
+}
+
+.event-card-extended {
+  margin-bottom: 35px;
+  
+  .event-card-extended-wrapper {
+    display: block;
+    box-shadow: $box-shadow, 0px 0px 0px 2px #eaeaea;
+    border-radius: 5px;
+    transition: all .3s ease;
+    
+    &:hover {
+      box-shadow: $box-shadow, 0px 0px 0px 2px $color-dark-bg;
+      cursor: pointer;
+    }
+  }
+
+  .event-card-image {
+    height: 250px;
+    overflow: hidden;
+
+    img {
+      object-fit: cover;
+      width: 100%;
+      height: 250px;
+      border-top-right-radius: 5px;
+      border-top-left-radius: 5px;
+    }
+  }
+
+  .event-card-info {
+    border-radius: 5px;
+
+    > div {
+      padding: 15px 25px;
+    }
+
+    .event-card-name {
+      font-family: $quicksand;
+      cursor: pointer;
+    }
+
+    .event-tags {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .event-card-details {
+      background: $color-lighter-gray;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+    }
+    
+    .event-card-title-info {
+      padding-right: 15px;
+      flex: 1
+    }
+  
+    .event-location {
+      flex: 1;
+
+      .location-name {
+        display: flex;
+        i {
+          margin-right: 10px;
+        }
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      .price {
+        font-weight: 500;
+        margin-bottom: 0;
+      }
+
+      .btn-action {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.event-date-calendar {
+  min-width: 75px;
+  text-align: center;
+  
+  .cal-graphic {
+    min-width: 75px;
+    border: 2px solid $color-dark-bg;
+  }
+
+  .cal-header {
+    background: #e74b39;
+    color: $color-light-text;
+    font-family: $quicksand;
+    font-weight: 500;
+    text-transform: uppercase;
+    padding: 0 5px;
+  }
+
+  .cal-date {
+    font-family: $quicksand;
+    font-weight: 500;
+    font-size: 25px;
+  }
+  .cal-time {
+    width: 100%;
+  }
+}
+
+#see-more-anchor {
+  color: $color-dark-bg;
+  cursor: pointer;
+  
+  &:hover {
+    color: $color-primary-bg;
+  }
+}
+
+.see-more-dialog {
+  padding: 25px;
+  border-radius: 5px;
+  background-color: $color-dark-bg;
+  margin-bottom: 100px;
+  color: $color-light-text;
+  box-shadow: $box-shadow;
+  
+  h2 {
+    margin-bottom: 25px;
+  }
+
+  a {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .right-chevron {
+      width: 16px;
+      height: 16px;
+      fill: $color-dark-bg;
+      margin-left: -15px;
+      margin-right: -5px;
+      opacity: 0;
+      transition: all .2s ease;
+    }
+
+    &:hover {
+      .right-chevron {
+        width: 16px;
+        height: 16px;
+        margin-left: 5px;
+        opacity: 1;
+        fill: $color-primary-bg;
+      } 
+    }
+  }
+}
+
+main {
+  // min-height: 100%;
+}
+
+p {
+  font-size: 18px;
+}
+
+p.lead, span.lead {
+  font-size: 22px;
+  font-weight: 300;
+  font-family: $quicksand;
+}
+
+.event-tags {
+  margin-bottom: 10px;
+
+  span {
+    padding: 3px 10px;
+    background: $color-dark-text;
+    color: $color-light-text;
+    text-transform: uppercase;
+    font-family: $quicksand;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 11px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+}
+
+.number-selector {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+  .selected-number {
+    height: 24px;
+    margin: 0 10px;
+  }
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all .2s ease;
+    border-radius: 16px;
+    width: 32px;
+    height: 32px;
+    border: 2px solid $color-dark-bg-indicator;
+    
+    &:disabled {
+      border: 2px solid $color-light-gray;
+    }
+    
+    &:hover {
+      &:not(:disabled) {
+        background: $color-dark-bg-hover;
+        border: 2px solid $color-dark-bg;
+      }
+    }
+    &:focus {
+      outline: none
+    }
+  }
+}
+
+.rsvp-chooser {
+  display: flex;
+  justify-content: space-around;
+}
+
+.text-checkbox-container {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none;
+  
+  input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+  }
+
+  
+  .option {
+    display: block;
+    padding: 2px 12px;
+    background-color: #fff;
+    border: 2px solid $color-dark-bg-indicator;
+    transition: all .2s ease;
+    font-family: $quicksand;
+    font-size: 16px;
+    
+  }
+  .icon {
+    padding: 5px;
+    display: flex;
+    svg {
+      transition: all .2s ease;
+      fill: rgba($color-dark-bg-hover, 0.75);
+    }
+  }
+}
+
+/* On mouse-over, add a grey background color */
+.text-checkbox-container:hover input ~ .option {
+  background-color: $color-dark-bg-hover;
+}
+
+/* When the checkbox is checked, add a blue background */
+.text-checkbox-container input:checked ~ .option {
+  background-color: $color-dark-bg-hover;
+  border: 2px solid $color-dark-bg;
+  color: #2b2b2b;
+
+  svg {
+    fill: #2b2b2b
+  }
+}
+
+.heart-icon {
+  fill: $color-dark-bg
+}
+
+img.img-circle {
+  border-radius: 50%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  label {
+    margin-right: 25px;
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-family: $quicksand;
+  } 
+}
+
+.form-group.inline-form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  label {
+    margin-bottom: 0;
+  }
+
+  input, textarea {
+    flex: 1
+  }
+}
+
+input, textarea, select {
+  border: 2px solid $color-dark-bg-indicator;
+  border-radius: 5px;
+  padding: 5px 10px;
+  transition: all .2s ease;
+  background-color: transparent;
+  
+  &:focus {
+    outline: none;
+    border: 2px solid $color-dark-bg;
+  }
+}
+
+.modal {
+  z-index: 99999999
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+
+  p {
+    margin-bottom: 0;
+  }
+}
+
+.global-alert {
+  margin: 0;
+  border-radius: 0;
+}
+
+.btn .fas {
+  margin-left: 5px;
+}

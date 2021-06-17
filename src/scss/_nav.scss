@@ -1,0 +1,86 @@
+.navbar-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-item {
+  margin-right: 10px;
+  margin-bottom: 15px;
+  @media(min-width: $md) {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+  } 
+}
+
+.navbar-container {
+  border-bottom: 1px solid $color-light-gray;
+  background-color: #fff;
+}
+
+.app-nav {
+  padding: 0;
+}
+
+.navbar-brand {
+  font-family: $quicksand;
+  margin-left: 10px;
+}
+
+.navbar-toggler {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  font-family: $quicksand;
+  font-weight: 500;
+  transition: all .2s ease;
+  box-shadow: inset 0 -3px transparent;
+  color: $color-dark-bg;
+
+  @media(min-width: $md) {
+    padding-top: 25px;
+    padding-bottom: 25px;
+    margin-bottom: 0;
+  }
+  &:hover {
+    box-shadow: inset 0 -3px $color-dark-bg;
+  }
+}
+
+#authenticationDiv, #enrollmentDiv {
+  .modal-body {
+    padding: 30px 50px;
+  }
+
+  .modal-title {
+    text-align: center;
+    flex:1;
+    border-bottom: none;;
+  }
+
+  .close {
+    position: absolute;
+    right: 20px;
+  }
+}
+
+#loginBox, #logoutBox {
+  display: flex;
+
+  .dropdown-item {
+    transition: all .2s ease;
+  }
+  .dropdown-item.active, .dropdown-item:active {
+    background: $color-dark-bg-hover;
+    color: $color-dark-text;
+    outline: 2px solid $color-dark-bg;
+  }
+  .dropdown-item:focus, .dropdown-item:hover {
+    background: $color-dark-bg-hover;
+    color: $color-dark-text;
+    outline: none;
+  }
+}

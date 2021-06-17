@@ -1,0 +1,618 @@
+.single-event-page, .profile-page {
+  background-color: #eee;
+  padding: 50px 0 50px 0;
+  height: 100%;
+}
+
+.single-event-detail, .profile-detail {
+  .single-event, .profile {
+    padding: 25px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background-color: #fefefe;
+    box-shadow: $floaty-box-shadow;
+    
+    @media (min-width: $md) {
+      padding: 50px;
+    }
+
+    .row:not(:last-child):not(.single-header):not(.event-footer-section) {
+      margin-bottom: 75px;
+    }
+
+    .single-header {
+      margin-bottom: 35px;
+    }
+
+    .like-button {
+      display: flex;
+      align-items: center;
+
+      &:focus {
+        background: transparent;
+      }
+      &:active {
+        background: darken($color-dark-bg-hover, 20);
+      }
+
+      .event-likes-counter {
+        margin-left: 5px;
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 20px;
+        font-family: $quicksand;
+      }
+    }
+
+
+    .address-and-calendar {
+      text-align: center;
+      display: flex;
+      
+      .ui-icon {
+        margin-right: 15px;
+        line-height: 22px;
+        i {
+          font-size: 22px;
+          margin-top: 2px;
+        }
+      }
+      .address, .calendar {
+        display: flex;
+        align-items: flex-start;
+
+        .details {
+          margin-right: 25px;
+          p {
+            margin-bottom: 0;
+          }
+          .lead {
+            line-height: 25px;
+            margin-bottom: 5px;
+          }
+          
+          @media (min-width: $sm) {
+            text-align: left;
+          }
+        }
+      }
+    }
+
+    #addToCalendarMenu .dropdown-item {
+      padding: 5px 15px;
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    .title {
+      @media (min-width: $sm) {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 35px;
+      }
+      
+      .event-tags {
+        margin-bottom: 25px;
+
+        a {
+          cursor: pointer;
+        }
+      }
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 15px;
+    }
+    
+    .top-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+
+      .action-group {
+        margin-bottom: 10px;
+        display: flex;
+      }
+
+      #addToCalendar {
+        margin-right: 0;
+        i {
+          margin-left: 10px;
+        }
+      }
+    }
+
+    .title-detail {
+      line-height: 1;
+      flex: 1;
+
+      h1 {
+        margin-right: 15px;
+        margin-bottom: 15px;
+        
+        @media (min-width: $sm) {
+          margin-bottom: 0;
+        }
+      }
+    }
+
+    .ticketing, .rsvp-center {
+      label {
+        flex: 1
+      }
+
+      .ticket-category {
+        .name {
+          font-weight: 300;
+          margin-bottom: 0;
+          font-size: 22px;
+        }
+        .price {
+          .sale-price {
+            font-weight: 400;
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+
+    .gallery {
+      @media (min-width: $sm) {
+        padding: 50px
+      }
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      background: $color-lighter-gray;
+      border-radius: 5px;
+      align-items: center;
+
+      h3 {
+        margin-bottom: 35px;
+      }
+
+      .carousel-item {
+        .carousel-item-inner {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 500px;
+          img {
+            align-self: center;
+            max-height: 500px;
+          }
+        }
+      }
+
+      .carousel-control-next, .carousel-control-prev {
+        i {
+          font-size: 22px;
+          color: $color-light-text;
+          text-shadow: 0 0 4px $color-dark-text;
+        }
+      }
+      .preview-slider {
+        display: flex;
+        overflow-x: scroll;
+        padding: 15px 0;
+
+        img {
+          flex: 1;
+          max-width: 25%;
+          margin-right: 15px;
+          cursor: pointer;
+          align-self: center;
+        }
+      }
+    }
+  }
+
+  .event-description-container {
+    margin-top: 50px;
+
+    .event-description {
+      .description-section:not(:last-child) {
+        margin-bottom: 75px;
+      }
+
+      #eventDescription {
+        p {
+          margin-bottom: 0;
+        }
+      }
+
+      .event-meta-section {
+        display: flex;
+        margin-bottom: 25px;
+        p {
+          margin-right: 10px;
+          font-size: 14px;
+          color: $color-gray-bg;
+        }
+      }
+
+      h3 {
+        margin-bottom: 15px;
+      }
+    }
+
+    .primary-image {
+      margin-bottom: 50px;
+      border-radius: 5px;
+      box-shadow: $floaty-box-shadow;
+    }
+
+    .dashed-decoration {
+      margin: 50px 0;
+    }
+
+    .event-description-sidebar {
+      @media (min-width: $md) {
+        margin-top: 0;
+      }
+      margin-top: 50px;
+
+    }
+
+    .sidebar-section {
+      margin-bottom: 35px;
+      h4 {
+        margin-bottom: 15px;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .submit-rsvp {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      button {
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .map-row {
+    height: 500px;
+    background-color: $color-lighter-gray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .single-footer {
+    text-align: center;
+    p.lead {
+      margin-bottom: 10px;
+    }
+    p {
+      margin-bottom: 0;
+    }
+  }
+  
+  .view-more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: $color-lighter-gray;
+    p {
+      margin-bottom: 0;
+    }
+  }
+
+  .messages-container {
+    .message-item {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding-top: 20px;
+      padding-bottom: 20px;
+      p {
+        margin-bottom: 0;
+      }
+
+      .message-profile {
+        flex-shrink: 0;
+        margin-right: 25px;
+        
+        img {
+          max-width: 80px;
+          box-shadow: $box-shadow;
+        }
+      }
+
+      .message-content {
+        flex: 1;
+
+        .timestamp {
+          font-size: 15px;
+          font-weight: 300;
+          margin-top: 10px;
+        }
+      }
+    }
+  }
+
+  .participants {
+    .participant {
+      display: flex;
+      align-items: center;
+
+      .participant-profile {
+        margin-right: 15px;
+        img {
+          box-shadow: $box-shadow;
+        }
+      }
+      .participant-info {
+        .name {
+          margin-bottom: 0;
+        }
+        .website {
+          
+        }
+      }
+    }
+  }
+
+  .schedule {
+    .schedule-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      p {
+        margin-bottom: 0;
+      }
+
+      .schedule-item-date {
+        flex-shrink: 0;
+      }
+
+      .schedule-description {
+        margin: 0 25px;
+        flex: 1;
+      }
+      .schedule-item-participants {
+        font-size: 16px;
+
+      }
+
+      .schedule-timing {
+        flex-shrink: 0;
+      }
+
+      .schedule-item-name {
+        font-weight: 600;
+      }
+      
+      .schedule-item-description {
+        font-size: 16px;
+      }
+      
+      .schedule-item-time {
+        font-size: 16px;
+        color: $color-dark-bg;
+      }
+    }
+  }
+
+  .event-footer-section {
+    margin-bottom: 50px;
+
+    h4 {
+      margin: 0 auto 25px auto;
+      text-align: center;
+    }
+  }
+
+  .social-section {
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      
+      i {
+        transition: all .2s ease;
+        margin: 0 15px;
+        font-size: 50px;
+      }
+      #fbshare {
+        color: #3b5998;
+        margin-right: 10px;
+        i {
+          font-size: 49px;
+        }
+        &:hover {
+          i {
+            color: darken(#3b5998, 10);
+          }
+        }
+      }
+      #twittershare {
+        color: #1DA1F2;
+        &:hover {
+          i {
+            color: darken(#1DA1F2, 10);
+          }
+        }
+      }
+    }
+  }
+
+  .search-tags {
+    h4 {
+      text-align: center;
+      margin: 0 auto 25px auto;
+    }
+
+    .tags-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .search-tag {
+        margin-bottom: 10px;
+        
+        p {
+          margin: 0 5px;
+          background: $color-light-gray;
+          border-radius: 5px;
+          padding: 5px 10px;
+          color: $color-darker-bg;
+        }
+      }
+    }
+  }
+
+  .gift-registry {
+    h3 {
+      margin-bottom: 25px;
+    }
+  }
+
+  .gift-registry-list {
+    .gift-registry-item {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      p {
+        margin-bottom: 0;
+      }
+
+      .gift-info {
+        display: flex;
+        flex-direction: row;
+        flex: 1;
+        align-items: center;
+
+        .gift-image {
+          margin-right: 15px;
+          box-shadow: $box-shadow-large;
+        }
+      }
+
+      .gift-purchase {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .price {
+          margin-right: 15px;
+        }
+      }
+    }
+  }
+
+  .potluck-list-item, .volunteer-list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    p {
+      margin-bottom: 0;
+    }
+    .item-name {
+      font-weight: 600;
+    }
+    .item-description {
+      font-weight: 300;
+    }
+    .item-time {
+      font-weight: 300;
+      font-size: 15px
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .potluck-item-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .potluck-signup {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    padding: 20px 0;
+
+    .form-group {
+      margin-right: 15px;
+      margin-bottom: 0;
+      label {
+        margin-right: 10px;
+      }
+    }
+    .form-group:not(:last-child) {
+      margin-right: 20px;
+    }
+  }
+  .contact-info {
+    display: flex;
+    align-items: flex-start;
+    
+    img {
+      border-radius: 5px;
+      box-shadow: $box-shadow;
+      margin-right: 15px;
+    }
+
+    .contact-details {
+      .name, .number {
+        margin-bottom: 5px;
+      }
+    }
+  }
+}
+
+.sponsor-category-listing, .booth-category-listing {
+  .listing {
+    .lead {
+      margin-bottom: 0;
+    }
+
+    .listing-pricing {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+
+      p {
+        margin-bottom: 0;
+      }
+      .prices {
+        display: flex;
+        flex: 1;
+      }
+
+      .listing-price {
+        margin-right: 10px;
+      }
+      .sale-price {
+        margin-right: 15px;
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.linethrough {
+  text-decoration: line-through;
+}
