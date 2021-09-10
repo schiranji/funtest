@@ -4,9 +4,13 @@
   "private": true,
   "proxy": "https://funzippy.com",
   "dependencies": {
+    "@ag-grid-community/all-modules": "^26.0.0",
+    "@ag-grid-community/react": "^26.0.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "ag-grid-community": "^26.0.0",
+    "ag-grid-react": "^26.0.0",
     "axios": "^0.21.1",
     "baseui": "^9.116.1",
     "bootstrap": "^5.0.1",
