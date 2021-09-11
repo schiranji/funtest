@@ -12,6 +12,7 @@ import ActionButton from "../components/ActionButton";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
+import { AiFillEdit } from "react-icons/ai";
 import {
   Modal,
   ModalHeader,
@@ -26,6 +27,7 @@ import { AgGridReact, AgGridColumn } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 
+
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is Required"),
   description: Yup.string().required("Description is Required"),
@@ -36,22 +38,16 @@ const SignupSchema = Yup.object().shape({
 const Schedule = () => {
   const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
-  const [gridApi, setGridApi] = useState(null);
-  const [gridColumnApi, setGridColumnApi] = useState(null);
-  const [rowData, setRowData] = useState(null);
+  // const [gridApi, setGridApi] = useState(null);
+  // const [gridColumnApi, setGridColumnApi] = useState(null);
+  // const [rowData, setRowData] = useState(null);
 
   const [isOpen, setIsOpen] = React.useState(false);
 
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
     values.id = Math.random();
-    console.log("SUBMIT::", values);
     setDatasss([...datass, values]);
-  };
-
-  const onGridReady = (params) => {
-    setGridApi(params.api);
-    setGridColumnApi(params.columnApi);
   };
 
   const onUpdate = (values, { resetForm }) => {
@@ -67,13 +63,15 @@ const Schedule = () => {
   };
 
   const deleteData = (data) => {
-    setIsOpen(false);
-    removeDatas(data);
+    localStorage.setItem("id", data.id);
+    setIsOpen(true);
   };
 
-  const removeDatas = (data) => {
-    setIsOpen(true);
-    console.log(data);
+  const removeDatas = () => {
+    const id = localStorage.getItem("id");
+    setIsOpen(false)
+    const filterData = datass.filter(item => item.id != id);
+    setDatasss(filterData)
   };
 
   return (
@@ -143,21 +141,8 @@ const Schedule = () => {
               const BtnCellRenderer = (props) => {
                 return (
                   <>
-                    {/* <Delete size={35} onClick={removeDatas}></Delete> */}
-
-                    <button
-                      type="button"
-                      onClick={() => deleteData(props.data)}
-                    >
-                      Delete
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => editHandlar(props.data)}
-                    >
-                      Edit
-                    </button>
+                    <Delete size={35} onClick={() => deleteData(props.data)} /> |
+                    <AiFillEdit size={30} onClick={() => editHandlar(props.data)} />
                   </>
                 );
               };
@@ -179,7 +164,7 @@ const Schedule = () => {
                         }}
                         rowDragManaged={true}
                         animateRows={true}
-                        onGridReady={onGridReady}
+                        // onGridReady={onGridReady}
                         rowData={datass}
                         frameworkComponents={{
                           btnCellRenderer: BtnCellRenderer,
@@ -189,75 +174,18 @@ const Schedule = () => {
                         <AgGridColumn field="description" />
                         <AgGridColumn field="participants" />
                         <AgGridColumn field="duration" />
-                        <AgGridColumn field="startDate" />
+                        <AgGridColumn field="startDate"/>
                         <AgGridColumn field="startTime" />
                         <AgGridColumn field="endDate" />
                         <AgGridColumn field="endTime" />
                         <AgGridColumn
-                          field="athlete"
+                          field="Delete | Edit"
                           cellClass="custom-athlete-cell"
                           cellRenderer="btnCellRenderer"
                         />
                       </AgGridReact>
                     </div>
                   </div>
-                  {/* {datass.length ? (
-                    <Table>
-                      <thead>
-                        <tr>
-                          <th>S no.</th>
-                          <th>Name</th>
-                          <th>Description</th>
-                          <th>Duration</th>
-                          <th>Participants</th>
-                          <th>Start Date</th>
-                          <th>Start Time</th>
-                          <th>End Date</th>
-                          <th>End Time</th>
-                          <th>Edit</th>
-                          <th>Delete</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {datass.map((data, index) => {
-                          return (
-                            <tr>
-                              <th scope="row">{index + 1}</th>
-                              <td>{data.name}</td>
-                              <td>{data.description}</td>
-                              <td>{data.duration}</td>
-                              <td>{data.participants}</td>
-                              <td>
-                                {moment(data.startDate).format("DD/MM/YYYY")}
-                              </td>
-                              <td>
-                                {moment(data.startTime).format("hh:mm a")}
-                              </td>
-                              <td>
-                                {moment(data.endDate).format("DD/MM/YYYY")}
-                              </td>
-                              <td>{moment(data.endTime).format("hh:mm a")}</td>
-                              <td>
-                                <button
-                                  type="button"
-                                  onClick={() => editHandlar(data)}
-                                >
-                                  Edit
-                                </button>
-                              </td>
-                              <td>
-                                <Delete
-                                  size={35}
-                                  onClick={() => removeDatas(index)}
-                                ></Delete>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </Table>
-                  ) : null} */}
-
                   <Form>
                     <Row>
                       <Col>
