@@ -12,6 +12,16 @@ import ActionButton from "../components/ActionButton";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalButton,
+  SIZE,
+  ROLE,
+} from "baseui/modal";
+import { KIND as ButtonKind } from "baseui/button";
 import { AgGridReact, AgGridColumn } from "ag-grid-react";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
@@ -24,54 +34,72 @@ const SignupSchema = Yup.object().shape({
 });
 
 const Schedule = () => {
-  const [datassss, setDatasss] = useState([]);
+  const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [rowData, setRowData] = useState(null);
 
+  const [isOpen, setIsOpen] = React.useState(false);
+
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
-    values.id = Math.random()
+    values.id = Math.random();
     console.log("SUBMIT::", values);
-    setDatasss([...datassss, values]);
+    setDatasss([...datass, values]);
   };
 
   const onGridReady = (params) => {
     setGridApi(params.api);
     setGridColumnApi(params.columnApi);
-
-    // const updateData = (data) => {
-    //   setRowData(data);
-    // };
-
-    // fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    //   .then((resp) => resp.json())
-    //   .then((data) => updateData(data));
   };
 
   const onUpdate = (values, { resetForm }) => {
     setUpdate(false);
     resetForm({});
-    const filterData = datassss.map((item) => {
+    const filterData = datass.map((item) => {
       if (item.id == values.id) {
         item = values;
       }
       return item;
     });
     setDatasss(filterData);
-    console.log("Update", values);
   };
 
-  const removeData = (value) => {
-    const newArr = [...datassss];
-    newArr.splice(value, 1);
-    setDatasss(newArr);
+  const deleteData = (data) => {
+    setIsOpen(false);
+    removeDatas(data);
   };
 
-  console.log(datassss)
+  const removeDatas = (data) => {
+    setIsOpen(true);
+    console.log(data);
+  };
+
   return (
     <>
+      <Modal
+        onClose={() => setIsOpen(false)}
+        closeable
+        isOpen={isOpen}
+        animate
+        autoFocus
+        size={SIZE.default}
+        role={ROLE.dialog}
+      >
+        <ModalHeader>Hello world</ModalHeader>
+        <ModalBody>Are you sure you want delete?</ModalBody>
+        <ModalFooter>
+          <ModalButton
+            kind={ButtonKind.tertiary}
+            onClick={() => setIsOpen(false)}
+          >
+            Cancel
+          </ModalButton>
+          <ModalButton onClick={removeDatas}>Okay</ModalButton>
+        </ModalFooter>
+      </Modal>
+
       <SectionHeader>
         <h1>Event Scheduler</h1>
       </SectionHeader>
@@ -115,17 +143,27 @@ const Schedule = () => {
               const BtnCellRenderer = (props) => {
                 return (
                   <>
-                    <Delete size={35} onClick={() => removeData(props.data.id)}></Delete>
+                    {/* <Delete size={35} onClick={removeDatas}></Delete> */}
 
-                    {/* <button type="button" onClick={() => editHandlar(props.data)}>
+                    <button
+                      type="button"
+                      onClick={() => deleteData(props.data)}
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => editHandlar(props.data)}
+                    >
                       Edit
-                    </button> */}
+                    </button>
                   </>
                 );
               };
               return (
                 <>
-                  {/* <div style={{ width: "100%", height: 250 }}>
+                  <div style={{ width: "100%", height: 250 }}>
                     <div
                       id="myGrid"
                       style={{
@@ -142,7 +180,7 @@ const Schedule = () => {
                         rowDragManaged={true}
                         animateRows={true}
                         onGridReady={onGridReady}
-                        rowData={datassss}
+                        rowData={datass}
                         frameworkComponents={{
                           btnCellRenderer: BtnCellRenderer,
                         }}
@@ -162,8 +200,8 @@ const Schedule = () => {
                         />
                       </AgGridReact>
                     </div>
-                  </div> */}
-                  {datassss.length ? (
+                  </div>
+                  {/* {datass.length ? (
                     <Table>
                       <thead>
                         <tr>
@@ -181,7 +219,7 @@ const Schedule = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {datassss.map((data, index) => {
+                        {datass.map((data, index) => {
                           return (
                             <tr>
                               <th scope="row">{index + 1}</th>
@@ -210,7 +248,7 @@ const Schedule = () => {
                               <td>
                                 <Delete
                                   size={35}
-                                  onClick={() => removeData(index)}
+                                  onClick={() => removeDatas(index)}
                                 ></Delete>
                               </td>
                             </tr>
@@ -218,7 +256,7 @@ const Schedule = () => {
                         })}
                       </tbody>
                     </Table>
-                  ) : null}
+                  ) : null} */}
 
                   <Form>
                     <Row>
