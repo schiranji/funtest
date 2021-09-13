@@ -24,9 +24,9 @@ import {
 } from "baseui/modal";
 import { KIND as ButtonKind } from "baseui/button";
 import { AgGridReact, AgGridColumn } from "ag-grid-react";
+import 'ag-grid-enterprise';
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is Required"),
@@ -38,8 +38,8 @@ const SignupSchema = Yup.object().shape({
 const Schedule = () => {
   const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
-  // const [gridApi, setGridApi] = useState(null);
-  // const [gridColumnApi, setGridColumnApi] = useState(null);
+  const [gridApi, setGridApi] = useState(null);
+  const [gridColumnApi, setGridColumnApi] = useState(null);
   // const [rowData, setRowData] = useState(null);
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -72,6 +72,15 @@ const Schedule = () => {
     setIsOpen(false)
     const filterData = datass.filter(item => item.id != id);
     setDatasss(filterData)
+  };
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+    setGridColumnApi(params.columnApi);
+  };
+
+  const onBtnExport = () => {
+    gridApi.exportDataAsCsv();
   };
 
   return (
@@ -114,7 +123,6 @@ const Schedule = () => {
               participants: "",
               duration: "",
               startDate: new Date(),
-              endDate: new Date(),
               startTime: "",
               endTime: "",
             }}
@@ -146,47 +154,74 @@ const Schedule = () => {
                   </>
                 );
               };
+
+              const startDate = (props) => {
+                return Date.parse(props.data.startDate)
+              }
+              const startTime = (props) => {
+                return Date.parse(props.data.startTime)
+              }
+
+              const endTime = (props) => {
+                return Date.parse(props.data.endTime)
+              }
+
+              
+
               return (
                 <>
-                  <div style={{ width: "100%", height: 250 }}>
-                    <div
-                      id="myGrid"
-                      style={{
-                        height: "100%",
-                        width: "100%",
-                      }}
-                      className="ag-theme-alpine"
-                    >
-                      <AgGridReact
-                        defaultColDef={{
-                          sortable: true,
-                          filter: true,
+                  <div style={{ width: '100%', height: 500 }}>
+                    <div style={{ margin: '10px 0' }}>
+                      <ActionButton onClick={() => onBtnExport()}>
+                        Download CSV export file
+                      </ActionButton>
+                    </div>
+
+                    <div className="grid-wrapper">
+                      <div
+                        id="myGrid"
+                        style={{
+                          height: 500,
+                          width: '100%',
                         }}
-                        rowDragManaged={true}
-                        animateRows={true}
-                        // onGridReady={onGridReady}
-                        rowData={datass}
-                        frameworkComponents={{
-                          btnCellRenderer: BtnCellRenderer,
-                        }}
+                        className="ag-theme-alpine"
                       >
-                        <AgGridColumn field="name" rowDrag={true} />
-                        <AgGridColumn field="description" />
-                        <AgGridColumn field="participants" />
-                        <AgGridColumn field="duration" />
-                        <AgGridColumn field="startDate"/>
-                        <AgGridColumn field="startTime" />
-                        <AgGridColumn field="endDate" />
-                        <AgGridColumn field="endTime" />
-                        <AgGridColumn
-                          field="Delete | Edit"
-                          cellClass="custom-athlete-cell"
-                          cellRenderer="btnCellRenderer"
-                        />
-                      </AgGridReact>
+                        <AgGridReact
+                          defaultColDef={{
+                            sortable: true,
+                            filter: true,
+                            editable: true,
+                            floatingFilter: true,
+                          }}
+                          onGridReady={onGridReady}
+                          suppressRowClickSelection={true}
+                          rowSelection={'multiple'}
+                          rowDragManaged={true}
+                          animateRows={true}
+                          rowData={datass}
+                          frameworkComponents={{
+                            btnCellRenderer: BtnCellRenderer,
+                          }}
+                          pagination={true}
+                          paginationPageSize={8}
+                        >
+                          <AgGridColumn field="name" rowDrag={true} filter="agTextColumnFilter"/>
+                          <AgGridColumn field="description" filter="agTextColumnFilter" />
+                          <AgGridColumn field="participants" filter="agTextColumnFilter" />
+                          <AgGridColumn field="duration" filter="agTextColumnFilter" />
+                          <AgGridColumn field="startDate" cellRenderer={startDate} />
+                          <AgGridColumn field="startTime" cellRenderer={startTime} />
+                          <AgGridColumn field="endTime" cellRenderer={endTime} />
+                          <AgGridColumn
+                            field="Delete | Edit"
+                            cellClass="custom-athlete-cell"
+                            cellRenderer="btnCellRenderer"
+                          />
+                        </AgGridReact>
+                      </div>
                     </div>
                   </div>
-                  <Form>
+                  <Form style={{ marginTop: 50 }}>
                     <Row>
                       <Col>
                         <FormControl
@@ -250,7 +285,7 @@ const Schedule = () => {
                         >
                           <Input
                             error={errors.duration && touched.duration}
-                            type="text"
+                            type="number"
                             name="duration"
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -290,7 +325,7 @@ const Schedule = () => {
                           ></TimePicker>
                         </FormControl>
                       </Col>
-                      <Col>
+                      {/* <Col>
                         <FormControl label="End Date" error={errors.endDate}>
                           <Datepicker
                             value={value.endDate}
@@ -300,7 +335,7 @@ const Schedule = () => {
                             minDate={new Date()}
                           ></Datepicker>
                         </FormControl>
-                      </Col>
+                      </Col> */}
                       <Col>
                         <FormControl label="End Time" error={errors.endTime}>
                           <TimePicker
@@ -353,10 +388,11 @@ export default Schedule;
 // import React, { useState } from 'react';
 // import { render } from 'react-dom';
 // import { AgGridReact, AgGridColumn } from 'ag-grid-react';
+// import 'ag-grid-enterprise';
 // import 'ag-grid-community/dist/styles/ag-grid.css';
 // import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-//  const Schedule = () => {
+// const Schedule = () => {
 //   const [gridApi, setGridApi] = useState(null);
 //   const [gridColumnApi, setGridColumnApi] = useState(null);
 //   const [rowData, setRowData] = useState(null);
@@ -365,45 +401,76 @@ export default Schedule;
 //     setGridApi(params.api);
 //     setGridColumnApi(params.columnApi);
 
-//     const updateData = (data) => {
-//       setRowData(data);
-//     };
+//     const updateData = (data) =>
+//       params.api.setRowData(data.filter((rec) => rec.country != null));
 
-//     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+//     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
 //       .then((resp) => resp.json())
 //       .then((data) => updateData(data));
+
+//     document.getElementById('selectedOnly').checked = true;
+//   };
+
+//   const onBtExport = () => {
+//     gridApi.exportDataAsExcel({
+//       onlySelected: document.querySelector('#selectedOnly').checked,
+//     });
 //   };
 
 //   return (
-//     <div style={{ width: '100%', height: '100%' }}>
-//       <div
-//         id="myGrid"
-//         style={{
-//           height: '100%',
-//           width: '100%',
-//         }}
-//         className="ag-theme-alpine"
-//       >
-//         <AgGridReact
-//           defaultColDef={{
-//             width: 170,
-//             sortable: true,
-//             filter: true,
-//           }}
-//           rowDragManaged={true}
-//           animateRows={true}
-//           onGridReady={onGridReady}
-//           rowData={rowData}
-//         >
-//           <AgGridColumn field="athlete" rowDrag={true} />
-//           <AgGridColumn field="country" />
-//           <AgGridColumn field="year" width={100} />
-//           <AgGridColumn field="date" />
-//           <AgGridColumn field="sport" />
-//           <AgGridColumn field="gold" />
-//           <AgGridColumn field="silver" />
-//           <AgGridColumn field="bronze" />
-//         </AgGridReact>
+//     <div style={{ width: '100%', height: 300 }}>
+//       <div className="container">
+//         <div className="columns">
+//           <label className="option" for="selectedOnly">
+//             <input id="selectedOnly" type="checkbox" />
+//             Selected Rows Only
+//           </label>
+//           <div>
+//             <button onClick={() => onBtExport()} style={{ fontWeight: 'bold' }}>
+//               Export to Excel
+//             </button>
+//           </div>
+//         </div>
+//         <div className="grid-wrapper">
+//           <div
+//             id="myGrid"
+//             style={{
+//               height: 300,
+//               width: '100%',
+//             }}
+//             className="ag-theme-alpine"
+//           >
+//             <AgGridReact
+//               defaultColDef={{
+//                 sortable: true,
+//                 filter: true,
+//                 resizable: true,
+//                 minWidth: 100,
+//                 flex: 1,
+//               }}
+//               suppressRowClickSelection={true}
+//               rowSelection={'multiple'}
+//               onGridReady={onGridReady}
+//               rowData={rowData}
+//             >
+//               <AgGridColumn
+//                 checkboxSelection={true}
+//                 field="athlete"
+//                 minWidth={200}
+//               />
+//               <AgGridColumn field="country" minWidth={200} />
+//               <AgGridColumn
+//                 headerName="Group"
+//                 valueGetter="data.country.charAt(0)"
+//               />
+//               <AgGridColumn field="sport" minWidth={150} />
+//               <AgGridColumn field="gold" hide={true} />
+//               <AgGridColumn field="silver" hide={true} />
+//               <AgGridColumn field="bronze" hide={true} />
+//               <AgGridColumn field="total" hide={true} />
+//             </AgGridReact>
+//           </div>
+//         </div>
 //       </div>
 //     </div>
 //   );
