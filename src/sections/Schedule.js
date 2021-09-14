@@ -33,6 +33,8 @@ const SignupSchema = Yup.object().shape({
   description: Yup.string().required("Description is Required"),
   participants: Yup.string().required("Participants is Required"),
   duration: Yup.string().required("Duration is Required"),
+  startTime: Yup.string().required("Start Time is Required"),
+  endTime: Yup.string().required("End Time is Required")
 });
 
 const Schedule = () => {
@@ -40,19 +42,28 @@ const Schedule = () => {
   const [update, setUpdate] = useState(false);
   const [gridApi, setGridApi] = useState(null);
   const [gridColumnApi, setGridColumnApi] = useState(null);
-  // const [rowData, setRowData] = useState(null);
+  const [rowData, setRowData] = useState(null);
 
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpened, setIsOpened] = React.useState(false);
 
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
     values.id = Math.random();
+    values.startDate = moment(values.startDate).format("DD MMM YYYY");
+    values.startTime = moment(values.startTime).format("HH:mm");
+    values.endTime = moment(values.endTime).format("HH:mm");
+    console.log("DADAD",values)
     setDatasss([...datass, values]);
   };
 
   const onUpdate = (values, { resetForm }) => {
     setUpdate(false);
     resetForm({});
+    values.startDate = moment(values.startDate).format("DD MMM YYYY");
+    values.startTime = moment(values.startTime).format("HH:mm");
+    values.endTime = moment(values.endTime).format("HH:mm");
+    console.log("DATAT",values)
     const filterData = datass.map((item) => {
       if (item.id == values.id) {
         item = values;
@@ -81,6 +92,23 @@ const Schedule = () => {
 
   const onBtnExport = () => {
     gridApi.exportDataAsCsv();
+  };
+
+  const onBtnImport = () => {
+    console.log("HHHHH::")
+  }
+
+  const onFileChange = event => {
+    setRowData(event.target.files[0]);
+  };
+  const onFileUpload = () => {
+    const formData = new FormData();
+    formData.append(
+      "myFile",
+      rowData,
+      rowData.name
+    );
+    console.log(rowData);
   };
 
   return (
@@ -141,6 +169,10 @@ const Schedule = () => {
             }) => {
               const editHandlar = (data) => {
                 setUpdate(true);
+                setIsOpened(true);
+                data.startTime = new Date(data.startDate+" "+data.startTime);
+                data.endTime = new Date(data.startDate+ " "+ data.endTime);
+                data.startDate = new Date(data.startDate);
                 for (const [key, value] of Object.entries(data)) {
                   setFieldValue(key, value);
                 }
@@ -154,29 +186,21 @@ const Schedule = () => {
                   </>
                 );
               };
-
-              const startDate = (props) => {
-                return Date.parse(props.data.startDate)
-              }
-              const startTime = (props) => {
-                return Date.parse(props.data.startTime)
-              }
-
-              const endTime = (props) => {
-                return Date.parse(props.data.endTime)
-              }
-
-              
-
               return (
                 <>
-                  <div style={{ width: '100%', height: 500 }}>
+                  <div style={{ width: '100%', height: 600 }}>
                     <div style={{ margin: '10px 0' }}>
                       <ActionButton onClick={() => onBtnExport()}>
                         Download CSV export file
                       </ActionButton>
+                      {/* <input type="file" onChange={onFileChange} />
+                      <button onClick={onFileUpload}>
+                        Upload!
+                      </button> */}
+                      {/* <ActionButton style={{ marginLeft: 20 }} onClick={() => onBtnImport()}>
+                        CSV import file
+                      </ActionButton> */}
                     </div>
-
                     <div className="grid-wrapper">
                       <div
                         id="myGrid"
@@ -205,127 +229,148 @@ const Schedule = () => {
                           pagination={true}
                           paginationPageSize={8}
                         >
-                          <AgGridColumn field="name" rowDrag={true} filter="agTextColumnFilter"/>
+                          <AgGridColumn field="name" rowDrag={true} filter="agTextColumnFilter" />
                           <AgGridColumn field="description" filter="agTextColumnFilter" />
                           <AgGridColumn field="participants" filter="agTextColumnFilter" />
                           <AgGridColumn field="duration" filter="agTextColumnFilter" />
-                          <AgGridColumn field="startDate" cellRenderer={startDate} />
-                          <AgGridColumn field="startTime" cellRenderer={startTime} />
-                          <AgGridColumn field="endTime" cellRenderer={endTime} />
+                          <AgGridColumn field="startDate" filter="agNumberColumnFilter"
+                            floatingFilter={false} />
+                          <AgGridColumn field="startTime" filter="agNumberColumnFilter"
+                            floatingFilter={false} />
+                          <AgGridColumn field="endTime" filter="agNumberColumnFilter"
+                            floatingFilter={false} />
                           <AgGridColumn
-                            field="Delete | Edit"
+                            // field="Delete | Edit"
                             cellClass="custom-athlete-cell"
                             cellRenderer="btnCellRenderer"
+                            ilter="agNumberColumnFilter"
+                            floatingFilter={false}
                           />
                         </AgGridReact>
                       </div>
                     </div>
                   </div>
-                  <Form style={{ marginTop: 50 }}>
-                    <Row>
-                      <Col>
-                        <FormControl
-                          label="Name"
-                          error={touched.name ? errors.name : null}
-                        >
-                          <Input
-                            error={errors.name && touched.name}
-                            name="name"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={value.name}
-                            placeholder={"Enter Name"}
-                          ></Input>
-                        </FormControl>
-                      </Col>
-                      <Col>
-                        <FormControl
-                          label="Description"
-                          error={
-                            touched.description ? errors.description : null
-                          }
-                        >
-                          <Input
-                            error={errors.description && touched.description}
-                            name="description"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={value.description}
-                            placeholder={"Enter Description"}
-                          ></Input>
-                        </FormControl>
-                      </Col>
-                    </Row>
 
-                    <Row>
-                      <Col>
-                        <FormControl
-                          label="Participants"
-                          error={
-                            touched.participants ? errors.participants : null
-                          }
-                        >
-                          <Input
-                            error={errors.participants && touched.participants}
-                            name="participants"
-                            type="text"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={value.participants}
-                            placeholder={"Enter Participants"}
-                          ></Input>
-                        </FormControl>
-                      </Col>
-                      <Col>
-                        <FormControl
-                          label="Duration"
-                          error={touched.duration ? errors.duration : null}
-                        >
-                          <Input
-                            error={errors.duration && touched.duration}
-                            type="number"
-                            name="duration"
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            value={value.duration}
-                            placeholder={"Enter Duration"}
-                          ></Input>
-                        </FormControl>
-                      </Col>
-                    </Row>
+                  <ModalButton onClick={() => setIsOpened(true)}>
+                    Add Schedule
+                  </ModalButton>
 
-                    <Row>
-                      <Col>
-                        <FormControl
-                          label="Start Date"
-                          error={errors.startDate}
-                        >
-                          <Datepicker
-                            value={value.startDate}
-                            onChange={({ date }) => {
-                              setFieldValue("startDate", date);
-                            }}
-                            minDate={new Date()}
-                          ></Datepicker>
-                        </FormControl>
-                      </Col>
-                      <Col>
-                        <FormControl
-                          label="Start Time"
-                          error={errors.startTime}
-                        >
-                          <TimePicker
-                            value={value.startTime}
-                            onChange={(time) =>
-                              setFieldValue("startTime", time)
+                  <ActionButton style={{ marginLeft: 20 }}>
+                    Save Schedule
+                  </ActionButton>
+
+                  <Modal
+                    onClose={() => setIsOpened(false)}
+                    isOpen={isOpened}
+                    size={1000}
+                    role={ROLE.alertdialog}
+                  >
+                    <Form style={{ margin: 50 }}>
+                      <Row>
+                        <Col>
+                          <FormControl
+                            label="Name"
+                            error={touched.name ? errors.name : null}
+                          >
+                            <Input
+                              error={errors.name && touched.name}
+                              name="name"
+                              type="text"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={value.name}
+                              placeholder={"Enter Name"}
+                            ></Input>
+                          </FormControl>
+                        </Col>
+                        <Col>
+                          <FormControl
+                            label="Description"
+                            error={
+                              touched.description ? errors.description : null
                             }
-                            creatable
-                          ></TimePicker>
-                        </FormControl>
-                      </Col>
-                      {/* <Col>
+                          >
+                            <Input
+                              error={errors.description && touched.description}
+                              name="description"
+                              type="text"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={value.description}
+                              placeholder={"Enter Description"}
+                            ></Input>
+                          </FormControl>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col>
+                          <FormControl
+                            label="Participants"
+                            error={
+                              touched.participants ? errors.participants : null
+                            }
+                          >
+                            <Input
+                              error={errors.participants && touched.participants}
+                              name="participants"
+                              type="text"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={value.participants}
+                              placeholder={"Enter Participants"}
+                            ></Input>
+                          </FormControl>
+                        </Col>
+                        <Col>
+                          <FormControl
+                            label="Duration"
+                            error={touched.duration ? errors.duration : null}
+                          >
+                            <Input
+                              error={errors.duration && touched.duration}
+                              type="number"
+                              name="duration"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={value.duration}
+                              placeholder={"Enter Duration"}
+                            ></Input>
+                          </FormControl>
+                        </Col>
+                      </Row>
+
+                      <Row>
+                        <Col>
+                          <FormControl
+                            label="Start Date"
+                            error={touched.startDate ? errors.startDate : null}
+                          >
+                            <Datepicker
+                              value={value.startDate}
+                              onChange={({ date }) => {
+                                setFieldValue("startDate", date);
+                              }}
+                              minDate={new Date()}
+                            ></Datepicker>
+                          </FormControl>
+                        </Col>
+                        <Col>
+                          <FormControl
+                            label="Start Time"
+                            error={touched.startTime ? errors.startTime : null}
+                          >
+                            <TimePicker
+                              error={errors.startTime && touched.startTime}
+                              value={value.startTime}
+                              onChange={(time) =>
+                                setFieldValue("startTime", time)
+                              }
+                              creatable
+                            ></TimePicker>
+                          </FormControl>
+                        </Col>
+                        {/* <Col>
                         <FormControl label="End Date" error={errors.endDate}>
                           <Datepicker
                             value={value.endDate}
@@ -336,43 +381,47 @@ const Schedule = () => {
                           ></Datepicker>
                         </FormControl>
                       </Col> */}
-                      <Col>
-                        <FormControl label="End Time" error={errors.endTime}>
-                          <TimePicker
-                            value={value.endTime}
-                            onChange={(time) => setFieldValue("endTime", time)}
-                            creatable
-                          ></TimePicker>
-                        </FormControl>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col>
-                        {update ? (
-                          <ActionButton
-                            onclick={handleSubmit}
-                            style={{ backgroundColor: "white" }}
-                            type="submit"
-                          >
-                            Update Schedule
-                          </ActionButton>
-                        ) : (
-                          <ActionButton
-                            onclick={handleSubmit}
-                            style={{ backgroundColor: "white" }}
-                            type="submit"
-                          >
-                            Add New Schedule
-                          </ActionButton>
-                        )}
+                        <Col>
+                          <FormControl label="End Time" error={touched.endTime ? errors.endTime : null}>
+                            <TimePicker
+                              value={value.endTime}
+                              error={errors.endTime && touched.endTime}
+                              onChange={(time) => setFieldValue("endTime", time)}
+                              creatable
+                            ></TimePicker>
+                          </FormControl>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <ModalFooter>
+                          {update ? (
+                            <ActionButton
+                              onclick={handleSubmit}
+                              style={{ backgroundColor: "white" }}
+                              type="submit"
+                            >
+                              Update Schedule
+                            </ActionButton>
+                          ) : (
+                            <ActionButton
+                              onclick={handleSubmit}
+                              style={{ backgroundColor: "white" }}
+                              type="submit"
+                            >
+                              New Schedule
+                            </ActionButton>
+                          )}
 
-                        <ActionButton style={{ marginLeft: 20 }}>
-                          Save Schedule
-                        </ActionButton>
-                      </Col>
-                      <Col></Col>
-                    </Row>
-                  </Form>
+                          <ModalButton type="button" style={{ marginLeft: 40, marginRight: 25 }}
+                            kind={ButtonKind.tertiary}
+                            onClick={() => setIsOpened(false)}
+                          >
+                            Cancel
+                          </ModalButton>
+                        </ModalFooter>
+                      </Row>
+                    </Form>
+                  </Modal>
                 </>
               );
             }}
@@ -385,95 +434,87 @@ const Schedule = () => {
 
 export default Schedule;
 
-// import React, { useState } from 'react';
-// import { render } from 'react-dom';
-// import { AgGridReact, AgGridColumn } from 'ag-grid-react';
-// import 'ag-grid-enterprise';
-// import 'ag-grid-community/dist/styles/ag-grid.css';
-// import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-// const Schedule = () => {
-//   const [gridApi, setGridApi] = useState(null);
-//   const [gridColumnApi, setGridColumnApi] = useState(null);
-//   const [rowData, setRowData] = useState(null);
+// import { useState } from 'react'
 
-//   const onGridReady = (params) => {
-//     setGridApi(params.api);
-//     setGridColumnApi(params.columnApi);
+// export default function Schedule(){
+//     const [csvFile, setCsvFile] = useState();
+//     const [csvArray, setCsvArray] = useState([]);
+//     // [{name: "", age: 0, rank: ""},{name: "", age: 0, rank: ""}]
 
-//     const updateData = (data) =>
-//       params.api.setRowData(data.filter((rec) => rec.country != null));
+//     const processCSV = (str, delim=',') => {
+//         const headers = str.slice(0,str.indexOf('\n')).split(delim);
+//         const rows = str.slice(str.indexOf('\n')+1).split('\n');
 
-//     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-//       .then((resp) => resp.json())
-//       .then((data) => updateData(data));
+//         const newArray = rows.map( row => {
+//             const values = row.split(delim);
+//             const eachObject = headers.reduce((obj, header, i) => {
+//                 obj[header] = values[i];
+//                 return obj;
+//             }, {})
+//             return eachObject;
+//         })
 
-//     document.getElementById('selectedOnly').checked = true;
-//   };
+//         setCsvArray(newArray)
+//     }
 
-//   const onBtExport = () => {
-//     gridApi.exportDataAsExcel({
-//       onlySelected: document.querySelector('#selectedOnly').checked,
-//     });
-//   };
+//     const submit = () => {
+//         const file = csvFile;
+//         const reader = new FileReader();
 
-//   return (
-//     <div style={{ width: '100%', height: 300 }}>
-//       <div className="container">
-//         <div className="columns">
-//           <label className="option" for="selectedOnly">
-//             <input id="selectedOnly" type="checkbox" />
-//             Selected Rows Only
-//           </label>
-//           <div>
-//             <button onClick={() => onBtExport()} style={{ fontWeight: 'bold' }}>
-//               Export to Excel
-//             </button>
-//           </div>
-//         </div>
-//         <div className="grid-wrapper">
-//           <div
-//             id="myGrid"
-//             style={{
-//               height: 300,
-//               width: '100%',
-//             }}
-//             className="ag-theme-alpine"
-//           >
-//             <AgGridReact
-//               defaultColDef={{
-//                 sortable: true,
-//                 filter: true,
-//                 resizable: true,
-//                 minWidth: 100,
-//                 flex: 1,
-//               }}
-//               suppressRowClickSelection={true}
-//               rowSelection={'multiple'}
-//               onGridReady={onGridReady}
-//               rowData={rowData}
+//         reader.onload = function(e) {
+//             const text = e.target.result;
+//             console.log("DADA",text);
+//             processCSV(text)
+//         }
+//         reader.readAsText(file);
+//         console.log(reader)
+//     }
+
+//     return(
+//         <form id='csv-form'>
+//             <input
+//                 type='file'
+//                 accept='.csv'
+//                 id='csvFile'
+//                 onChange={(e) => {
+//                     setCsvFile(e.target.files[0])
+//                 }}
 //             >
-//               <AgGridColumn
-//                 checkboxSelection={true}
-//                 field="athlete"
-//                 minWidth={200}
-//               />
-//               <AgGridColumn field="country" minWidth={200} />
-//               <AgGridColumn
-//                 headerName="Group"
-//                 valueGetter="data.country.charAt(0)"
-//               />
-//               <AgGridColumn field="sport" minWidth={150} />
-//               <AgGridColumn field="gold" hide={true} />
-//               <AgGridColumn field="silver" hide={true} />
-//               <AgGridColumn field="bronze" hide={true} />
-//               <AgGridColumn field="total" hide={true} />
-//             </AgGridReact>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
+//             </input>
+//             <br/>
+//             <button
+//                 onClick={(e) => {
+//                     e.preventDefault()
+//                     if(csvFile)submit()
+//                 }}
+//             >
+//                 Submit
+//             </button>
+//             <br/>
+//             <br/>
+//             {csvArray.length>0 ? 
+//             <>
+//                 <table>
+//                     <thead>
+//                         <th>Name</th>
+//                         <th>Age</th>
+//                         <th>Rank</th>
+//                     </thead>
+//                     <tbody>
+//                         {
+//                             csvArray.map((item, i) => (
+//                                 <tr key={i}>
+//                                     <td>{item.name}</td>
+//                                     <td>{item.age}</td>
+//                                     <td>{item.rank}</td>
+//                                 </tr>
+//                             ))
+//                         }
+//                     </tbody>
+//                 </table>
+//             </> : null}
+//         </form>
+//     );
 
-// export default Schedule;
+// }
