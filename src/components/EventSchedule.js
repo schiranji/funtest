@@ -295,6 +295,7 @@ const EventSchedule = (props) => {
                         onChange={handleFileUpload}
                         ref={fileInput}
                         style={{ display: "none" }}
+                        
                       />
                       <ActionButton
                         className="photo-button m-1"
