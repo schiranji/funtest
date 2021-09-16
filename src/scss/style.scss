@@ -575,7 +575,7 @@ input, textarea, select {
   
   &:focus {
     outline: none;
-    border: 2px solid $color-dark-bg;
+    // border: 2px solid $color-dark-bg;
   }
 }
 
@@ -599,4 +599,8 @@ input, textarea, select {
 
 .btn .fas {
   margin-left: 5px;
+}
+
+.customInput {
+  border: 1px solid red !important
 }

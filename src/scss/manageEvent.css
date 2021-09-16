@@ -35,7 +35,6 @@ $inputBackground: rgb(238, 238, 238);
 .manage-sidebar {
   display: flex;
   flex-direction: column;
-  border: 2px solid $color-light-gray;
   border-radius: 5px;
   padding: 0;
   height: 100%;
