@@ -32,12 +32,9 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { CSVLink } from "react-csv";
 import axios from "axios";
 import { API_PATH } from "../Path";
-import { requestBase, getEventSchedualUrl } from "../utils";
+import { requestBase, getEventSchedualUrl, EVENT_TYPE } from "../utils";
 import { useParams, Prompt, Link } from "react-router-dom";
-import {
-  Checkbox,
-  LABEL_PLACEMENT
-} from "baseui/checkbox";
+import { Checkbox, LABEL_PLACEMENT } from "baseui/checkbox";
 
 const headers = [
   { label: "Name", key: "name" },
@@ -58,7 +55,7 @@ const SignupSchema = Yup.object().shape({
   endTime: Yup.string().required("End Time is Required"),
 });
 
-const EventSchedule = (props) => {
+const EventSchedule = () => {
   const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
   const [gridApi, setGridApi] = useState(null);
@@ -67,13 +64,17 @@ const EventSchedule = (props) => {
   const [isOpened, setIsOpened] = React.useState(false);
   const { eventId } = useParams();
   const [checked, setChecked] = React.useState(false);
+  const [mediaData, setMediaData] = useState(null)
 
-  console.log("DADADA", eventId);
-
-  const Cookieheaders = {
-    Cookie:
-      "_ga=GA1.2.2003048989.1631602995; JSESSIONID=8F1A43F067262D8C69A9F3CD579A0115; csrftkn=hNOcn; _gid=GA1.2.555156501.1631943552; _gat=1; AuthToken=30ee295f-6241-4811-bd59-9f8867bdec0f; eventSearchCriteria=%7B%22pageNo%22%3A1%2C%22resultsPerPage%22%3A20%2C%22radius%22%3A50%2C%22dateRange%22%3A%22%22%2C%22name%22%3A%22%22%2C%22city%22%3A%22%22%2C%22category1%22%3A%22%22%2C%22nickname%22%3A%22TestUser%22%7D",
-  };
+  useEffect(() => {
+    const getEventMedia = async () => {
+      let url = `/auth/event/event/view/getEvent/${eventId}`
+      const getReq = await requestBase.get(url);
+      console.log("DADADAD",getReq.data)
+      setMediaData(getReq.data.scheduleItems)
+    }
+    getEventMedia();
+  }, [eventId])
 
   const processData = (dataString) => {
     const dataStringLines = dataString.split(/\r\n|\n/);
@@ -138,7 +139,7 @@ const EventSchedule = (props) => {
 
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
-    if(checked !== true){
+    if (checked !== true) {
       setIsOpened(false);
     }
     toaster.positive(<p>Schedule added in the table.</p>);
@@ -196,18 +197,7 @@ const EventSchedule = (props) => {
       };
       Arr.push(item);
     });
-    axios
-      .post(
-        API_PATH +
-          `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
-        Arr,
-        {
-          headers: Cookieheaders,
-        }
-      )
-      .then((response) => {
-        console.log("object", response);
-      });
+    requestBase.post(`/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,JSON.parse(JSON.stringify(Arr)));
   };
 
   const csvReport = {
@@ -291,13 +281,13 @@ const EventSchedule = (props) => {
                 resetForm({});
                 setIsOpened(false);
                 setUpdate(false);
-                setChecked(false)
+                setChecked(false);
               };
 
               const handleModalOpen = () => {
                 resetForm({});
                 setIsOpened(true);
-                setChecked(false)
+                setChecked(false);
               };
 
               const BtnCellRenderer = (props) => {
@@ -358,7 +348,7 @@ const EventSchedule = (props) => {
                           rowSelection={"multiple"}
                           rowDragManaged={true}
                           animateRows={true}
-                          rowData={datass}
+                          rowData={mediaData}
                           frameworkComponents={{
                             btnCellRenderer: BtnCellRenderer,
                           }}
@@ -413,12 +403,12 @@ const EventSchedule = (props) => {
                     Add Schedule
                   </ModalButton>
 
-                  <ActionButton
+                  {/* <ActionButton
                     onClick={onSubmitData}
                     style={{ marginLeft: 20 }}
                   >
                     Save Schedule
-                  </ActionButton>
+                  </ActionButton> */}
 
                   <Modal onClose={closeModal} isOpen={isOpened} size={1000}>
                     <Form style={{ margin: 50 }}>
@@ -567,22 +557,28 @@ const EventSchedule = (props) => {
                             </ActionButton>
                           ) : (
                             <>
-                            <span style={{position: 'absolute', right:'35%',marginTop: 10}}>
-                            <Checkbox
-                            checked={checked}
-                            onChange={e => setChecked(e.target.checked)}
-                          >
-                            Create another
-                          </Checkbox>
-                          </span>
-                            <ActionButton
-                              onclick={handleSubmit}
-                              style={{ backgroundColor: "white" }}
-                              type="submit"
-                            >
-                              Add new schedule
-                            </ActionButton>
-                           </>
+                              <span
+                                style={{
+                                  position: "absolute",
+                                  right: 350,
+                                  marginTop: 10,
+                                }}
+                              >
+                                <Checkbox
+                                  checked={checked}
+                                  onChange={(e) => setChecked(e.target.checked)}
+                                >
+                                  Create another
+                                </Checkbox>
+                              </span>
+                              <ActionButton
+                                onclick={handleSubmit}
+                                style={{ backgroundColor: "white" }}
+                                type="submit"
+                              >
+                                Add new schedule
+                              </ActionButton>
+                            </>
                           )}
 
                           <ModalButton

@@ -87,6 +87,7 @@ const Manage = ({eventType}) => {
 
       let formattedEventData = getReq.data;
       
+      console.log("objectkjwjfkjkjk:::",formattedEventData)
       formattedEventData.eventType = eventType;
 
       if (formattedEventData.attendanceMode === ATTENDANCE_TYPE.online) {
