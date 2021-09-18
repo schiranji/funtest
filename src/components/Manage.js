@@ -493,6 +493,7 @@ const Manage = ({eventType}) => {
                       toaster.positive(<p>Successfully saved changes!</p>)
 
                     } else if (eventType === EVENT_TYPE.regular) {
+                      console.log("DADADAD",JSON.parse(JSON.stringify(eventManagementBody)))
                       await Promise.all([
                         requestBase.post(`/auth/event/event/edit/updateEvent/${eventData.id}`, JSON.parse(JSON.stringify(body)), {}),
                         requestBase.post(`/auth/event/event/edit/updateEventManagement/${eventData.id}`, JSON.parse(JSON.stringify(eventManagementBody)), {}),

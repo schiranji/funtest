@@ -14,6 +14,7 @@ import * as Yup from "yup";
 import moment from "moment";
 import { AiFillEdit } from "react-icons/ai";
 import * as XLSX from "xlsx";
+import { toaster } from "baseui/toast";
 import {
   Modal,
   ModalHeader,
@@ -28,8 +29,15 @@ import { AgGridReact, AgGridColumn } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-
 import { CSVLink } from "react-csv";
+import axios from "axios";
+import { API_PATH } from "../Path";
+import { requestBase, getEventSchedualUrl } from "../utils";
+import { useParams, Prompt, Link } from "react-router-dom";
+import {
+  Checkbox,
+  LABEL_PLACEMENT
+} from "baseui/checkbox";
 
 const headers = [
   { label: "Name", key: "name" },
@@ -57,6 +65,15 @@ const EventSchedule = (props) => {
   const fileInput = useRef(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpened, setIsOpened] = React.useState(false);
+  const { eventId } = useParams();
+  const [checked, setChecked] = React.useState(false);
+
+  console.log("DADADA", eventId);
+
+  const Cookieheaders = {
+    Cookie:
+      "_ga=GA1.2.2003048989.1631602995; JSESSIONID=8F1A43F067262D8C69A9F3CD579A0115; csrftkn=hNOcn; _gid=GA1.2.555156501.1631943552; _gat=1; AuthToken=30ee295f-6241-4811-bd59-9f8867bdec0f; eventSearchCriteria=%7B%22pageNo%22%3A1%2C%22resultsPerPage%22%3A20%2C%22radius%22%3A50%2C%22dateRange%22%3A%22%22%2C%22name%22%3A%22%22%2C%22city%22%3A%22%22%2C%22category1%22%3A%22%22%2C%22nickname%22%3A%22TestUser%22%7D",
+  };
 
   const processData = (dataString) => {
     const dataStringLines = dataString.split(/\r\n|\n/);
@@ -103,7 +120,6 @@ const EventSchedule = (props) => {
   };
 
   const handleFileUpload = (e) => {
-    
     if (e.target.value) {
       const file = e.target.files[0];
       const reader = new FileReader();
@@ -116,12 +132,16 @@ const EventSchedule = (props) => {
         processData(data);
       };
       reader.readAsBinaryString(file);
+      toaster.positive(<p>Schedule import in the table.</p>);
     }
   };
 
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
-    setIsOpened(false);
+    if(checked !== true){
+      setIsOpened(false);
+    }
+    toaster.positive(<p>Schedule added in the table.</p>);
     values.id = Math.random();
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
@@ -133,6 +153,7 @@ const EventSchedule = (props) => {
     setUpdate(false);
     setIsOpened(false);
     resetForm({});
+    toaster.positive(<p>Schedule Edit Successfully.</p>);
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
@@ -175,7 +196,18 @@ const EventSchedule = (props) => {
       };
       Arr.push(item);
     });
-    console.log("DATASS", Arr);
+    axios
+      .post(
+        API_PATH +
+          `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
+        Arr,
+        {
+          headers: Cookieheaders,
+        }
+      )
+      .then((response) => {
+        console.log("object", response);
+      });
   };
 
   const csvReport = {
@@ -195,8 +227,8 @@ const EventSchedule = (props) => {
         size={SIZE.default}
         role={ROLE.dialog}
       >
-        <ModalHeader>Hello world</ModalHeader>
-        <ModalBody>Are you sure you want delete?</ModalBody>
+        <ModalHeader>Are you sure you want delete?</ModalHeader>
+        {/* <ModalBody>Are you sure you want delete?</ModalBody> */}
         <ModalFooter>
           <ModalButton
             kind={ButtonKind.tertiary}
@@ -259,12 +291,14 @@ const EventSchedule = (props) => {
                 resetForm({});
                 setIsOpened(false);
                 setUpdate(false);
+                setChecked(false)
               };
 
-              const handleModalOpen = () =>{
+              const handleModalOpen = () => {
                 resetForm({});
                 setIsOpened(true);
-              }
+                setChecked(false)
+              };
 
               const BtnCellRenderer = (props) => {
                 return (
@@ -295,7 +329,6 @@ const EventSchedule = (props) => {
                         onChange={handleFileUpload}
                         ref={fileInput}
                         style={{ display: "none" }}
-                        
                       />
                       <ActionButton
                         className="photo-button m-1"
@@ -387,11 +420,7 @@ const EventSchedule = (props) => {
                     Save Schedule
                   </ActionButton>
 
-                  <Modal
-                    onClose={closeModal}
-                    isOpen={isOpened}
-                    size={1000}
-                  >
+                  <Modal onClose={closeModal} isOpen={isOpened} size={1000}>
                     <Form style={{ margin: 50 }}>
                       <Row>
                         <Col>
@@ -534,16 +563,26 @@ const EventSchedule = (props) => {
                               style={{ backgroundColor: "white" }}
                               type="submit"
                             >
-                              Update Schedule
+                              Update schedule
                             </ActionButton>
                           ) : (
+                            <>
+                            <span style={{position: 'absolute', right:'35%',marginTop: 10}}>
+                            <Checkbox
+                            checked={checked}
+                            onChange={e => setChecked(e.target.checked)}
+                          >
+                            Create another
+                          </Checkbox>
+                          </span>
                             <ActionButton
                               onclick={handleSubmit}
                               style={{ backgroundColor: "white" }}
                               type="submit"
                             >
-                              New Schedule
+                              Add new schedule
                             </ActionButton>
+                           </>
                           )}
 
                           <ModalButton
@@ -551,7 +590,7 @@ const EventSchedule = (props) => {
                             style={{ marginLeft: 40, marginRight: 25 }}
                             onClick={closeModal}
                           >
-                            Cancel
+                            Close
                           </ModalButton>
                         </ModalFooter>
                       </Row>
