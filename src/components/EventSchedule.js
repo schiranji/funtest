@@ -71,7 +71,7 @@ const EventSchedule = () => {
       let url = `/auth/event/event/view/getEvent/${eventId}`;
       const getReq = await requestBase.get(url);
       console.log("DADADAD", getReq.data);
-      setMediaData(getReq.data.scheduleItems);
+      setDatasss(...datass,getReq.data.scheduleItems);
     };
     getEventMedia();
   }, [eventId]);
@@ -201,6 +201,7 @@ const EventSchedule = () => {
       `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
       JSON.parse(JSON.stringify(Arr))
     );
+    toaster.positive(<p>Schedule has been added.</p>);
   };
 
   const csvReport = {
@@ -351,7 +352,7 @@ const EventSchedule = () => {
                           rowSelection={"multiple"}
                           rowDragManaged={true}
                           animateRows={true}
-                          rowData={mediaData}
+                          rowData={datass}
                           frameworkComponents={{
                             btnCellRenderer: BtnCellRenderer,
                           }}
