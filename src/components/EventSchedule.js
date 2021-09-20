@@ -64,17 +64,17 @@ const EventSchedule = () => {
   const [isOpened, setIsOpened] = React.useState(false);
   const { eventId } = useParams();
   const [checked, setChecked] = React.useState(false);
-  const [mediaData, setMediaData] = useState(null)
+  const [mediaData, setMediaData] = useState(null);
 
   useEffect(() => {
     const getEventMedia = async () => {
-      let url = `/auth/event/event/view/getEvent/${eventId}`
+      let url = `/auth/event/event/view/getEvent/${eventId}`;
       const getReq = await requestBase.get(url);
-      console.log("DADADAD",getReq.data)
-      setMediaData(getReq.data.scheduleItems)
-    }
+      console.log("DADADAD", getReq.data);
+      setMediaData(getReq.data.scheduleItems);
+    };
     getEventMedia();
-  }, [eventId])
+  }, [eventId]);
 
   const processData = (dataString) => {
     const dataStringLines = dataString.split(/\r\n|\n/);
@@ -197,7 +197,10 @@ const EventSchedule = () => {
       };
       Arr.push(item);
     });
-    requestBase.post(`/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,JSON.parse(JSON.stringify(Arr)));
+    requestBase.post(
+      `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
+      JSON.parse(JSON.stringify(Arr))
+    );
   };
 
   const csvReport = {
@@ -403,12 +406,12 @@ const EventSchedule = () => {
                     Add Schedule
                   </ModalButton>
 
-                  {/* <ActionButton
+                  <ActionButton
                     onClick={onSubmitData}
                     style={{ marginLeft: 20 }}
                   >
-                    Save Schedule
-                  </ActionButton> */}
+                    Save Changes
+                  </ActionButton>
 
                   <Modal onClose={closeModal} isOpen={isOpened} size={1000}>
                     <Form style={{ margin: 50 }}>
