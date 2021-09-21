@@ -3,9 +3,9 @@ import { Input } from "baseui/input";
 import { FormControl } from "baseui/form-control";
 import SectionBody from "../components/SectionBody";
 import SectionHeader from "../components/SectionHeader";
-import { Row, Col, Table, Button } from "reactstrap";
+import { Row, Col } from "reactstrap";
 import { Delete } from "baseui/icon";
-import { Datepicker, TimezonePicker } from "baseui/datepicker";
+import { Datepicker } from "baseui/datepicker";
 import { TimePicker } from "baseui/timepicker";
 import SubSection from "../components/Subsection";
 import ActionButton from "../components/ActionButton";
@@ -18,7 +18,6 @@ import { toaster } from "baseui/toast";
 import {
   Modal,
   ModalHeader,
-  ModalBody,
   ModalFooter,
   ModalButton,
   SIZE,
@@ -30,11 +29,9 @@ import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { CSVLink } from "react-csv";
-import axios from "axios";
-import { API_PATH } from "../Path";
-import { requestBase, getEventSchedualUrl, EVENT_TYPE } from "../utils";
-import { useParams, Prompt, Link } from "react-router-dom";
-import { Checkbox, LABEL_PLACEMENT } from "baseui/checkbox";
+import { requestBase } from "../utils";
+import { useParams } from "react-router-dom";
+import { Checkbox } from "baseui/checkbox";
 
 const headers = [
   { label: "Name", key: "name" },
@@ -64,14 +61,13 @@ const EventSchedule = () => {
   const [isOpened, setIsOpened] = React.useState(false);
   const { eventId } = useParams();
   const [checked, setChecked] = React.useState(false);
-  const [mediaData, setMediaData] = useState(null);
 
   useEffect(() => {
     const getEventMedia = async () => {
       let url = `/auth/event/event/view/getEvent/${eventId}`;
       const getReq = await requestBase.get(url);
-      console.log("DADADAD", getReq.data);
-      setDatasss(...datass,getReq.data.scheduleItems);
+      console.log("DADADAD", getReq.data.scheduleItems);
+      setDatasss(...datass, getReq.data.scheduleItems);
     };
     getEventMedia();
   }, [eventId]);
@@ -142,22 +138,31 @@ const EventSchedule = () => {
     if (checked !== true) {
       setIsOpened(false);
     }
-    toaster.positive(<p>Schedule added in the table.</p>);
     values.id = Math.random();
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
+    values.startDateTime = Date.parse(
+      values.startDate + " " + values.startTime
+    );
+    values.endDateTime = Date.parse(values.startDate + " " + values.endTime);
     setDatasss([...datass, values]);
+    setTimeout(() => {
+      toaster.positive(<p>Schedule has been added.</p>);
+    }, 2000);
   };
 
   const onUpdate = (values, { resetForm }) => {
     setUpdate(false);
     setIsOpened(false);
     resetForm({});
-    toaster.positive(<p>Schedule Edit Successfully.</p>);
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
+    values.startDateTime = Date.parse(
+      values.startDate + " " + values.startTime
+    );
+    values.endDateTime = Date.parse(values.startDate + " " + values.endTime);
     const filterData = datass.map((item) => {
       if (item.id == values.id) {
         item = values;
@@ -165,18 +170,31 @@ const EventSchedule = () => {
       return item;
     });
     setDatasss(filterData);
+    setTimeout(() => {
+      toaster.positive(<p>Schedule has been update.</p>);
+    }, 2000);
   };
 
+  useEffect(() => {
+    if (datass.length !== 0) {
+      onSubmitData();
+    }
+  }, [datass]);
+
   const deleteData = (data) => {
-    localStorage.setItem("id", data.id);
+    localStorage.setItem("name", data.name);
     setIsOpen(true);
   };
 
   const removeDatas = () => {
-    const id = localStorage.getItem("id");
+    const name = localStorage.getItem("name");
     setIsOpen(false);
-    const filterData = datass.filter((item) => item.id != id);
+    const filterData = datass.filter((item) => item.name != name);
     setDatasss(filterData);
+    setTimeout(() => {
+      onSubmitData();
+      toaster.positive(<p>Schedule has been update.</p>);
+    }, 2000);
   };
 
   const onGridReady = (params) => {
@@ -186,10 +204,11 @@ const EventSchedule = () => {
   const onSubmitData = () => {
     const Arr = [];
     datass.map((data) => {
+      const startATime = data.startDate + " " + data.startTime;
+      const endTime = data.startDate + " " + data.endTime;
       const item = {
-        startDate: data.startDate,
-        startTime: data.startTime,
-        endTime: data.endTime,
+        startDateTime: Date.parse(startATime),
+        endDateTime: Date.parse(endTime),
         description: data.description,
         participants: data.participants,
         duration: data.duration,
@@ -201,7 +220,6 @@ const EventSchedule = () => {
       `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
       JSON.parse(JSON.stringify(Arr))
     );
-    toaster.positive(<p>Schedule has been added.</p>);
   };
 
   const csvReport = {
@@ -271,11 +289,10 @@ const EventSchedule = () => {
               const editHandlar = (data) => {
                 setUpdate(true);
                 setIsOpened(true);
-                data.startTime = new Date(
-                  data.startDate + " " + data.startTime
-                );
-                data.endTime = new Date(data.startDate + " " + data.endTime);
-                data.startDate = new Date(data.startDate);
+                data.startTime = new Date(data.startDateTime);
+                data.endTime = new Date(data.endDateTime);
+                data.startDate = new Date(data.startDateTime);
+                console.log(data);
                 for (const [key, value] of Object.entries(data)) {
                   setFieldValue(key, value);
                 }
@@ -306,6 +323,17 @@ const EventSchedule = () => {
                   </>
                 );
               };
+
+              const StartDate = (props) => {
+                return moment(props.data.startDateTime).format("DD-MMM-YYYY");
+              };
+              const StartTime = (props) => {
+                return moment(props.data.startDateTime).format("HH:mm");
+              };
+              const EndTime = (props) => {
+                return moment(props.data.endDateTime).format("HH:mm");
+              };
+
               return (
                 <>
                   <div style={{ width: "100%", height: 600 }}>
@@ -314,7 +342,7 @@ const EventSchedule = () => {
                         {...csvReport}
                         style={{ textDecoration: "none", color: "black" }}
                       >
-                        <ActionButton>Download File</ActionButton>
+                        <ActionButton>Download Schedule</ActionButton>
                       </CSVLink>
 
                       <input
@@ -328,7 +356,7 @@ const EventSchedule = () => {
                         className="photo-button m-1"
                         onClick={() => fileInput.current.click()}
                       >
-                        Upload File
+                        Upload Schedule
                       </ActionButton>
                     </div>
                     <div className="grid-wrapper">
@@ -380,16 +408,19 @@ const EventSchedule = () => {
                             field="startDate"
                             filter="agNumberColumnFilter"
                             floatingFilter={false}
+                            cellRenderer={StartDate}
                           />
                           <AgGridColumn
                             field="startTime"
                             filter="agNumberColumnFilter"
                             floatingFilter={false}
+                            cellRenderer={StartTime}
                           />
                           <AgGridColumn
                             field="endTime"
                             filter="agNumberColumnFilter"
                             floatingFilter={false}
+                            cellRenderer={EndTime}
                           />
                           <AgGridColumn
                             field="Delete | Edit"
@@ -407,12 +438,12 @@ const EventSchedule = () => {
                     Add Schedule
                   </ModalButton>
 
-                  <ActionButton
+                  {/* <ActionButton
                     onClick={onSubmitData}
                     style={{ marginLeft: 20 }}
                   >
                     Save Changes
-                  </ActionButton>
+                  </ActionButton> */}
 
                   <Modal onClose={closeModal} isOpen={isOpened} size={1000}>
                     <Form style={{ margin: 50 }}>
@@ -580,7 +611,7 @@ const EventSchedule = () => {
                                 style={{ backgroundColor: "white" }}
                                 type="submit"
                               >
-                                Add new schedule
+                                Save new Schedule
                               </ActionButton>
                             </>
                           )}
