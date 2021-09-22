@@ -55,22 +55,44 @@ const SignupSchema = Yup.object().shape({
 const EventSchedule = () => {
   const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
+  const [showData, setShowData] = useState(false);
   const [gridApi, setGridApi] = useState(null);
   const fileInput = useRef(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpened, setIsOpened] = React.useState(false);
   const { eventId } = useParams();
   const [checked, setChecked] = React.useState(false);
+  const [selectedScheduleId, setSelectedScheduleId] = useState(null);
 
   useEffect(() => {
     const getEventMedia = async () => {
       let url = `/auth/event/event/view/getEvent/${eventId}`;
       const getReq = await requestBase.get(url);
-      console.log("DADADAD", getReq.data.scheduleItems);
+      console.log("DADADAD", getReq.data.startDateTime);
+      setGridApi(getReq.data.scheduleItems);
       setDatasss(...datass, getReq.data.scheduleItems);
     };
     getEventMedia();
   }, [eventId]);
+
+  const onSubmitData = () => {
+    const Arr = [];
+    datass.map((data) => {
+      const item = {
+        startDateTime: data.startDateTime,
+        endDateTime: data.endDateTime,
+        description: data.description,
+        participants: data.participants,
+        duration: data.duration,
+        name: data.name,
+      };
+      Arr.push(item);
+    });
+    requestBase.post(
+      `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
+      JSON.parse(JSON.stringify(Arr))
+    );
+  };
 
   const processData = (dataString) => {
     const dataStringLines = dataString.split(/\r\n|\n/);
@@ -111,6 +133,8 @@ const EventSchedule = () => {
       data.startDate = moment(data.Start_Date).format("DD MMM YYYY");
       data.startTime = data.Start_Time;
       data.endTime = data.End_Time;
+      data.startDateTime = Date.parse(data.startDate + " " + data.startTime);
+      data.endDateTime = Date.parse(data.startDate + " " + data.endTime);
       array.push(data);
     });
     setDatasss((prev) => [...prev, ...array]);
@@ -129,16 +153,20 @@ const EventSchedule = () => {
         processData(data);
       };
       reader.readAsBinaryString(file);
-      toaster.positive(<p>Schedule import in the table.</p>);
     }
   };
+
+  useEffect(() => {
+    if (datass.length !== 0) {
+      onSubmitData();
+    }
+  }, [datass]);
 
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
     if (checked !== true) {
       setIsOpened(false);
     }
-    values.id = Math.random();
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
@@ -146,10 +174,8 @@ const EventSchedule = () => {
       values.startDate + " " + values.startTime
     );
     values.endDateTime = Date.parse(values.startDate + " " + values.endTime);
+    toaster.positive(<p>Schedule has been added.</p>);
     setDatasss([...datass, values]);
-    setTimeout(() => {
-      toaster.positive(<p>Schedule has been added.</p>);
-    }, 2000);
   };
 
   const onUpdate = (values, { resetForm }) => {
@@ -159,73 +185,43 @@ const EventSchedule = () => {
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
+
     values.startDateTime = Date.parse(
       values.startDate + " " + values.startTime
     );
     values.endDateTime = Date.parse(values.startDate + " " + values.endTime);
+    
     const filterData = datass.map((item) => {
-      if (item.id == values.id) {
+      if (item.name == values.name) {
         item = values;
       }
       return item;
     });
+    toaster.positive(<p>Schedule has been update.</p>);
     setDatasss(filterData);
-    setTimeout(() => {
-      toaster.positive(<p>Schedule has been update.</p>);
-    }, 2000);
   };
 
-  useEffect(() => {
-    if (datass.length !== 0) {
-      onSubmitData();
-    }
-  }, [datass]);
-
   const deleteData = (data) => {
-    localStorage.setItem("name", data.name);
+    setSelectedScheduleId(data.id ? data.id : 26);
     setIsOpen(true);
   };
 
   const removeDatas = () => {
-    const name = localStorage.getItem("name");
     setIsOpen(false);
-    const filterData = datass.filter((item) => item.name != name);
-    setDatasss(filterData);
-    setTimeout(() => {
-      onSubmitData();
-      toaster.positive(<p>Schedule has been update.</p>);
-    }, 2000);
-  };
-
-  const onGridReady = (params) => {
-    setGridApi(params.api);
-  };
-
-  const onSubmitData = () => {
-    const Arr = [];
-    datass.map((data) => {
-      const startATime = data.startDate + " " + data.startTime;
-      const endTime = data.startDate + " " + data.endTime;
-      const item = {
-        startDateTime: Date.parse(startATime),
-        endDateTime: Date.parse(endTime),
-        description: data.description,
-        participants: data.participants,
-        duration: data.duration,
-        name: data.name,
-      };
-      Arr.push(item);
-    });
-    requestBase.post(
-      `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
-      JSON.parse(JSON.stringify(Arr))
-    );
+    if (selectedScheduleId !== null) {
+      requestBase.delete(
+        `/auth/event/event/delete/schedule-item/${eventId}/${selectedScheduleId}`
+      );
+      // toaster.positive(<p>Schedule has been deleted.</p>);
+    } else {
+      toaster.warning(<p>Schedule item id is not found.</p>);
+    }
   };
 
   const csvReport = {
     data: datass,
     headers: headers,
-    filename: "Clue_Mediator_Report.csv",
+    filename: "FunZippy_Event_Schedule.csv",
   };
 
   return (
@@ -263,7 +259,6 @@ const EventSchedule = () => {
         <div>
           <Formik
             initialValues={{
-              id: "",
               name: "",
               description: "",
               participants: "",
@@ -298,6 +293,18 @@ const EventSchedule = () => {
                 }
               };
 
+              const viewData = (data) => {
+                setShowData(true);
+                setIsOpened(true);
+                data.startTime = new Date(data.startDateTime);
+                data.endTime = new Date(data.endDateTime);
+                data.startDate = new Date(data.startDateTime);
+                console.log(data);
+                for (const [key, value] of Object.entries(data)) {
+                  setFieldValue(key, value);
+                }
+              };
+
               const closeModal = () => {
                 resetForm({});
                 setIsOpened(false);
@@ -314,6 +321,9 @@ const EventSchedule = () => {
               const BtnCellRenderer = (props) => {
                 return (
                   <>
+                    <ActionButton onClick={() => viewData(props.data)}>
+                      View{" "}
+                    </ActionButton>
                     <Delete size={35} onClick={() => deleteData(props.data)} />{" "}
                     |
                     <AiFillEdit
@@ -322,16 +332,6 @@ const EventSchedule = () => {
                     />
                   </>
                 );
-              };
-
-              const StartDate = (props) => {
-                return moment(props.data.startDateTime).format("DD-MMM-YYYY");
-              };
-              const StartTime = (props) => {
-                return moment(props.data.startDateTime).format("HH:mm");
-              };
-              const EndTime = (props) => {
-                return moment(props.data.endDateTime).format("HH:mm");
               };
 
               return (
@@ -375,7 +375,6 @@ const EventSchedule = () => {
                             editable: true,
                             floatingFilter: true,
                           }}
-                          onGridReady={onGridReady}
                           suppressRowClickSelection={true}
                           rowSelection={"multiple"}
                           rowDragManaged={true}
@@ -404,7 +403,7 @@ const EventSchedule = () => {
                             field="duration"
                             filter="agTextColumnFilter"
                           />
-                          <AgGridColumn
+                          {/* <AgGridColumn
                             field="startDate"
                             filter="agNumberColumnFilter"
                             floatingFilter={false}
@@ -421,9 +420,9 @@ const EventSchedule = () => {
                             filter="agNumberColumnFilter"
                             floatingFilter={false}
                             cellRenderer={EndTime}
-                          />
+                          /> */}
                           <AgGridColumn
-                            field="Delete | Edit"
+                            field="View | Delete | Edit"
                             cellClass="custom-athlete-cell"
                             cellRenderer="btnCellRenderer"
                             ilter="agNumberColumnFilter"
@@ -461,6 +460,7 @@ const EventSchedule = () => {
                               onBlur={handleBlur}
                               value={value.name}
                               placeholder={"Enter Name"}
+                              disabled={showData}
                             ></Input>
                           </FormControl>
                         </Col>
@@ -479,6 +479,7 @@ const EventSchedule = () => {
                               onBlur={handleBlur}
                               value={value.description}
                               placeholder={"Enter Description"}
+                              disabled={showData}
                             ></Input>
                           </FormControl>
                         </Col>
@@ -502,6 +503,7 @@ const EventSchedule = () => {
                               onBlur={handleBlur}
                               value={value.participants}
                               placeholder={"Enter Participants"}
+                              disabled={showData}
                             ></Input>
                           </FormControl>
                         </Col>
@@ -518,6 +520,7 @@ const EventSchedule = () => {
                               onBlur={handleBlur}
                               value={value.duration}
                               placeholder={"Enter Duration"}
+                              disabled={showData}
                             ></Input>
                           </FormControl>
                         </Col>
@@ -535,6 +538,7 @@ const EventSchedule = () => {
                                 setFieldValue("startDate", date);
                               }}
                               minDate={new Date()}
+                              disabled={showData}
                             ></Datepicker>
                           </FormControl>
                         </Col>
@@ -550,6 +554,7 @@ const EventSchedule = () => {
                                 setFieldValue("startTime", time)
                               }
                               creatable
+                              disabled={showData}
                             ></TimePicker>
                           </FormControl>
                         </Col>
@@ -576,6 +581,7 @@ const EventSchedule = () => {
                                 setFieldValue("endTime", time)
                               }
                               creatable
+                              disabled={showData}
                             ></TimePicker>
                           </FormControl>
                         </Col>
@@ -590,7 +596,7 @@ const EventSchedule = () => {
                             >
                               Update schedule
                             </ActionButton>
-                          ) : (
+                          ) : showData ? null : (
                             <>
                               <span
                                 style={{
