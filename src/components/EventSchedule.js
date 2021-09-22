@@ -5,6 +5,7 @@ import SectionBody from "../components/SectionBody";
 import SectionHeader from "../components/SectionHeader";
 import { Row, Col } from "reactstrap";
 import { Delete } from "baseui/icon";
+import Show from 'baseui/icon/show'
 import { Datepicker } from "baseui/datepicker";
 import { TimePicker } from "baseui/timepicker";
 import SubSection from "../components/Subsection";
@@ -321,9 +322,8 @@ const EventSchedule = () => {
               const BtnCellRenderer = (props) => {
                 return (
                   <>
-                    <ActionButton onClick={() => viewData(props.data)}>
-                      View{" "}
-                    </ActionButton>
+                    <Show size={30} onClick={() => viewData(props.data)} />{" "}
+                    |
                     <Delete size={35} onClick={() => deleteData(props.data)} />{" "}
                     |
                     <AiFillEdit
