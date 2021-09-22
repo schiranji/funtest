@@ -57,7 +57,8 @@ const EventSchedule = () => {
   const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
   const [showData, setShowData] = useState(false);
-  const [gridApi, setGridApi] = useState(null);
+  const [minimumDate, setMinimumDate] = useState(null);
+  const [maximumDate, setMaximumDate] = useState(null);
   const fileInput = useRef(null);
   const [isOpen, setIsOpen] = React.useState(false);
   const [isOpened, setIsOpened] = React.useState(false);
@@ -69,8 +70,8 @@ const EventSchedule = () => {
     const getEventMedia = async () => {
       let url = `/auth/event/event/view/getEvent/${eventId}`;
       const getReq = await requestBase.get(url);
-      console.log("DADADAD", getReq.data.startDateTime);
-      setGridApi(getReq.data.scheduleItems);
+      setMinimumDate(new Date(getReq.data.startDateTime));
+      setMaximumDate(new Date(getReq.data.endDateTime));
       setDatasss(...datass, getReq.data.scheduleItems);
     };
     getEventMedia();
@@ -171,10 +172,10 @@ const EventSchedule = () => {
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
-    values.startDateTime = Date.parse(
+    values.startDateTime = new Date(
       values.startDate + " " + values.startTime
-    );
-    values.endDateTime = Date.parse(values.startDate + " " + values.endTime);
+    ).toISOString();
+    values.endDateTime = new Date(values.startDate + " " + values.endTime).toISOString();
     toaster.positive(<p>Schedule has been added.</p>);
     setDatasss([...datass, values]);
   };
@@ -284,6 +285,7 @@ const EventSchedule = () => {
             }) => {
               const editHandlar = (data) => {
                 setUpdate(true);
+                setShowData(false);
                 setIsOpened(true);
                 data.startTime = new Date(data.startDateTime);
                 data.endTime = new Date(data.endDateTime);
@@ -316,6 +318,7 @@ const EventSchedule = () => {
               const handleModalOpen = () => {
                 resetForm({});
                 setIsOpened(true);
+                setShowData(false);
                 setChecked(false);
               };
 
@@ -537,7 +540,8 @@ const EventSchedule = () => {
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
-                              minDate={new Date()}
+                              minDate={minimumDate}
+                              maxDate={maximumDate}
                               disabled={showData}
                             ></Datepicker>
                           </FormControl>
