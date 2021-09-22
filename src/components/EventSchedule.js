@@ -135,8 +135,8 @@ const EventSchedule = () => {
       data.startDate = moment(data.Start_Date).format("DD MMM YYYY");
       data.startTime = data.Start_Time;
       data.endTime = data.End_Time;
-      data.startDateTime = Date.parse(data.startDate + " " + data.startTime);
-      data.endDateTime = Date.parse(data.startDate + " " + data.endTime);
+      data.startDateTime = new Date(data.startDate + " " + data.startTime).toISOString();
+      data.endDateTime = new Date(data.startDate + " " + data.endTime).toISOString();
       array.push(data);
     });
     setDatasss((prev) => [...prev, ...array]);
@@ -188,10 +188,10 @@ const EventSchedule = () => {
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
 
-    values.startDateTime = Date.parse(
+    values.startDateTime = new Date(
       values.startDate + " " + values.startTime
-    );
-    values.endDateTime = Date.parse(values.startDate + " " + values.endTime);
+    ).toISOString();
+    values.endDateTime = new Date(values.startDate + " " + values.endTime).toISOString();
     
     const filterData = datass.map((item) => {
       if (item.name == values.name) {
