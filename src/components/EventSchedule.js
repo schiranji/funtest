@@ -325,7 +325,7 @@ const EventSchedule = () => {
               const BtnCellRenderer = (props) => {
                 return (
                   <>
-                    <Show size={30} onClick={() => viewData(props.data)} />{" "}
+                    <Show size={27} onClick={() => viewData(props.data)} />{" "}
                     |
                     <Delete size={35} onClick={() => deleteData(props.data)} />{" "}
                     |
