@@ -5,7 +5,7 @@ import SectionBody from "../components/SectionBody";
 import SectionHeader from "../components/SectionHeader";
 import { Row, Col } from "reactstrap";
 import { Delete } from "baseui/icon";
-import Show from 'baseui/icon/show'
+import Show from "baseui/icon/show";
 import { Datepicker } from "baseui/datepicker";
 import { TimePicker } from "baseui/timepicker";
 import SubSection from "../components/Subsection";
@@ -65,6 +65,7 @@ const EventSchedule = () => {
   const { eventId } = useParams();
   const [checked, setChecked] = React.useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
+  const [searchinItem, setSearchingItem] = useState("");
 
   useEffect(() => {
     const getEventMedia = async () => {
@@ -135,8 +136,12 @@ const EventSchedule = () => {
       data.startDate = moment(data.Start_Date).format("DD MMM YYYY");
       data.startTime = data.Start_Time;
       data.endTime = data.End_Time;
-      data.startDateTime = new Date(data.startDate + " " + data.startTime).toISOString();
-      data.endDateTime = new Date(data.startDate + " " + data.endTime).toISOString();
+      data.startDateTime = new Date(
+        data.startDate + " " + data.startTime
+      ).toISOString();
+      data.endDateTime = new Date(
+        data.startDate + " " + data.endTime
+      ).toISOString();
       array.push(data);
     });
     setDatasss((prev) => [...prev, ...array]);
@@ -175,7 +180,9 @@ const EventSchedule = () => {
     values.startDateTime = new Date(
       values.startDate + " " + values.startTime
     ).toISOString();
-    values.endDateTime = new Date(values.startDate + " " + values.endTime).toISOString();
+    values.endDateTime = new Date(
+      values.startDate + " " + values.endTime
+    ).toISOString();
     toaster.positive(<p>Schedule has been added.</p>);
     setDatasss([...datass, values]);
   };
@@ -191,8 +198,10 @@ const EventSchedule = () => {
     values.startDateTime = new Date(
       values.startDate + " " + values.startTime
     ).toISOString();
-    values.endDateTime = new Date(values.startDate + " " + values.endTime).toISOString();
-    
+    values.endDateTime = new Date(
+      values.startDate + " " + values.endTime
+    ).toISOString();
+
     const filterData = datass.map((item) => {
       if (item.name == values.name) {
         item = values;
@@ -325,9 +334,11 @@ const EventSchedule = () => {
               const BtnCellRenderer = (props) => {
                 return (
                   <>
-                    <Show size={27} onClick={() => viewData(props.data)} />{" "}
-                    |
-                    <Delete size={35} onClick={() => deleteData(props.data)} />{" "}
+                    <Show size={30} onClick={() => viewData(props.data)} /> |
+                    <Delete
+                      size={35}
+                      onClick={() => deleteData(props.data)}
+                    />{" "}
                     |
                     <AiFillEdit
                       size={30}
@@ -336,6 +347,21 @@ const EventSchedule = () => {
                   </>
                 );
               };
+
+              const StartTime = (props) => {
+                return moment(props.data.startDateTime).format(
+                  "DD MMM YYYY HH:mm"
+                );
+              };
+
+              const filterResult = datass.filter(
+                (item) =>
+                  item.name.substr(0, searchinItem.length).toLocaleLowerCase() == searchinItem ||
+                  item.duration.substr(0, searchinItem.length).toLocaleLowerCase() == searchinItem ||
+                  item.participants.substr(0, searchinItem.length).toLocaleLowerCase() == searchinItem ||
+                  item.description.substr(0, searchinItem.length).toLocaleLowerCase() ==
+                    searchinItem
+              );
 
               return (
                 <>
@@ -361,6 +387,19 @@ const EventSchedule = () => {
                       >
                         Upload Schedule
                       </ActionButton>
+
+                      <input
+                        type="text"
+                        placeholder="Filter..."
+                        value={searchinItem}
+                        onChange={(e) => setSearchingItem(e.target.value)}
+                        style={{
+                          height: 40,
+                          borderRadius: 0,
+                          backgroundColor: "#F6F6F6",
+                          color: "#888",
+                        }}
+                      />
                     </div>
                     <div className="grid-wrapper">
                       <div
@@ -376,35 +415,28 @@ const EventSchedule = () => {
                             sortable: true,
                             filter: true,
                             editable: true,
-                            floatingFilter: true,
+                            // floatingFilter: true,
                           }}
                           suppressRowClickSelection={true}
                           rowSelection={"multiple"}
                           rowDragManaged={true}
                           animateRows={true}
-                          rowData={datass}
+                          rowData={searchinItem == "" ? datass : filterResult}
                           frameworkComponents={{
                             btnCellRenderer: BtnCellRenderer,
                           }}
                           pagination={true}
                           paginationPageSize={8}
                         >
-                          <AgGridColumn
-                            field="name"
-                            rowDrag={true}
-                            filter="agTextColumnFilter"
-                          />
-                          <AgGridColumn
-                            field="description"
-                            filter="agTextColumnFilter"
-                          />
-                          <AgGridColumn
-                            field="participants"
-                            filter="agTextColumnFilter"
-                          />
+                          <AgGridColumn field="name" rowDrag={true} />
+                          {/* <AgGridColumn field="description" />
+                          <AgGridColumn field="participants" /> */}
                           <AgGridColumn
                             field="duration"
-                            filter="agTextColumnFilter"
+                          />
+                          <AgGridColumn
+                            field="startTime"
+                            cellRenderer={StartTime}
                           />
                           {/* <AgGridColumn
                             field="startDate"
@@ -474,16 +506,43 @@ const EventSchedule = () => {
                               touched.description ? errors.description : null
                             }
                           >
-                            <Input
-                              error={errors.description && touched.description}
-                              name="description"
-                              type="text"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={value.description}
-                              placeholder={"Enter Description"}
-                              disabled={showData}
-                            ></Input>
+                            {!showData ? (
+                              <Input
+                                error={
+                                  errors.description && touched.description
+                                }
+                                name="description"
+                                type="text"
+                                title="HELLOOASHJSHH"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={value.description}
+                                placeholder={"Enter Description"}
+                                style={{ marginTop: 20 }}
+                              ></Input>
+                            ) : (
+                              <input
+                                id="username"
+                                name="description"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={
+                                  value.description.length > 15
+                                    ? value.description.slice(0, 15) + "..."
+                                    : value.description
+                                }
+                                disabled
+                                title={value.description}
+                                style={{
+                                  width: "100%",
+                                  height: 48,
+                                  border: "none",
+                                  borderRadius: 0,
+                                  backgroundColor: "#F6F6F6",
+                                  color: "#AFAFBF",
+                                }}
+                              />
+                            )}
                           </FormControl>
                         </Col>
                       </Row>
