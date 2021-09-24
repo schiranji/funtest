@@ -6,7 +6,7 @@ import SectionHeader from "../components/SectionHeader";
 import { Row, Col } from "reactstrap";
 import { Delete } from "baseui/icon";
 import Show from "baseui/icon/show";
-import { Datepicker } from "baseui/datepicker";
+import { Datepicker, TimezonePicker } from "baseui/datepicker";
 import { TimePicker } from "baseui/timepicker";
 import SubSection from "../components/Subsection";
 import ActionButton from "../components/ActionButton";
@@ -66,14 +66,24 @@ const EventSchedule = () => {
   const [checked, setChecked] = React.useState(false);
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [searchinItem, setSearchingItem] = useState("");
+  const [getRequest, setGetRequest] = useState(false);
 
   useEffect(() => {
     const getEventMedia = async () => {
-      let url = `/auth/event/event/view/getEvent/${eventId}`;
-      const getReq = await requestBase.get(url);
-      setMinimumDate(new Date(getReq.data.startDateTime));
-      setMaximumDate(new Date(getReq.data.endDateTime));
-      setDatasss(...datass, getReq.data.scheduleItems);
+      try {
+        let url = `/auth/event/event/view/getEvent/${eventId}`;
+        const getReq = await requestBase.get(url);
+        setMinimumDate(new Date(getReq.data.startDateTime));
+        setMaximumDate(new Date(getReq.data.endDateTime));
+        if (getReq.data.scheduleItems) {
+          setGetRequest(false);
+          setDatasss(...datass, getReq.data.scheduleItems);
+        } else {
+          setDatasss([]);
+        }
+      } catch (e) {
+        console.log("error!");
+      }
     };
     getEventMedia();
   }, [eventId]);
@@ -91,6 +101,7 @@ const EventSchedule = () => {
       };
       Arr.push(item);
     });
+    console.log(Arr)
     requestBase.post(
       `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
       JSON.parse(JSON.stringify(Arr))
@@ -139,6 +150,7 @@ const EventSchedule = () => {
       data.startDateTime = new Date(
         data.startDate + " " + data.startTime
       ).toISOString();
+
       data.endDateTime = new Date(
         data.startDate + " " + data.endTime
       ).toISOString();
@@ -164,12 +176,13 @@ const EventSchedule = () => {
   };
 
   useEffect(() => {
-    if (datass.length !== 0) {
+    if (datass.length !== 0 && getRequest === true) {
       onSubmitData();
     }
   }, [datass]);
 
   const onSubmit = (values, { resetForm }) => {
+    setGetRequest(true);
     resetForm({});
     if (checked !== true) {
       setIsOpened(false);
@@ -179,17 +192,19 @@ const EventSchedule = () => {
     values.endTime = moment(values.endTime).format("HH:mm");
     values.startDateTime = new Date(
       values.startDate + " " + values.startTime
-    ).toISOString();
+    )
     values.endDateTime = new Date(
       values.startDate + " " + values.endTime
-    ).toISOString();
+    )
     toaster.positive(<p>Schedule has been added.</p>);
+    console.log(values);
     setDatasss([...datass, values]);
   };
 
   const onUpdate = (values, { resetForm }) => {
     setUpdate(false);
     setIsOpened(false);
+    setGetRequest(true);
     resetForm({});
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
@@ -234,6 +249,18 @@ const EventSchedule = () => {
     headers: headers,
     filename: "FunZippy_Event_Schedule.csv",
   };
+
+  const filterResult = datass?.filter(
+    (item) =>
+      item?.name.substr(0, searchinItem?.length).toLocaleLowerCase() ==
+        searchinItem.toLocaleLowerCase() ||
+      item?.duration.substr(0, searchinItem?.length).toLocaleLowerCase() ==
+        searchinItem.toLocaleLowerCase() ||
+      item?.participants.substr(0, searchinItem?.length).toLocaleLowerCase() ==
+        searchinItem.toLocaleLowerCase() ||
+      item?.description.substr(0, searchinItem?.length).toLocaleLowerCase() ==
+        searchinItem.toLocaleLowerCase()
+  );
 
   return (
     <>
@@ -353,16 +380,6 @@ const EventSchedule = () => {
                   "DD MMM YYYY HH:mm"
                 );
               };
-
-              const filterResult = datass.filter(
-                (item) =>
-                  item.name.substr(0, searchinItem.length).toLocaleLowerCase() == searchinItem ||
-                  item.duration.substr(0, searchinItem.length).toLocaleLowerCase() == searchinItem ||
-                  item.participants.substr(0, searchinItem.length).toLocaleLowerCase() == searchinItem ||
-                  item.description.substr(0, searchinItem.length).toLocaleLowerCase() ==
-                    searchinItem
-              );
-
               return (
                 <>
                   <div style={{ width: "100%", height: 600 }}>
@@ -431,9 +448,7 @@ const EventSchedule = () => {
                           <AgGridColumn field="name" rowDrag={true} />
                           {/* <AgGridColumn field="description" />
                           <AgGridColumn field="participants" /> */}
-                          <AgGridColumn
-                            field="duration"
-                          />
+                          <AgGridColumn field="duration" />
                           <AgGridColumn
                             field="startTime"
                             cellRenderer={StartTime}
@@ -653,7 +668,7 @@ const EventSchedule = () => {
                         <ModalFooter>
                           {update ? (
                             <ActionButton
-                              onclick={handleSubmit}
+                              onClick={handleSubmit}
                               style={{ backgroundColor: "white" }}
                               type="submit"
                             >
@@ -676,7 +691,7 @@ const EventSchedule = () => {
                                 </Checkbox>
                               </span>
                               <ActionButton
-                                onclick={handleSubmit}
+                                onClick={handleSubmit}
                                 style={{ backgroundColor: "white" }}
                                 type="submit"
                               >
