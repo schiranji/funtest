@@ -29,7 +29,7 @@ import { AgGridReact, AgGridColumn } from "ag-grid-react";
 import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import { CSVLink } from "react-csv";
+import { CSVLink, CSVDownload } from "react-csv";
 import { requestBase } from "../utils";
 import { useParams } from "react-router-dom";
 import { Checkbox } from "baseui/checkbox";
@@ -180,7 +180,6 @@ const EventSchedule = () => {
       onSubmitData();
     }
   }, [datass]);
-
   const onSubmit = (values, { resetForm }) => {
     setGetRequest(true);
     resetForm({});
@@ -238,12 +237,6 @@ const EventSchedule = () => {
     } else {
       toaster.warning(<p>Schedule item id is not found.</p>);
     }
-  };
-
-  const csvReport = {
-    data: datass,
-    headers: headers,
-    filename: "FunZippy_Event_Schedule.csv",
   };
 
   return (
@@ -368,12 +361,15 @@ const EventSchedule = () => {
                 <>
                   <div style={{ width: "100%", height: 600 }}>
                     <div style={{ margin: "10px 0" }}>
-                      {/* <CSVLink
-                        {...csvReport}
-                        style={{ textDecoration: "none", color: "black" }}
+                      <CSVLink
+                        data={datass ? datass : null}
+                        headers={headers ? headers : null}
+                        filename="FunZippy_Event_Schedule.csv"
+                        target="_blank"
+                        style={{textDecoration: 'none'}}
                       >
                         <ActionButton>Download Schedule</ActionButton>
-                      </CSVLink> */}
+                      </CSVLink>
                       <input
                         type="file"
                         accept=".csv,.xlsx,.xls"
@@ -387,7 +383,6 @@ const EventSchedule = () => {
                       >
                         Upload Schedule
                       </ActionButton>
-
                       <input
                         type="text"
                         placeholder="Filter..."
