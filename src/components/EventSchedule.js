@@ -101,7 +101,7 @@ const EventSchedule = () => {
       };
       Arr.push(item);
     });
-    console.log(Arr)
+    console.log(Arr);
     requestBase.post(
       `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
       JSON.parse(JSON.stringify(Arr))
@@ -190,12 +190,8 @@ const EventSchedule = () => {
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
-    values.startDateTime = new Date(
-      values.startDate + " " + values.startTime
-    )
-    values.endDateTime = new Date(
-      values.startDate + " " + values.endTime
-    )
+    values.startDateTime = new Date(values.startDate + " " + values.startTime);
+    values.endDateTime = new Date(values.startDate + " " + values.endTime);
     toaster.positive(<p>Schedule has been added.</p>);
     console.log(values);
     setDatasss([...datass, values]);
@@ -249,18 +245,6 @@ const EventSchedule = () => {
     headers: headers,
     filename: "FunZippy_Event_Schedule.csv",
   };
-
-  const filterResult = datass?.filter(
-    (item) =>
-      item?.name.substr(0, searchinItem?.length).toLocaleLowerCase() ==
-        searchinItem.toLocaleLowerCase() ||
-      item?.duration.substr(0, searchinItem?.length).toLocaleLowerCase() ==
-        searchinItem.toLocaleLowerCase() ||
-      item?.participants.substr(0, searchinItem?.length).toLocaleLowerCase() ==
-        searchinItem.toLocaleLowerCase() ||
-      item?.description.substr(0, searchinItem?.length).toLocaleLowerCase() ==
-        searchinItem.toLocaleLowerCase()
-  );
 
   return (
     <>
@@ -384,13 +368,12 @@ const EventSchedule = () => {
                 <>
                   <div style={{ width: "100%", height: 600 }}>
                     <div style={{ margin: "10px 0" }}>
-                      <CSVLink
+                      {/* <CSVLink
                         {...csvReport}
                         style={{ textDecoration: "none", color: "black" }}
                       >
                         <ActionButton>Download Schedule</ActionButton>
-                      </CSVLink>
-
+                      </CSVLink> */}
                       <input
                         type="file"
                         accept=".csv,.xlsx,.xls"
@@ -438,7 +421,29 @@ const EventSchedule = () => {
                           rowSelection={"multiple"}
                           rowDragManaged={true}
                           animateRows={true}
-                          rowData={searchinItem == "" ? datass : filterResult}
+                          rowData={
+                            searchinItem == ""
+                              ? datass
+                              : datass?.filter(
+                                  (item) =>
+                                    item?.name
+                                      .substr(0, searchinItem?.length)
+                                      .toLocaleLowerCase() ==
+                                      searchinItem.toLocaleLowerCase() ||
+                                    item?.duration
+                                      .substr(0, searchinItem?.length)
+                                      .toLocaleLowerCase() ==
+                                      searchinItem.toLocaleLowerCase() ||
+                                    item?.participants
+                                      .substr(0, searchinItem?.length)
+                                      .toLocaleLowerCase() ==
+                                      searchinItem.toLocaleLowerCase() ||
+                                    item?.description
+                                      .substr(0, searchinItem?.length)
+                                      .toLocaleLowerCase() ==
+                                      searchinItem.toLocaleLowerCase()
+                                )
+                          }
                           frameworkComponents={{
                             btnCellRenderer: BtnCellRenderer,
                           }}
@@ -670,7 +675,7 @@ const EventSchedule = () => {
                             <ActionButton
                               onClick={handleSubmit}
                               style={{ backgroundColor: "white" }}
-                              type="submit"
+                              type="button"
                             >
                               Update schedule
                             </ActionButton>
@@ -680,6 +685,7 @@ const EventSchedule = () => {
                                 style={{
                                   position: "absolute",
                                   right: 350,
+
                                   marginTop: 10,
                                 }}
                               >
@@ -693,7 +699,7 @@ const EventSchedule = () => {
                               <ActionButton
                                 onClick={handleSubmit}
                                 style={{ backgroundColor: "white" }}
-                                type="submit"
+                                type="button"
                               >
                                 Save new Schedule
                               </ActionButton>
