@@ -109,6 +109,7 @@ const EventSchedule = () => {
   };
 
   const processData = (dataString) => {
+    setGetRequest(true);
     const dataStringLines = dataString.split(/\r\n|\n/);
     const headers = dataStringLines[0].split(
       /,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/
@@ -139,7 +140,6 @@ const EventSchedule = () => {
 
     const array = [];
     list.map((data) => {
-      data.id = Math.random();
       data.name = data.Name;
       data.participants = data.Participants;
       data.description = data.Description;
