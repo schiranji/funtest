@@ -67,14 +67,17 @@ const EventSchedule = () => {
   const [selectedScheduleId, setSelectedScheduleId] = useState(null);
   const [searchinItem, setSearchingItem] = useState("");
   const [getRequest, setGetRequest] = useState(false);
+  const [getDownload, setGetDownload] = useState([]);
 
   useEffect(() => {
     const getEventMedia = async () => {
       try {
         let url = `/auth/event/event/view/getEvent/${eventId}`;
         const getReq = await requestBase.get(url);
+
         setMinimumDate(new Date(getReq.data.startDateTime));
         setMaximumDate(new Date(getReq.data.endDateTime));
+        console.log(new Date(getReq.data.startDateTime));
         if (getReq.data.scheduleItems) {
           setGetRequest(false);
           setDatasss(...datass, getReq.data.scheduleItems);
@@ -87,6 +90,17 @@ const EventSchedule = () => {
     };
     getEventMedia();
   }, [eventId]);
+
+  useEffect(() => {
+    const Array = [];
+    datass.map((values) => {
+      values.startDate = moment(values.startDate).format("DD MMM YYYY");
+      values.startTime = moment(values.startTime).format("HH:mm");
+      values.endTime = moment(values.endTime).format("HH:mm");
+      Array.push(values);
+    });
+    setGetDownload(Array);
+  }, [datass]);
 
   const onSubmitData = () => {
     const Arr = [];
@@ -144,18 +158,11 @@ const EventSchedule = () => {
       data.participants = data.Participants;
       data.description = data.Description;
       data.duration = data.Duration;
-      data.startDate = moment(data.Start_Date).format("DD MMM YYYY");
-      data.startTime = data.Start_Time;
-      data.endTime = data.End_Time;
-      data.startDateTime = new Date(
-        data.startDate + " " + data.startTime
-      ).toISOString();
-
-      data.endDateTime = new Date(
-        data.startDate + " " + data.endTime
-      ).toISOString();
+      data.endDateTime = new Date(data.Start_Date + " " + data.Start_Time);
+      data.startDateTime = new Date(data.Start_Date + " " + data.End_Time);
       array.push(data);
     });
+    console.log("HAHHA", array);
     setDatasss((prev) => [...prev, ...array]);
   };
 
@@ -180,6 +187,7 @@ const EventSchedule = () => {
       onSubmitData();
     }
   }, [datass]);
+
   const onSubmit = (values, { resetForm }) => {
     setGetRequest(true);
     resetForm({});
@@ -189,8 +197,13 @@ const EventSchedule = () => {
     values.startDate = moment(values.startDate).format("DD MMM YYYY");
     values.startTime = moment(values.startTime).format("HH:mm");
     values.endTime = moment(values.endTime).format("HH:mm");
-    values.startDateTime = new Date(values.startDate + " " + values.startTime);
-    values.endDateTime = new Date(values.startDate + " " + values.endTime);
+    values.startDateTime = new Date(
+      values.startDate + " " + values.startTime
+    ).toISOString();
+    values.endDateTime = new Date(
+      values.startDate + " " + values.endTime
+    ).toISOString();
+
     toaster.positive(<p>Schedule has been added.</p>);
     console.log(values);
     setDatasss([...datass, values]);
@@ -290,7 +303,6 @@ const EventSchedule = () => {
               handleBlur,
               handleSubmit,
               touched,
-              isValid,
               values: value,
               errors,
               setFieldValue,
@@ -300,10 +312,15 @@ const EventSchedule = () => {
                 setUpdate(true);
                 setShowData(false);
                 setIsOpened(true);
-                data.startTime = new Date(data.startDateTime);
-                data.endTime = new Date(data.endDateTime);
-                data.startDate = new Date(data.startDateTime);
-                console.log(data);
+                data.startTime = data.startDateTime
+                  ? new Date(data.startDateTime)
+                  : new Date();
+                data.endTime = data.endDateTime
+                  ? new Date(data.endDateTime)
+                  : new Date();
+                data.startDate = data.startDateTime
+                  ? new Date(data.startDateTime)
+                  : new Date();
                 for (const [key, value] of Object.entries(data)) {
                   setFieldValue(key, value);
                 }
@@ -312,10 +329,15 @@ const EventSchedule = () => {
               const viewData = (data) => {
                 setShowData(true);
                 setIsOpened(true);
-                data.startTime = new Date(data.startDateTime);
-                data.endTime = new Date(data.endDateTime);
-                data.startDate = new Date(data.startDateTime);
-                console.log(data);
+                data.startTime = data.startDateTime
+                  ? new Date(data.startDateTime)
+                  : new Date();
+                data.endTime = data.endDateTime
+                  ? new Date(data.endDateTime)
+                  : new Date();
+                data.startDate = data.startDateTime
+                  ? new Date(data.startDateTime)
+                  : new Date();
                 for (const [key, value] of Object.entries(data)) {
                   setFieldValue(key, value);
                 }
@@ -362,11 +384,11 @@ const EventSchedule = () => {
                   <div style={{ width: "100%", height: 600 }}>
                     <div style={{ margin: "10px 0" }}>
                       <CSVLink
-                        data={datass ? datass : null}
+                        data={getDownload ? getDownload : null}
                         headers={headers ? headers : null}
                         filename="FunZippy_Event_Schedule.csv"
                         target="_blank"
-                        style={{textDecoration: 'none'}}
+                        style={{ textDecoration: "none" }}
                       >
                         <ActionButton>Download Schedule</ActionButton>
                       </CSVLink>
@@ -422,21 +444,20 @@ const EventSchedule = () => {
                               : datass?.filter(
                                   (item) =>
                                     item?.name
-                                      .substr(0, searchinItem?.length)
-                                      .toLocaleLowerCase() ==
-                                      searchinItem.toLocaleLowerCase() ||
+                                      .toLowerCase()
+                                      .indexOf(searchinItem.toLowerCase()) >
+                                      -1 ||
                                     item?.duration
-                                      .substr(0, searchinItem?.length)
-                                      .toLocaleLowerCase() ==
-                                      searchinItem.toLocaleLowerCase() ||
+                                      .toLowerCase()
+                                      .indexOf(searchinItem.toLowerCase()) >
+                                      -1 ||
                                     item?.participants
-                                      .substr(0, searchinItem?.length)
-                                      .toLocaleLowerCase() ==
-                                      searchinItem.toLocaleLowerCase() ||
+                                      .toLowerCase()
+                                      .indexOf(searchinItem.toLowerCase()) >
+                                      -1 ||
                                     item?.description
-                                      .substr(0, searchinItem?.length)
-                                      .toLocaleLowerCase() ==
-                                      searchinItem.toLocaleLowerCase()
+                                      .toLowerCase()
+                                      .indexOf(searchinItem.toLowerCase()) > -1
                                 )
                           }
                           frameworkComponents={{
@@ -610,12 +631,14 @@ const EventSchedule = () => {
                             error={touched.startDate ? errors.startDate : null}
                           >
                             <Datepicker
-                              value={value.startDate}
+                              value={minimumDate ? minimumDate : value.startDate}
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
-                              minDate={minimumDate}
-                              maxDate={maximumDate}
+                              minDate={minimumDate !== null? minimumDate : new Date()}
+                              maxDate={
+                                maximumDate !== null ? maximumDate : new Date()
+                              }
                               disabled={showData}
                             ></Datepicker>
                           </FormControl>
