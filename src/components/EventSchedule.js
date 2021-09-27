@@ -49,6 +49,7 @@ const SignupSchema = Yup.object().shape({
   description: Yup.string().required("Description is Required"),
   participants: Yup.string().required("Participants is Required"),
   duration: Yup.string().required("Duration is Required"),
+  startDate: Yup.string().required("Start Date is Required"),
   startTime: Yup.string().required("Start Time is Required"),
   endTime: Yup.string().required("End Time is Required"),
 });
@@ -74,7 +75,6 @@ const EventSchedule = () => {
       try {
         let url = `/auth/event/event/view/getEvent/${eventId}`;
         const getReq = await requestBase.get(url);
-
         setMinimumDate(new Date(getReq.data.startDateTime));
         setMaximumDate(new Date(getReq.data.endDateTime));
         console.log(new Date(getReq.data.startDateTime));
@@ -190,6 +190,7 @@ const EventSchedule = () => {
 
   const onSubmit = (values, { resetForm }) => {
     setGetRequest(true);
+    console.log(values)
     resetForm({});
     if (checked !== true) {
       setIsOpened(false);
@@ -291,7 +292,7 @@ const EventSchedule = () => {
               description: "",
               participants: "",
               duration: "",
-              startDate: new Date(),
+              startDate: "",
               startTime: "",
               endTime: "",
             }}
@@ -631,13 +632,13 @@ const EventSchedule = () => {
                             error={touched.startDate ? errors.startDate : null}
                           >
                             <Datepicker
-                              value={minimumDate ? minimumDate : value.startDate}
+                              value={minimumDate}
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
                               minDate={minimumDate !== null? minimumDate : new Date()}
                               maxDate={
-                                maximumDate !== null ? maximumDate : new Date()
+                                maximumDate !== null ? maximumDate : null
                               }
                               disabled={showData}
                             ></Datepicker>
