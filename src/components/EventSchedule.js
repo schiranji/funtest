@@ -73,14 +73,14 @@ const EventSchedule = () => {
   useEffect(() => {
     const getEventMedia = async () => {
       try {
-        let url = `/auth/event/event/view/getEvent/${eventId}`;
+        let url = `/auth/event/event/search/schedule-item/${eventId}`;
         const getReq = await requestBase.get(url);
-        setMinimumDate(new Date(getReq.data.startDateTime));
-        setMaximumDate(new Date(getReq.data.endDateTime));
+        // setMinimumDate(new Date(getReq.data.startDateTime));
+        // setMaximumDate(new Date(getReq.data.endDateTime));
         console.log(new Date(getReq.data.startDateTime));
-        if (getReq.data.scheduleItems) {
+        if (getReq.data) {
           setGetRequest(false);
-          setDatasss(...datass, getReq.data.scheduleItems);
+          setDatasss(...datass, getReq.data);
         } else {
           setDatasss([]);
         }
@@ -102,25 +102,26 @@ const EventSchedule = () => {
     setGetDownload(Array);
   }, [datass]);
 
-  const onSubmitData = () => {
-    const Arr = [];
-    datass.map((data) => {
-      const item = {
-        startDateTime: data.startDateTime,
-        endDateTime: data.endDateTime,
-        description: data.description,
-        participants: data.participants,
-        duration: data.duration,
-        name: data.name,
-      };
-      Arr.push(item);
-    });
-    console.log(Arr);
-    requestBase.post(
-      `/auth/event/eventManagement/edit/createUpdateSchedule/${eventId}`,
-      JSON.parse(JSON.stringify(Arr))
-    );
-  };
+  // const onSubmitData = async() => {
+  //   const Arr = [];
+  //   let item = ""
+  //   datass.map((data) => {
+  //     item = {
+  //       startDateTime: data.startDateTime,
+  //       endDateTime: data.endDateTime,
+  //       description: data.description,
+  //       participants: data.participants,
+  //       duration: data.duration,
+  //       name: data.name,
+  //     };
+  //     Arr.push(item);
+  //   });
+  //   console.log("submittimg here",Arr);
+  //   requestBase.post(
+  //     `/auth/event/event/create/schedule-item/${eventId}`,
+  //     JSON.parse(JSON.stringify(item))
+  //   );
+  // };
 
   const processData = (dataString) => {
     setGetRequest(true);
@@ -182,13 +183,13 @@ const EventSchedule = () => {
     }
   };
 
-  useEffect(() => {
-    if (datass.length !== 0 && getRequest === true) {
-      onSubmitData();
-    }
-  }, [datass]);
+  // useEffect(() => {
+  //   if (datass.length !== 0 && getRequest === true) {
+  //     onSubmitData();
+  //   }
+  // }, [datass]);
 
-  const onSubmit = (values, { resetForm }) => {
+  const onSubmit = async(values, { resetForm })  => {
     setGetRequest(true);
     console.log(values)
     resetForm({});
@@ -204,10 +205,22 @@ const EventSchedule = () => {
     values.endDateTime = new Date(
       values.startDate + " " + values.endTime
     ).toISOString();
-
-    toaster.positive(<p>Schedule has been added.</p>);
-    console.log(values);
-    setDatasss([...datass, values]);
+    console.log("record added values",values);
+    const respo = await requestBase.post(
+      `/auth/event/event/create/schedule-item/${eventId}`,
+      JSON.parse(JSON.stringify(values))
+    );
+    
+    if(respo){
+      toaster.positive(<p>Schedule has been added.</p>);
+      const getRes = await requestBase.get(
+        `/auth/event/event/search/schedule-item/${eventId}`
+      );
+      if(getRes.data){
+        setDatasss(getRes.data)
+    }
+    }
+    // setDatasss([...datass, values]);
   };
 
   const onUpdate = (values, { resetForm }) => {
@@ -227,7 +240,7 @@ const EventSchedule = () => {
     ).toISOString();
 
     const filterData = datass.map((item) => {
-      if (item.name == values.name) {
+      if (item.name === values.name) {
         item = values;
       }
       return item;
@@ -237,17 +250,26 @@ const EventSchedule = () => {
   };
 
   const deleteData = (data) => {
-    setSelectedScheduleId(data.id ? data.id : 26);
+    setSelectedScheduleId(data?.uid );
     setIsOpen(true);
   };
 
-  const removeDatas = () => {
+  const removeDatas = async () => { 
     setIsOpen(false);
-    if (selectedScheduleId !== null) {
-      requestBase.delete(
+    if (selectedScheduleId) {
+      const response =await requestBase.delete(
         `/auth/event/event/delete/schedule-item/${eventId}/${selectedScheduleId}`
       );
-      // toaster.positive(<p>Schedule has been deleted.</p>);
+      if(response.data.statusDescription === "Success"){
+        const getRes =await requestBase.get(
+          `/auth/event/event/search/schedule-item/${eventId}`
+        );
+        ;
+        if(getRes.data){
+          setDatasss(getRes.data)
+        }
+      }
+      toaster.positive(<p>Schedule has been deleted.</p>);
     } else {
       toaster.warning(<p>Schedule item id is not found.</p>);
     }
@@ -435,12 +457,11 @@ const EventSchedule = () => {
                             editable: true,
                             // floatingFilter: true,
                           }}
-                          suppressRowClickSelection={true}
-                          rowSelection={"multiple"}
-                          rowDragManaged={true}
+                          // suppressRowClickSelection={true}
+                          rowDragManaged={false}
                           animateRows={true}
                           rowData={
-                            searchinItem == ""
+                            searchinItem === ""
                               ? datass
                               : datass?.filter(
                                   (item) =>
@@ -465,39 +486,21 @@ const EventSchedule = () => {
                             btnCellRenderer: BtnCellRenderer,
                           }}
                           pagination={true}
-                          paginationPageSize={8}
+                          paginationPageSize={10}
                         >
                           <AgGridColumn field="name" rowDrag={true} />
                           {/* <AgGridColumn field="description" />
                           <AgGridColumn field="participants" /> */}
-                          <AgGridColumn field="duration" />
+                          <AgGridColumn field="duration"/>
                           <AgGridColumn
                             field="startTime"
                             cellRenderer={StartTime}
                           />
-                          {/* <AgGridColumn
-                            field="startDate"
-                            filter="agNumberColumnFilter"
-                            floatingFilter={false}
-                            cellRenderer={StartDate}
-                          />
-                          <AgGridColumn
-                            field="startTime"
-                            filter="agNumberColumnFilter"
-                            floatingFilter={false}
-                            cellRenderer={StartTime}
-                          />
-                          <AgGridColumn
-                            field="endTime"
-                            filter="agNumberColumnFilter"
-                            floatingFilter={false}
-                            cellRenderer={EndTime}
-                          /> */}
                           <AgGridColumn
                             field="View | Delete | Edit"
                             cellClass="custom-athlete-cell"
                             cellRenderer="btnCellRenderer"
-                            ilter="agNumberColumnFilter"
+                            filter="agNumberColumnFilter"
                             floatingFilter={false}
                           />
                         </AgGridReact>
@@ -632,7 +635,7 @@ const EventSchedule = () => {
                             error={touched.startDate ? errors.startDate : null}
                           >
                             <Datepicker
-                              value={minimumDate}
+                              value={minimumDate || new Date()}
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
