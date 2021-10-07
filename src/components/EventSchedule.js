@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Input } from "baseui/input";
+import { Textarea } from "baseui/textarea";
 import { FormControl } from "baseui/form-control";
 import SectionBody from "../components/SectionBody";
 import SectionHeader from "../components/SectionHeader";
@@ -46,8 +47,9 @@ const headers = [
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is Required"),
-  description: Yup.string().required("Description is Required"),
-  participants: Yup.string().required("Participants is Required"),
+  description: Yup.string().required("Description is Required").max(1024),
+  room: Yup.string().required("Room is Required").max(50),
+  participants: Yup.string().required("Participants is Required").max(1024),
   duration: Yup.string().required("Duration is Required"),
   startDate: Yup.string().required("Start Date is Required"),
   startTime: Yup.string().required("Start Time is Required"),
@@ -57,6 +59,7 @@ const SignupSchema = Yup.object().shape({
 const EventSchedule = () => {
   const [datass, setDatasss] = useState([]);
   const [update, setUpdate] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [showData, setShowData] = useState(false);
   const [minimumDate, setMinimumDate] = useState(null);
   const [maximumDate, setMaximumDate] = useState(null);
@@ -69,6 +72,7 @@ const EventSchedule = () => {
   const [searchinItem, setSearchingItem] = useState("");
   const [getRequest, setGetRequest] = useState(false);
   const [getDownload, setGetDownload] = useState([]);
+  const [paginationSize, setPaginationSize] = useState(5);
 
   useEffect(() => {
     const getEventMedia = async () => {
@@ -89,18 +93,26 @@ const EventSchedule = () => {
       }
     };
     getEventMedia();
-  }, [eventId]);
+  }, [eventId, refresh]);
 
   useEffect(() => {
     const Array = [];
-    datass.map((values) => {
-      values.startDate = moment(values.startDate).format("DD MMM YYYY");
-      values.startTime = moment(values.startTime).format("HH:mm");
-      values.endTime = moment(values.endTime).format("HH:mm");
-      Array.push(values);
-    });
+    datass.map &&
+      datass.map((values) => {
+        let myValue = { ...values };
+        myValue.startDate =
+          moment(new Date(values.startDateTime)).format("DD MMM YYYY") !==
+          moment(new Date(values.endDateTime)).format("DD MMM YYYY")
+            ? moment(new Date(values.startDateTime)).format("DD MMM YYYY")
+            : "";
+        myValue.startTime = moment(new Date(values.startDateTime)).format(
+          "h:mma"
+        );
+        myValue.endTime = moment(values.endTime).format("HH:mm");
+        Array.push(myValue);
+      });
     setGetDownload(Array);
-  }, [datass]);
+  }, [datass.length]);
 
   // const onSubmitData = async() => {
   //   const Arr = [];
@@ -164,7 +176,7 @@ const EventSchedule = () => {
       array.push(data);
     });
     console.log("HAHHA", array);
-    setDatasss((prev) => [...prev, ...array]);
+    //setDatasss((prev) => [...prev, ...array]);
   };
 
   const handleFileUpload = (e) => {
@@ -189,9 +201,9 @@ const EventSchedule = () => {
   //   }
   // }, [datass]);
 
-  const onSubmit = async(values, { resetForm })  => {
+  const onSubmit = async (values, { resetForm }) => {
     setGetRequest(true);
-    console.log(values)
+    console.log(values);
     resetForm({});
     if (checked !== true) {
       setIsOpened(false);
@@ -205,74 +217,83 @@ const EventSchedule = () => {
     values.endDateTime = new Date(
       values.startDate + " " + values.endTime
     ).toISOString();
-    console.log("record added values",values);
+    console.log("record added values", values);
     const respo = await requestBase.post(
       `/auth/event/event/create/schedule-item/${eventId}`,
       JSON.parse(JSON.stringify(values))
     );
-    
-    if(respo){
+
+    if (respo) {
       toaster.positive(<p>Schedule has been added.</p>);
       const getRes = await requestBase.get(
         `/auth/event/event/search/schedule-item/${eventId}`
       );
-      if(getRes.data){
-        setDatasss(getRes.data)
-    }
+      if (getRes.data) {
+        setDatasss(getRes.data);
+      }
     }
     // setDatasss([...datass, values]);
   };
 
-  const onUpdate = (values, { resetForm }) => {
+  const onUpdate = async (values, { resetForm }) => {
     setUpdate(false);
     setIsOpened(false);
     setGetRequest(true);
     resetForm({});
-    values.startDate = moment(values.startDate).format("DD MMM YYYY");
-    values.startTime = moment(values.startTime).format("HH:mm");
-    values.endTime = moment(values.endTime).format("HH:mm");
 
-    values.startDateTime = new Date(
-      values.startDate + " " + values.startTime
-    ).toISOString();
-    values.endDateTime = new Date(
-      values.startDate + " " + values.endTime
-    ).toISOString();
+    let formValue = { ...values };
+    formValue.startDate = moment(values.startDate).format("DD MMM YYYY");
+    formValue.startTime = moment(values.startTime).format("HH:mm");
+    formValue.endTime = moment(values.endTime).format("HH:mm");
 
-    const filterData = datass.map((item) => {
-      if (item.name === values.name) {
-        item = values;
-      }
-      return item;
-    });
-    toaster.positive(<p>Schedule has been update.</p>);
-    setDatasss(filterData);
+    formValue.startDateTime = new Date(
+      formValue.startDate + " " + formValue.startTime
+    );
+    formValue.endDateTime = new Date(
+      formValue.startDate + " " + formValue.endTime
+    );
+
+    const getRes = await requestBase.put(
+      `/auth/event/event/update/schedule-item/${eventId}/${values.uid}`,
+      JSON.parse(JSON.stringify(formValue))
+    );
+
+    if (getRes.data.statusDescription === "Success") {
+      setRefresh(!refresh);
+      toaster.positive(<p>Schedule has been update.</p>);
+    } else {
+      toaster.negative(<p>something went wrong.</p>);
+    }
   };
 
   const deleteData = (data) => {
-    setSelectedScheduleId(data?.uid );
+    setSelectedScheduleId(data?.uid);
     setIsOpen(true);
   };
 
-  const removeDatas = async () => { 
+  const removeDatas = async () => {
     setIsOpen(false);
     if (selectedScheduleId) {
-      const response =await requestBase.delete(
+      const response = await requestBase.delete(
         `/auth/event/event/delete/schedule-item/${eventId}/${selectedScheduleId}`
       );
-      if(response.data.statusDescription === "Success"){
-        const getRes =await requestBase.get(
+      if (response.data.statusDescription === "Success") {
+        const getRes = await requestBase.get(
           `/auth/event/event/search/schedule-item/${eventId}`
         );
-        ;
-        if(getRes.data){
-          setDatasss(getRes.data)
+        if (getRes.data) {
+          setDatasss(getRes.data);
         }
       }
       toaster.positive(<p>Schedule has been deleted.</p>);
     } else {
       toaster.warning(<p>Schedule item id is not found.</p>);
     }
+  };
+
+  const onPageSizeChanged = (e) => {
+    console.log("newPageSize", e.target.value)
+    setPaginationSize(e.target.value)
   };
 
   return (
@@ -305,7 +326,9 @@ const EventSchedule = () => {
 
       <SectionBody>
         <SubSection>
-          <p>Set up your event's schedule!</p>
+          <p>
+            {datass ? "Set up your event's schedule!" : "No schedule Found"}
+          </p>
         </SubSection>
         <div>
           <Formik
@@ -397,128 +420,157 @@ const EventSchedule = () => {
                 );
               };
 
+              const StartDate = (props) => {
+                return moment(new Date(props.data.startDateTime)).format(
+                  "DD MMM YYYY"
+                ) !==
+                  moment(new Date(props.data.endDateTime)).format("DD MMM YYYY")
+                  ? moment(new Date(props.data.startDateTime)).format(
+                      "DD MMM YYYY"
+                    )
+                  : "";
+              };
               const StartTime = (props) => {
-                return moment(props.data.startDateTime).format(
-                  "DD MMM YYYY HH:mm"
+                return moment(new Date(props.data.startDateTime)).format(
+                  "h:mma"
                 );
               };
               return (
                 <>
-                  <div style={{ width: "100%", height: 600 }}>
-                    <div style={{ margin: "10px 0" }}>
-                      <CSVLink
-                        data={getDownload ? getDownload : null}
-                        headers={headers ? headers : null}
-                        filename="FunZippy_Event_Schedule.csv"
-                        target="_blank"
-                        style={{ textDecoration: "none" }}
-                      >
-                        <ActionButton>Download Schedule</ActionButton>
-                      </CSVLink>
-                      <input
-                        type="file"
-                        accept=".csv,.xlsx,.xls"
-                        onChange={handleFileUpload}
-                        ref={fileInput}
-                        style={{ display: "none" }}
-                      />
-                      <ActionButton
-                        className="photo-button m-1"
-                        onClick={() => fileInput.current.click()}
-                      >
-                        Upload Schedule
-                      </ActionButton>
-                      <input
-                        type="text"
-                        placeholder="Filter..."
-                        value={searchinItem}
-                        onChange={(e) => setSearchingItem(e.target.value)}
-                        style={{
-                          height: 40,
-                          borderRadius: 0,
-                          backgroundColor: "#F6F6F6",
-                          color: "#888",
-                        }}
-                      />
-                    </div>
-                    <div className="grid-wrapper">
-                      <div
-                        id="myGrid"
-                        style={{
-                          height: 500,
-                          width: "100%",
-                        }}
-                        className="ag-theme-alpine"
-                      >
-                        <AgGridReact
-                          defaultColDef={{
-                            sortable: true,
-                            filter: true,
-                            editable: true,
-                            // floatingFilter: true,
-                          }}
-                          // suppressRowClickSelection={true}
-                          rowDragManaged={false}
-                          animateRows={true}
-                          rowData={
-                            searchinItem === ""
-                              ? datass
-                              : datass?.filter(
-                                  (item) =>
-                                    item?.name
-                                      .toLowerCase()
-                                      .indexOf(searchinItem.toLowerCase()) >
-                                      -1 ||
-                                    item?.duration
-                                      .toLowerCase()
-                                      .indexOf(searchinItem.toLowerCase()) >
-                                      -1 ||
-                                    item?.participants
-                                      .toLowerCase()
-                                      .indexOf(searchinItem.toLowerCase()) >
-                                      -1 ||
-                                    item?.description
-                                      .toLowerCase()
-                                      .indexOf(searchinItem.toLowerCase()) > -1
-                                )
-                          }
-                          frameworkComponents={{
-                            btnCellRenderer: BtnCellRenderer,
-                          }}
-                          pagination={true}
-                          paginationPageSize={10}
-                        >
-                          <AgGridColumn field="name" rowDrag={true} />
-                          {/* <AgGridColumn field="description" />
+                  <div style={{ width: "100%", height: datass ? 600 : 10 }}>
+                    {datass && (
+                      <div>
+                        <div style={{ margin: "10px 0" }}>
+                          <CSVLink
+                            data={getDownload ? getDownload : null}
+                            headers={headers ? headers : null}
+                            filename="FunZippy_Event_Schedule.csv"
+                            target="_blank"
+                            style={{ textDecoration: "none" }}
+                          >
+                            <ActionButton>Download Schedule</ActionButton>
+                          </CSVLink>
+                          <input
+                            type="file"
+                            accept=".csv,.xlsx,.xls"
+                            onChange={handleFileUpload}
+                            ref={fileInput}
+                            style={{ display: "none" }}
+                          />
+                          <ActionButton
+                            className="photo-button m-1"
+                            onClick={() => fileInput.current.click()}
+                          >
+                            Upload Schedule
+                          </ActionButton>
+                          <input
+                            type="text"
+                            placeholder="Filter..."
+                            value={searchinItem}
+                            onChange={(e) => setSearchingItem(e.target.value)}
+                            style={{
+                              height: 40,
+                              borderRadius: 0,
+                              backgroundColor: "#F6F6F6",
+                              color: "#888",
+                            }}
+                          />
+                        </div>
+                        {datass.length > 0 && <><div className="grid-wrapper">
+                          
+                          <div
+                            id="myGrid"
+                            style={{
+                              height: 500,
+                              width: "100%",
+                            }}
+                            className="ag-theme-alpine"
+                          >
+                            Page Size:
+                          <select style={{ width: "10%", marginLeft:"5px", marginBottom:"5px"}} onChange={onPageSizeChanged} id="page-size">
+                            <option value="5" selected={paginationSize === "5"}>
+                              5
+                            </option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                          </select>
+                            <AgGridReact
+                              defaultColDef={{
+                                sortable: true,
+                                filter: true,
+                                editable: true,
+                                // floatingFilter: true,
+                              }}
+                              // suppressRowClickSelection={true}
+                              rowDragManaged={false}
+                              animateRows={true}
+                              rowData={
+                                searchinItem === ""
+                                  ? datass
+                                  : datass?.filter(
+                                      (item) =>
+                                        item?.name
+                                          .toLowerCase()
+                                          .indexOf(searchinItem.toLowerCase()) >
+                                          -1 ||
+                                        item?.duration
+                                          .toLowerCase()
+                                          .indexOf(searchinItem.toLowerCase()) >
+                                          -1 ||
+                                        item?.participants
+                                          .toLowerCase()
+                                          .indexOf(searchinItem.toLowerCase()) >
+                                          -1 ||
+                                        item?.description
+                                          .toLowerCase()
+                                          .indexOf(searchinItem.toLowerCase()) >
+                                          -1
+                                    )
+                              }
+                              frameworkComponents={{
+                                btnCellRenderer: BtnCellRenderer,
+                              }}
+                              pagination={true}
+                              paginationPageSize={paginationSize}
+                            >
+                              <AgGridColumn field="name" rowDrag={true} />
+                              {/* <AgGridColumn field="description" />
                           <AgGridColumn field="participants" /> */}
-                          <AgGridColumn field="duration"/>
-                          <AgGridColumn
-                            field="startTime"
-                            cellRenderer={StartTime}
-                          />
-                          <AgGridColumn
-                            field="View | Delete | Edit"
-                            cellClass="custom-athlete-cell"
-                            cellRenderer="btnCellRenderer"
-                            filter="agNumberColumnFilter"
-                            floatingFilter={false}
-                          />
-                        </AgGridReact>
+
+                              <AgGridColumn
+                                field="startDate"
+                                cellRenderer={StartDate}
+                              />
+                              <AgGridColumn
+                                field="startTime"
+                                cellRenderer={StartTime}
+                              />
+                              <AgGridColumn field="duration" />
+                              <AgGridColumn
+                                field="View | Delete | Edit"
+                                cellClass="custom-athlete-cell"
+                                cellRenderer="btnCellRenderer"
+                                filter="agNumberColumnFilter"
+                                floatingFilter={false}
+                              />
+                            </AgGridReact>
+                          </div>
+                        </div> </>}
+                        
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   <ModalButton onClick={handleModalOpen}>
                     Add Schedule
                   </ModalButton>
-
                   {/* <ActionButton
                     onClick={onSubmitData}
                     style={{ marginLeft: 20 }}
                   >
                     Save Changes
                   </ActionButton> */}
-
                   <Modal onClose={closeModal} isOpen={isOpened} size={1000}>
                     <Form style={{ margin: 50 }}>
                       <Row>
@@ -541,13 +593,49 @@ const EventSchedule = () => {
                         </Col>
                         <Col>
                           <FormControl
+                            label="Room"
+                            error={touched.room ? errors.room : null}
+                          >
+                            <Input
+                              error={errors.room && touched.room}
+                              name="room"
+                              type="text"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={value.room}
+                              placeholder={"Enter Room"}
+                              disabled={showData}
+                            ></Input>
+                          </FormControl>
+                        </Col>
+                        <Col>
+                          <FormControl
+                            label="Duration"
+                            error={touched.duration ? errors.duration : null}
+                          >
+                            <Input
+                              error={errors.duration && touched.duration}
+                              type="number"
+                              name="duration"
+                              onChange={handleChange}
+                              onBlur={handleBlur}
+                              value={value.duration}
+                              placeholder={"Enter Duration"}
+                              disabled={showData}
+                            ></Input>
+                          </FormControl>
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col>
+                          <FormControl
                             label="Description"
                             error={
                               touched.description ? errors.description : null
                             }
                           >
                             {!showData ? (
-                              <Input
+                              <Textarea
                                 error={
                                   errors.description && touched.description
                                 }
@@ -559,7 +647,7 @@ const EventSchedule = () => {
                                 value={value.description}
                                 placeholder={"Enter Description"}
                                 style={{ marginTop: 20 }}
-                              ></Input>
+                              ></Textarea>
                             ) : (
                               <input
                                 id="username"
@@ -595,7 +683,7 @@ const EventSchedule = () => {
                               touched.participants ? errors.participants : null
                             }
                           >
-                            <Input
+                            <Textarea
                               error={
                                 errors.participants && touched.participants
                               }
@@ -606,28 +694,10 @@ const EventSchedule = () => {
                               value={value.participants}
                               placeholder={"Enter Participants"}
                               disabled={showData}
-                            ></Input>
-                          </FormControl>
-                        </Col>
-                        <Col>
-                          <FormControl
-                            label="Duration"
-                            error={touched.duration ? errors.duration : null}
-                          >
-                            <Input
-                              error={errors.duration && touched.duration}
-                              type="number"
-                              name="duration"
-                              onChange={handleChange}
-                              onBlur={handleBlur}
-                              value={value.duration}
-                              placeholder={"Enter Duration"}
-                              disabled={showData}
-                            ></Input>
+                            ></Textarea>
                           </FormControl>
                         </Col>
                       </Row>
-
                       <Row>
                         <Col>
                           <FormControl
@@ -639,7 +709,9 @@ const EventSchedule = () => {
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
-                              minDate={minimumDate !== null? minimumDate : new Date()}
+                              minDate={
+                                minimumDate !== null ? minimumDate : new Date()
+                              }
                               maxDate={
                                 maximumDate !== null ? maximumDate : null
                               }
