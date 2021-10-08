@@ -37,6 +37,7 @@ import { Checkbox } from "baseui/checkbox";
 
 const headers = [
   { label: "Name", key: "name" },
+  { label: "Room", key: "room" },
   { label: "Description", key: "description" },
   { label: "Participants", key: "participants" },
   { label: "Duration", key: "duration" },
@@ -57,7 +58,7 @@ const SignupSchema = Yup.object().shape({
 });
 
 const EventSchedule = () => {
-  const [datass, setDatasss] = useState([]);
+  const [datass, setDatasss] = useState();
   const [update, setUpdate] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [showData, setShowData] = useState(false);
@@ -84,9 +85,9 @@ const EventSchedule = () => {
         console.log(new Date(getReq.data.startDateTime));
         if (getReq.data) {
           setGetRequest(false);
-          setDatasss(...datass, getReq.data);
+          setDatasss(getReq.data);
         } else {
-          setDatasss([]);
+          setDatasss();
         }
       } catch (e) {
         console.log("error!");
@@ -97,7 +98,8 @@ const EventSchedule = () => {
 
   useEffect(() => {
     const Array = [];
-    datass.map &&
+    datass &&
+      datass.map &&
       datass.map((values) => {
         let myValue = { ...values };
         myValue.startDate =
@@ -112,7 +114,7 @@ const EventSchedule = () => {
         Array.push(myValue);
       });
     setGetDownload(Array);
-  }, [datass.length]);
+  }, [datass && datass.length]);
 
   // const onSubmitData = async() => {
   //   const Arr = [];
@@ -208,19 +210,21 @@ const EventSchedule = () => {
     if (checked !== true) {
       setIsOpened(false);
     }
-    values.startDate = moment(values.startDate).format("DD MMM YYYY");
-    values.startTime = moment(values.startTime).format("HH:mm");
-    values.endTime = moment(values.endTime).format("HH:mm");
-    values.startDateTime = new Date(
-      values.startDate + " " + values.startTime
-    ).toISOString();
-    values.endDateTime = new Date(
-      values.startDate + " " + values.endTime
-    ).toISOString();
-    console.log("record added values", values);
+    let formValue = { ...values };
+    formValue.startDate = moment(values.startDate).format("DD MMM YYYY");
+    formValue.startTime = moment(values.startTime).format("HH:mm");
+    formValue.endTime = moment(values.endTime).format("HH:mm");
+
+    formValue.startDateTime = new Date(
+      formValue.startDate + " " + formValue.startTime
+    );
+    formValue.endDateTime = new Date(
+      formValue.startDate + " " + formValue.endTime
+    );
+
     const respo = await requestBase.post(
       `/auth/event/event/create/schedule-item/${eventId}`,
-      JSON.parse(JSON.stringify(values))
+      JSON.parse(JSON.stringify(formValue))
     );
 
     if (respo) {
@@ -292,8 +296,8 @@ const EventSchedule = () => {
   };
 
   const onPageSizeChanged = (e) => {
-    console.log("newPageSize", e.target.value)
-    setPaginationSize(e.target.value)
+    console.log("newPageSize", e.target.value);
+    setPaginationSize(e.target.value);
   };
 
   return (
@@ -340,6 +344,7 @@ const EventSchedule = () => {
               startDate: "",
               startTime: "",
               endTime: "",
+              room: "",
             }}
             validationSchema={SignupSchema}
             onSubmit={update ? onUpdate : onSubmit}
@@ -435,21 +440,38 @@ const EventSchedule = () => {
                   "h:mma"
                 );
               };
+              const handleDownload = () => {
+                requestBase({
+                  url: `/auth/event/event/export/schedule-item/${eventId}`, //your url
+                  method: "GET",
+                  responseType: "blob", // important
+                }).then((response) => {
+                  const url = window.URL.createObjectURL(
+                    new Blob([response.data])
+                  );
+                  const link = document.createElement("a");
+                  link.href = url;
+                  link.setAttribute(
+                    "download",
+                    `schedules.${new Date().toString()}.csv`
+                  ); //or any other extension
+                  document.body.appendChild(link);
+                  link.click();
+                });
+              };
+
               return (
                 <>
                   <div style={{ width: "100%", height: datass ? 600 : 10 }}>
                     {datass && (
                       <div>
                         <div style={{ margin: "10px 0" }}>
-                          <CSVLink
-                            data={getDownload ? getDownload : null}
-                            headers={headers ? headers : null}
-                            filename="FunZippy_Event_Schedule.csv"
-                            target="_blank"
-                            style={{ textDecoration: "none" }}
+                          <ActionButton
+                            className="photo-button m-1"
+                            onClick={handleDownload}
                           >
-                            <ActionButton>Download Schedule</ActionButton>
-                          </CSVLink>
+                            Download Schedule
+                          </ActionButton>
                           <input
                             type="file"
                             accept=".csv,.xlsx,.xls"
@@ -476,88 +498,106 @@ const EventSchedule = () => {
                             }}
                           />
                         </div>
-                        {datass.length > 0 && <><div className="grid-wrapper">
-                          
-                          <div
-                            id="myGrid"
-                            style={{
-                              height: 500,
-                              width: "100%",
-                            }}
-                            className="ag-theme-alpine"
-                          >
-                            Page Size:
-                          <select style={{ width: "10%", marginLeft:"5px", marginBottom:"5px"}} onChange={onPageSizeChanged} id="page-size">
-                            <option value="5" selected={paginationSize === "5"}>
-                              5
-                            </option>
-                            <option value="10">10</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                          </select>
-                            <AgGridReact
-                              defaultColDef={{
-                                sortable: true,
-                                filter: true,
-                                editable: true,
-                                // floatingFilter: true,
-                              }}
-                              // suppressRowClickSelection={true}
-                              rowDragManaged={false}
-                              animateRows={true}
-                              rowData={
-                                searchinItem === ""
-                                  ? datass
-                                  : datass?.filter(
-                                      (item) =>
-                                        item?.name
-                                          .toLowerCase()
-                                          .indexOf(searchinItem.toLowerCase()) >
-                                          -1 ||
-                                        item?.duration
-                                          .toLowerCase()
-                                          .indexOf(searchinItem.toLowerCase()) >
-                                          -1 ||
-                                        item?.participants
-                                          .toLowerCase()
-                                          .indexOf(searchinItem.toLowerCase()) >
-                                          -1 ||
-                                        item?.description
-                                          .toLowerCase()
-                                          .indexOf(searchinItem.toLowerCase()) >
-                                          -1
-                                    )
-                              }
-                              frameworkComponents={{
-                                btnCellRenderer: BtnCellRenderer,
-                              }}
-                              pagination={true}
-                              paginationPageSize={paginationSize}
-                            >
-                              <AgGridColumn field="name" rowDrag={true} />
-                              {/* <AgGridColumn field="description" />
+                        {datass.length > 0 && (
+                          <>
+                            <div className="grid-wrapper">
+                              <div
+                                id="myGrid"
+                                style={{
+                                  height: 500,
+                                  width: "100%",
+                                }}
+                                className="ag-theme-alpine"
+                              >
+                                Page Size:
+                                <select
+                                  style={{
+                                    width: "10%",
+                                    marginLeft: "5px",
+                                    marginBottom: "5px",
+                                  }}
+                                  onChange={onPageSizeChanged}
+                                  id="page-size"
+                                >
+                                  <option
+                                    value="5"
+                                    selected={paginationSize === "5"}
+                                  >
+                                    5
+                                  </option>
+                                  <option value="10">10</option>
+                                  <option value="25">25</option>
+                                  <option value="50">50</option>
+                                </select>
+                                <AgGridReact
+                                  defaultColDef={{
+                                    sortable: true,
+                                    filter: true,
+                                    editable: true,
+                                    // floatingFilter: true,
+                                  }}
+                                  // suppressRowClickSelection={true}
+                                  rowDragManaged={true}
+                                  animateRows={true}
+                                  suppressMoveWhenRowDragging={true}
+                                  rowData={
+                                    searchinItem === ""
+                                      ? datass
+                                      : datass?.filter(
+                                          (item) =>
+                                            item?.name
+                                              .toLowerCase()
+                                              .indexOf(
+                                                searchinItem.toLowerCase()
+                                              ) > -1 ||
+                                            item?.duration
+                                              .toLowerCase()
+                                              .indexOf(
+                                                searchinItem.toLowerCase()
+                                              ) > -1 ||
+                                            item?.participants
+                                              .toLowerCase()
+                                              .indexOf(
+                                                searchinItem.toLowerCase()
+                                              ) > -1 ||
+                                            item?.description
+                                              .toLowerCase()
+                                              .indexOf(
+                                                searchinItem.toLowerCase()
+                                              ) > -1
+                                        )
+                                  }
+                                  frameworkComponents={{
+                                    btnCellRenderer: BtnCellRenderer,
+                                  }}
+                                  pagination={true}
+                                  paginationPageSize={paginationSize}
+                                >
+                                  <AgGridColumn field="name" rowDrag={true} />
+                                  {/* <AgGridColumn field="description" />
                           <AgGridColumn field="participants" /> */}
 
-                              <AgGridColumn
-                                field="startDate"
-                                cellRenderer={StartDate}
-                              />
-                              <AgGridColumn
-                                field="startTime"
-                                cellRenderer={StartTime}
-                              />
-                              <AgGridColumn field="duration" />
-                              <AgGridColumn
-                                field="View | Delete | Edit"
-                                cellClass="custom-athlete-cell"
-                                cellRenderer="btnCellRenderer"
-                                filter="agNumberColumnFilter"
-                                floatingFilter={false}
-                              />
-                            </AgGridReact>
-                          </div>
-                        </div> </>}
-                        
+                                  <AgGridColumn
+                                    field="startDate"
+                                    cellRenderer={StartDate}
+                                  />
+                                  <AgGridColumn
+                                    field="startTime"
+                                    cellRenderer={StartTime}
+                                  />
+                                  <AgGridColumn field="duration" />
+                                  <AgGridColumn
+                                    field="View | Delete | Edit"
+                                    cellClass="custom-athlete-cell"
+                                    cellRenderer="btnCellRenderer"
+                                    filter="agNumberColumnFilter"
+                                    floatingFilter={false}
+                                  />
+                                </AgGridReact>
+                              </div>
+                            </div>{" "}
+                          </>
+                        )}
                       </div>
                     )}
                   </div>
@@ -584,7 +624,6 @@ const EventSchedule = () => {
                               name="name"
                               type="text"
                               onChange={handleChange}
-                              onBlur={handleBlur}
                               value={value.name}
                               placeholder={"Enter Name"}
                               disabled={showData}
@@ -601,7 +640,6 @@ const EventSchedule = () => {
                               name="room"
                               type="text"
                               onChange={handleChange}
-                              onBlur={handleBlur}
                               value={value.room}
                               placeholder={"Enter Room"}
                               disabled={showData}
@@ -618,7 +656,6 @@ const EventSchedule = () => {
                               type="number"
                               name="duration"
                               onChange={handleChange}
-                              onBlur={handleBlur}
                               value={value.duration}
                               placeholder={"Enter Duration"}
                               disabled={showData}
@@ -627,7 +664,7 @@ const EventSchedule = () => {
                         </Col>
                       </Row>
                       <Row>
-                        <Col>
+                      <Col>
                           <FormControl
                             label="Description"
                             error={
@@ -673,9 +710,6 @@ const EventSchedule = () => {
                             )}
                           </FormControl>
                         </Col>
-                      </Row>
-
-                      <Row>
                         <Col>
                           <FormControl
                             label="Participants"
@@ -697,6 +731,7 @@ const EventSchedule = () => {
                             ></Textarea>
                           </FormControl>
                         </Col>
+                        
                       </Row>
                       <Row>
                         <Col>
