@@ -308,8 +308,8 @@ const EventSchedule = (props) => {
     }
   };
   const sameDayEvent =
-    moment(new Date(props.startDateTime)).format("DD MMM YYYY") ===
-    moment(new Date(props.endDateTime)).format("DD MMM YYYY");
+    moment(new Date(props.eventData.startDateTime)).format("DD MMM YYYY") ===
+    moment(new Date(props.eventData.endDateTime)).format("DD MMM YYYY");
   return (
     <>
       <Modal
