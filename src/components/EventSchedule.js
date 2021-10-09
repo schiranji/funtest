@@ -57,7 +57,7 @@ const SignupSchema = Yup.object().shape({
   endTime: Yup.string().required("End Time is Required"),
 });
 
-const EventSchedule = () => {
+const EventSchedule = (props) => {
   const [datass, setDatasss] = useState();
   const [update, setUpdate] = useState(false);
   const [refresh, setRefresh] = useState(false);
@@ -74,7 +74,10 @@ const EventSchedule = () => {
   const [getRequest, setGetRequest] = useState(false);
   const [getDownload, setGetDownload] = useState([]);
   const [paginationSize, setPaginationSize] = useState(5);
-
+  const [gridApi, setGridApi] = useState(null);
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+  };
   useEffect(() => {
     const getEventMedia = async () => {
       try {
@@ -298,8 +301,15 @@ const EventSchedule = () => {
   const onPageSizeChanged = (e) => {
     console.log("newPageSize", e.target.value);
     setPaginationSize(e.target.value);
+    if (gridApi) {
+      gridApi.setDomLayout(e.target.value < 11 ? "autoHeight" : "normal");
+      document.querySelector("#myGrid").style.height =
+        e.target.value < 11 ? "" : "500px";
+    }
   };
-
+  const sameDayEvent =
+    moment(new Date(props.startDateTime)).format("DD MMM YYYY") ===
+    moment(new Date(props.endDateTime)).format("DD MMM YYYY");
   return (
     <>
       <Modal
@@ -462,7 +472,7 @@ const EventSchedule = () => {
 
               return (
                 <>
-                  <div style={{ width: "100%", height: datass ? 600 : 10 }}>
+                  <div style={{ width: "100%" }}>
                     {datass && (
                       <div>
                         <div style={{ margin: "10px 0" }}>
@@ -497,6 +507,23 @@ const EventSchedule = () => {
                               color: "#888",
                             }}
                           />
+                          Page Size:
+                          <select
+                            style={{
+                              width: "10%",
+                              marginLeft: "5px",
+                              marginBottom: "5px",
+                            }}
+                            onChange={onPageSizeChanged}
+                            id="page-size"
+                          >
+                            <option value="5" selected={paginationSize === "5"}>
+                              5
+                            </option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                          </select>
                         </div>
                         {datass.length > 0 && (
                           <>
@@ -504,36 +531,17 @@ const EventSchedule = () => {
                               <div
                                 id="myGrid"
                                 style={{
-                                  height: 500,
                                   width: "100%",
                                 }}
                                 className="ag-theme-alpine"
                               >
-                                Page Size:
-                                <select
-                                  style={{
-                                    width: "10%",
-                                    marginLeft: "5px",
-                                    marginBottom: "5px",
-                                  }}
-                                  onChange={onPageSizeChanged}
-                                  id="page-size"
-                                >
-                                  <option
-                                    value="5"
-                                    selected={paginationSize === "5"}
-                                  >
-                                    5
-                                  </option>
-                                  <option value="10">10</option>
-                                  <option value="25">25</option>
-                                  <option value="50">50</option>
-                                </select>
                                 <AgGridReact
+                                  onGridReady={onGridReady}
+                                  domLayout={"autoHeight"}
                                   defaultColDef={{
                                     sortable: true,
                                     filter: true,
-                                    editable: true,
+
                                     // floatingFilter: true,
                                   }}
                                   // suppressRowClickSelection={true}
@@ -577,10 +585,12 @@ const EventSchedule = () => {
                                   {/* <AgGridColumn field="description" />
                           <AgGridColumn field="participants" /> */}
 
-                                  <AgGridColumn
-                                    field="startDate"
-                                    cellRenderer={StartDate}
-                                  />
+                                  {!sameDayEvent && (
+                                    <AgGridColumn
+                                      field="startDate"
+                                      cellRenderer={StartDate}
+                                    />
+                                  )}
                                   <AgGridColumn
                                     field="startTime"
                                     cellRenderer={StartTime}
@@ -602,7 +612,10 @@ const EventSchedule = () => {
                     )}
                   </div>
 
-                  <ModalButton onClick={handleModalOpen}>
+                  <ModalButton
+                    style={{ marginTop: "50px" }}
+                    onClick={handleModalOpen}
+                  >
                     Add Schedule
                   </ModalButton>
                   {/* <ActionButton
@@ -664,7 +677,7 @@ const EventSchedule = () => {
                         </Col>
                       </Row>
                       <Row>
-                      <Col>
+                        <Col>
                           <FormControl
                             label="Description"
                             error={
@@ -731,7 +744,6 @@ const EventSchedule = () => {
                             ></Textarea>
                           </FormControl>
                         </Col>
-                        
                       </Row>
                       <Row>
                         <Col>

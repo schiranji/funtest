@@ -1,10 +1,10 @@
 import React from "react";
 import EventSchedule from '../components/EventSchedule'
 
-const Schedule = () => {
+const Schedule = (props) => {
   return(
     <>
-      <EventSchedule />
+      <EventSchedule {...props}/>
     </>
   );
 }
