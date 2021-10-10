@@ -23,17 +23,26 @@ const TimeSlots = ({
   const [showDeleteDialog, setDeleteDialog] = useState(false);
   const [viewOnly, setviewOnly] = useState(false);
   const [currentSlot, setcurrentSlot] = useState({});
+  const startDate = moment(eventData.startDateTime, "YYYY-MM-DD");
+  const endDate = moment(eventData.endDateTime, "YYYY-MM-DD");
+
+  const multiEventCol = !startDate.diff(endDate)
+    ? []
+    : [
+        {
+          field: "startDate",
+          cellRenderer: (props) =>
+            moment(new Date(props.data.startDateTime)).format("DD MMM YYYY"),
+        },
+        {
+          field: "endDate",
+          cellRenderer: (props) =>
+            moment(new Date(props.data.endDateTime)).format("DD MMM YYYY"),
+        },
+      ];
+
   const columns = [
-    {
-      field: "startDate",
-      cellRenderer: (props) =>
-        moment(new Date(props.data.startDateTime)).format("DD MMM YYYY"),
-    },
-    {
-      field: "endDate",
-      cellRenderer: (props) =>
-        moment(new Date(props.data.endDateTime)).format("DD MMM YYYY"),
-    },
+    ...multiEventCol,
     {
       field: "startDateTime",
       cellRenderer: (props) =>
@@ -43,6 +52,15 @@ const TimeSlots = ({
       field: "endDateTime",
       cellRenderer: (props) =>
         moment(new Date(props.data.endDateTime)).format("h:mma"),
+    },
+    {
+      field: "name",
+    },
+    {
+      field: "email",
+    },
+    {
+      field: "phone",
     },
   ];
   //const handleWithAny = handleWithAnyFunction(handleChange, whenAny);

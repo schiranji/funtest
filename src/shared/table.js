@@ -31,16 +31,16 @@ const Table = (props) => {
           btnCellRenderer: BtnCellRenderer,
         }}
       >
-        {props.columns.map((column) => (
-          <AgGridColumn {...column} key={column.field} />
-        ))}
         <AgGridColumn
-          field="View | Delete | Edit"
+          field="Action"
           cellClass="custom-athlete-cell"
           cellRenderer="btnCellRenderer"
           filter="agNumberColumnFilter"
           floatingFilter={false}
         />
+        {props.columns.map((column) => (
+          <AgGridColumn {...column} key={column.field} />
+        ))}
       </AgGridReact>
     </div>
   );

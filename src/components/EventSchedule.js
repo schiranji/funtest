@@ -17,6 +17,7 @@ import moment from "moment";
 import { AiFillEdit } from "react-icons/ai";
 import * as XLSX from "xlsx";
 import { toaster } from "baseui/toast";
+import { EVENT_TYPE } from "../utils";
 import {
   Modal,
   ModalHeader,
@@ -75,13 +76,15 @@ const EventSchedule = (props) => {
   const [getDownload, setGetDownload] = useState([]);
   const [paginationSize, setPaginationSize] = useState(5);
   const [gridApi, setGridApi] = useState(null);
+  const eventTyepe =
+    props.eventData.eventType === EVENT_TYPE.group ? "groupEvent" : "event";
   const onGridReady = (params) => {
     setGridApi(params.api);
   };
   useEffect(() => {
     const getEventMedia = async () => {
       try {
-        let url = `/auth/event/event/search/schedule-item/${eventId}`;
+        let url = `/auth/${eventTyepe}/event/search/schedule-item/${eventId}`;
         const getReq = await requestBase.get(url);
         // setMinimumDate(new Date(getReq.data.startDateTime));
         // setMaximumDate(new Date(getReq.data.endDateTime));
@@ -226,14 +229,14 @@ const EventSchedule = (props) => {
     );
 
     const respo = await requestBase.post(
-      `/auth/event/event/create/schedule-item/${eventId}`,
+      `/auth/${eventTyepe}/event/create/schedule-item/${eventId}`,
       JSON.parse(JSON.stringify(formValue))
     );
 
     if (respo) {
       toaster.positive(<p>Schedule has been added.</p>);
       const getRes = await requestBase.get(
-        `/auth/event/event/search/schedule-item/${eventId}`
+        `/auth/${eventTyepe}/event/search/schedule-item/${eventId}`
       );
       if (getRes.data) {
         setDatasss(getRes.data);
@@ -261,7 +264,7 @@ const EventSchedule = (props) => {
     );
 
     const getRes = await requestBase.put(
-      `/auth/event/event/update/schedule-item/${eventId}/${values.uid}`,
+      `/auth/${eventTyepe}/event/update/schedule-item/${eventId}/${values.uid}`,
       JSON.parse(JSON.stringify(formValue))
     );
 
@@ -282,11 +285,11 @@ const EventSchedule = (props) => {
     setIsOpen(false);
     if (selectedScheduleId) {
       const response = await requestBase.delete(
-        `/auth/event/event/delete/schedule-item/${eventId}/${selectedScheduleId}`
+        `/auth/${eventTyepe}/event/delete/schedule-item/${eventId}/${selectedScheduleId}`
       );
       if (response.data.statusDescription === "Success") {
         const getRes = await requestBase.get(
-          `/auth/event/event/search/schedule-item/${eventId}`
+          `/auth/${eventTyepe}/event/search/schedule-item/${eventId}`
         );
         if (getRes.data) {
           setDatasss(getRes.data);
@@ -307,9 +310,9 @@ const EventSchedule = (props) => {
         e.target.value < 11 ? "" : "500px";
     }
   };
-  const sameDayEvent =
-    moment(new Date(props.eventData.startDateTime)).format("DD MMM YYYY") ===
-    moment(new Date(props.eventData.endDateTime)).format("DD MMM YYYY");
+  const startDate = moment(props.eventData.startDateTime, "YYYY-MM-DD");
+  const endDate = moment(props.eventData.endDateTime, "YYYY-MM-DD");
+  const sameDayEvent = !startDate.diff(endDate);
   return (
     <>
       <Modal
@@ -597,7 +600,7 @@ const EventSchedule = (props) => {
                                   />
                                   <AgGridColumn field="duration" />
                                   <AgGridColumn
-                                    field="View | Delete | Edit"
+                                    field="Action"
                                     cellClass="custom-athlete-cell"
                                     cellRenderer="btnCellRenderer"
                                     filter="agNumberColumnFilter"
