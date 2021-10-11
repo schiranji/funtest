@@ -23,7 +23,13 @@ const HiddenRow = styled.div`
   display: none;
 `;
 
-const TimeSlotGenerator = ({ setDirty, eventManagementData, eventData }) => {
+const TimeSlotGenerator = ({
+  setDirty,
+  eventManagementData,
+  eventData,
+  handleNew,
+  pageRefresh,
+}) => {
   const { setFieldValue, values } = useFormikContext();
   const { startTime, endTime } = values;
 
@@ -79,6 +85,7 @@ const TimeSlotGenerator = ({ setDirty, eventManagementData, eventData }) => {
                   }
 
                   if (response.statusCode === 0) {
+                    pageRefresh();
                     setFieldValue("timeSlots", response.data.results);
                   }
                 }}
@@ -168,8 +175,17 @@ const TimeSlotGenerator = ({ setDirty, eventManagementData, eventData }) => {
                           type="button"
                           onClick={handleSubmit}
                           kind={KIND.primary}
+                          style={{ "margin-right": "10px" }}
                         >
                           Generate
+                        </Button>
+
+                        <Button
+                          type="button"
+                          onClick={handleNew}
+                          kind={KIND.primary}
+                        >
+                          Create Timeslot
                         </Button>
                       </Col>
                     </Row>

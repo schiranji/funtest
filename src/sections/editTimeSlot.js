@@ -1,32 +1,80 @@
 import React from "react";
 import { FormControl } from "baseui/form-control";
-import { Formik, Form } from "formik";
+import { Formik, Form, useFormikContext } from "formik";
 import { Row, Col } from "reactstrap";
 import { Modal, ModalHeader, ModalFooter } from "baseui/modal";
 import { Datepicker } from "baseui/datepicker";
 import { Button, KIND } from "baseui/button";
 import { Input } from "baseui/input";
 import * as Yup from "yup";
+import { requestBase } from "../utils";
+import { toaster } from "baseui/toast";
+
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const SignupSchema = Yup.object().shape({
-  name: Yup.string().required("Name is Required").max(50),
-  phone: Yup.string().max(20),
-  email: Yup.string().email().max(50),
+  signupName: Yup.string().required("Name is Required").max(50),
+  phoneNumber: Yup.string().matches(phoneRegExp, {
+    message: "Phone number is not valid",
+  }),
+  emailAdddress: Yup.string().email("Please enter valid email").max(50),
+  startDateTime: Yup.string().required("Please provide date and time"),
+  endDateTime: Yup.string().required("Please provide date and time"),
 });
+
 export const EditTimeSlot = (props) => {
+  const HandleSave = async (values) => {
+    const url = props.isNew
+      ? `/auth/groupEvent/event/create/timeslot/${props.eventManagementData.eventId}`
+      : `/auth/groupEvent/event/update/timeslot/${props.eventManagementData.eventId}/${values.uid}`;
+    try {
+      const response = await requestBase[props.isNew ? "post" : "put"](
+        url,
+        JSON.parse(JSON.stringify(values))
+      );
+      if (response.data.statusDescription === "Success") {
+        toaster.positive(<p>TimeSlot has been update.</p>);
+      } else {
+        toaster.negative(<p>something went wrong.</p>);
+      }
+    } catch (e) {
+      toaster.negative(<p>something went wrong.</p>);
+    }
+    setTimeout(() => {
+      props.handleClose();
+      props.pageRefresh();
+    }, 100);
+  };
+  const { setFieldValue, values } = useFormikContext();
+  const { startTime, endTime } = values;
+
   return (
     <Modal onClose={props.handleClose} isOpen={props.isOpen} size={1000}>
-      <ModalHeader>Edit TimeSlot</ModalHeader>
+      <ModalHeader>
+        {(props.viewOnly ? "View" : props.isNew ? "Create" : "Edit") +
+          " TimeSlot"}
+      </ModalHeader>
       <Formik
-        initialValues={{
-          name: "",
-          phone: "",
-          email: "",
-          startDateTime: new Date(props.data.startDateTime),
-          endDateTime: new Date(props.data.endDateTime),
-        }}
+        initialValues={
+          props.isNew
+            ? {
+                signupName: "",
+                phoneNumber: "",
+                emailAdddress: "",
+                startDateTime: "",
+                endDateTime: "",
+              }
+            : {
+                ...props.data,
+                signupName: props.data.signupName,
+                phoneNumber: props.data.phoneNumber,
+                emailAdddress: props.data.emailAdddress,
+                startDateTime: new Date(props.data.startDateTime),
+                endDateTime: new Date(props.data.endDateTime),
+              }
+        }
         validationSchema={SignupSchema}
-        onSubmit={undefined}
+        onSubmit={HandleSave}
       >
         {({
           handleChange,
@@ -43,14 +91,14 @@ export const EditTimeSlot = (props) => {
               <Col>
                 <FormControl
                   label="Name"
-                  error={touched.name ? errors.name : null}
+                  error={touched.signupName ? errors.signupName : null}
                 >
                   <Input
-                    error={errors.name && touched.name}
-                    name="name"
+                    error={errors.signupName && touched.signupName}
+                    name="signupName"
                     type="text"
                     onChange={handleChange}
-                    value={value.name}
+                    value={value.signupName}
                     placeholder={"Enter Name"}
                     disabled={props.viewOnly}
                   ></Input>
@@ -59,14 +107,14 @@ export const EditTimeSlot = (props) => {
               <Col>
                 <FormControl
                   label="Phone"
-                  error={touched.phone ? errors.phone : null}
+                  error={touched.phoneNumber ? errors.phoneNumber : null}
                 >
                   <Input
-                    error={errors.phone && touched.phone}
-                    name="room"
+                    error={errors.phoneNumber && touched.phoneNumber}
+                    name="phoneNumber"
                     type="text"
                     onChange={handleChange}
-                    value={value.phone}
+                    value={value.phoneNumber}
                     placeholder={"Enter Phone"}
                     disabled={props.viewOnly}
                   ></Input>
@@ -75,14 +123,14 @@ export const EditTimeSlot = (props) => {
               <Col>
                 <FormControl
                   label="Email"
-                  error={touched.email ? errors.email : null}
+                  error={touched.emailAdddress ? errors.emailAdddress : null}
                 >
                   <Input
-                    error={errors.email && touched.email}
+                    error={errors.emailAdddress && touched.emailAdddress}
                     type="email"
-                    name="email"
+                    name="emailAdddress"
                     onChange={handleChange}
-                    value={value.email}
+                    value={value.emailAdddress}
                     placeholder={"Enter Email"}
                     disabled={props.viewOnly}
                   ></Input>
@@ -97,11 +145,15 @@ export const EditTimeSlot = (props) => {
                 >
                   <Datepicker
                     formatString="MM/dd/yyyy HH:mm"
-                    onChange={({ time, date }) => {}}
+                    onChange={({ time, date }) => {
+                      setFieldValue("startDateTime", date);
+                    }}
                     onBlur={handleBlur}
                     value={value.startDateTime}
                     timeSelectStart
                     disabled={props.viewOnly}
+                    minDate={startTime}
+                    maxDate={endTime}
                   ></Datepicker>
                 </FormControl>
               </Col>
@@ -112,11 +164,15 @@ export const EditTimeSlot = (props) => {
                 >
                   <Datepicker
                     formatString="MM/dd/yyyy HH:mm"
-                    onChange={({ time, date }) => {}}
+                    onChange={({ time, date }) => {
+                      setFieldValue("endDateTime", date);
+                    }}
                     onBlur={handleBlur}
                     value={value.endDateTime}
                     timeSelectStart
                     disabled={props.viewOnly}
+                    minDate={startTime}
+                    maxDate={endTime}
                   ></Datepicker>
                 </FormControl>
               </Col>
@@ -127,16 +183,22 @@ export const EditTimeSlot = (props) => {
             </Row>
             <ModalFooter>
               <Button
-                style={{ margin: "0px 10px" }}
+                style={{ "margin-right": "10px" }}
                 type="button"
                 onClick={props.handleClose}
                 kind={KIND.primary}
               >
                 Cancel
               </Button>
-              <Button onClick={handleSubmit} kind={KIND.primary}>
-                Save
-              </Button>
+              {!props.viewOnly && (
+                <Button
+                  type={"submit"}
+                  onClick={handleSubmit}
+                  kind={KIND.primary}
+                >
+                  Save
+                </Button>
+              )}
             </ModalFooter>
           </Form>
         )}

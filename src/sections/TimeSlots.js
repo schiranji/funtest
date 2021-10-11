@@ -20,8 +20,11 @@ const TimeSlots = ({
 }) => {
   const { handleSubmit, handleChange } = formikProps;
   const [showDialog, setshowDialog] = useState(false);
+  const [refresh, setrefresh] = useState(false);
+
   const [showDeleteDialog, setDeleteDialog] = useState(false);
   const [viewOnly, setviewOnly] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const [currentSlot, setcurrentSlot] = useState({});
   const startDate = moment(eventData.startDateTime, "YYYY-MM-DD");
   const endDate = moment(eventData.endDateTime, "YYYY-MM-DD");
@@ -54,47 +57,47 @@ const TimeSlots = ({
         moment(new Date(props.data.endDateTime)).format("h:mma"),
     },
     {
-      field: "name",
+      field: "signupName",
     },
     {
-      field: "email",
+      field: "emailAdddress",
     },
     {
-      field: "phone",
+      field: "phoneNumber",
     },
   ];
   //const handleWithAny = handleWithAnyFunction(handleChange, whenAny);
   const submitWithAny = handleWithAnyFunction(handleSubmit, whenAny, false);
-  // const slotResponse = useCall(
-  //   () =>
-  //     requestBase.get(
-  //       `/auth/groupEvent/event/search/timeslot/${eventManagementData.eventId}`,
-  //       {}
-  //     ),
-  //   [eventManagementData.eventId],
-  //   []
-  // );
-  const HandleSave = async () => {
-    const response = await requestBase.post(
-      `/auth/grpEvent/event/edit/updateEvent/${eventManagementData.eventId}`,
-      JSON.parse(JSON.stringify({ ...eventData }))
-    );
+  const slotResponse = useCall(
+    () =>
+      requestBase.get(
+        `/auth/groupEvent/event/search/timeslot/${eventManagementData.eventId}`,
+        {}
+      ),
+    [eventManagementData.eventId, refresh],
+    []
+  );
 
-    if (response) {
-      debugger;
-    }
+  const pageRefresh = () => {
+    setrefresh(!refresh);
   };
+
   const viewHandler = (rowdata) => {
+    setIsNew(false);
     setviewOnly(true);
     setcurrentSlot(rowdata);
     setshowDialog(true);
   };
+
   const editHandler = (rowdata) => {
+    setIsNew(false);
     setviewOnly(false);
     setcurrentSlot(rowdata);
     setshowDialog(true);
   };
+
   const deleteHandler = (rowdata) => {
+    setIsNew(false);
     setviewOnly(false);
     setcurrentSlot(rowdata);
     setDeleteDialog(true);
@@ -111,6 +114,12 @@ const TimeSlots = ({
             <TimeSlotGenerator
               eventManagementData={eventManagementData}
               setDirty={whenAny}
+              pageRefresh={pageRefresh}
+              handleNew={() => {
+                setIsNew(true);
+                setshowDialog(true);
+                setviewOnly(false);
+              }}
             ></TimeSlotGenerator>
           </SubSection>
           <SubSection></SubSection>
@@ -121,7 +130,7 @@ const TimeSlots = ({
                 viewHandler={viewHandler}
                 editHandler={editHandler}
                 deleteHandler={deleteHandler}
-                data={eventData.timeSlots}
+                data={slotResponse.data}
               ></Table>
             </Col>
           </Row>
@@ -131,16 +140,23 @@ const TimeSlots = ({
             </Col>
           </Row>
           <EditTimeSlot
-            data={currentSlot}
+            data={isNew ? {} : currentSlot}
             handleClose={() => setshowDialog(!showDialog)}
             isOpen={showDialog}
             viewOnly={viewOnly}
+            isNew={isNew}
+            maxDate={eventData.endDateTime}
+            minDate={eventData.startDateTime}
+            eventManagementData={eventManagementData}
+            pageRefresh={pageRefresh}
           />
           <Delete
             data={currentSlot}
             handleClose={() => setDeleteDialog(!showDeleteDialog)}
             isOpen={showDeleteDialog}
             viewOnly={viewOnly}
+            pageRefresh={pageRefresh}
+            eventManagementData={eventManagementData}
           />
         </form>
       </SectionBody>
