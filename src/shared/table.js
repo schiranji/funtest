@@ -9,7 +9,9 @@ const Table = (props) => {
     return (
       <>
         <Show size={30} onClick={() => props.viewHandler(row.data)} /> |
-        <Delete size={35} onClick={() => props.deleteHandler(row.data)} /> |
+        {props.viewDelete && (
+          <Delete size={35} onClick={() => props.deleteHandler(row.data)} />
+        )}
         <AiFillEdit size={30} onClick={() => props.editHandler(row.data)} />
       </>
     );
@@ -19,28 +21,43 @@ const Table = (props) => {
     <div
       id="myGrid"
       style={{
-        height: 300,
+        height: props.height || 300,
         width: "100%",
       }}
       className="ag-theme-alpine"
     >
       <AgGridReact
-        pagination={true}
+        {...props}
+        onGridReady={props.onGridReady}
+        pagination={props.pagination}
+        paginationPageSize={props.paginationPageSize}
         rowData={props.data || []}
         frameworkComponents={{
-          btnCellRenderer: BtnCellRenderer,
+          ...props.frameworkComponents,
+          btnCellRenderer: props.BtnCellRenderer || BtnCellRenderer,
         }}
       >
-        <AgGridColumn
-          field="Action"
-          cellClass="custom-athlete-cell"
-          cellRenderer="btnCellRenderer"
-          filter="agNumberColumnFilter"
-          floatingFilter={false}
-        />
+        {props.ActionRow === "FIRST" && (
+          <AgGridColumn
+            field="Action"
+            cellClass="custom-athlete-cell"
+            cellRenderer="btnCellRenderer"
+            filter="agNumberColumnFilter"
+            floatingFilter={false}
+          />
+        )}
         {props.columns.map((column) => (
           <AgGridColumn {...column} key={column.field} />
         ))}
+        {props.ActionRow !== "FIRST" && (
+          <AgGridColumn
+            field="Action"
+            cellClass="custom-athlete-cell"
+            cellRenderer="btnCellRenderer"
+            filter="agNumberColumnFilter"
+            floatingFilter={false}
+          />
+        )}
       </AgGridReact>
     </div>
   );

@@ -7,7 +7,7 @@ export const Delete = (props) => {
   const HandleDelete = async () => {
     const url = `/auth/groupEvent/event/delete/timeslot/${props.eventManagementData.eventId}/${props.data.uid}`;
     try {
-      const response = await requestBase.post(url);
+      const response = await requestBase.delete(url);
       if (response.data.statusDescription === "Success") {
         toaster.positive(<p>Schedule has been update.</p>);
       } else {

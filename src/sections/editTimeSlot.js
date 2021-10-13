@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormControl } from "baseui/form-control";
 import { Formik, Form, useFormikContext } from "formik";
 import { Row, Col } from "reactstrap";
@@ -23,7 +23,9 @@ const SignupSchema = Yup.object().shape({
 });
 
 export const EditTimeSlot = (props) => {
+  const [isloading, setLoading] = useState(false);
   const HandleSave = async (values) => {
+    setLoading(true);
     const url = props.isNew
       ? `/auth/groupEvent/event/create/timeslot/${props.eventManagementData.eventId}`
       : `/auth/groupEvent/event/update/timeslot/${props.eventManagementData.eventId}/${values.uid}`;
@@ -37,7 +39,9 @@ export const EditTimeSlot = (props) => {
       } else {
         toaster.negative(<p>something went wrong.</p>);
       }
+      setLoading(false);
     } catch (e) {
+      setLoading(false);
       toaster.negative(<p>something went wrong.</p>);
     }
     setTimeout(() => {
@@ -192,6 +196,7 @@ export const EditTimeSlot = (props) => {
               </Button>
               {!props.viewOnly && (
                 <Button
+                  isloading={isloading}
                   type={"submit"}
                   onClick={handleSubmit}
                   kind={KIND.primary}

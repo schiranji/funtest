@@ -11,6 +11,7 @@ import Table from "../shared/table";
 import moment from "moment";
 import { EditTimeSlot } from "./editTimeSlot";
 import { Delete } from "./deleteTimeSlot";
+import { Button, KIND } from "baseui/button";
 
 const TimeSlots = ({
   formikProps,
@@ -21,6 +22,7 @@ const TimeSlots = ({
   const { handleSubmit, handleChange } = formikProps;
   const [showDialog, setshowDialog] = useState(false);
   const [refresh, setrefresh] = useState(false);
+  const [isloading, setLoading] = useState(false);
 
   const [showDeleteDialog, setDeleteDialog] = useState(false);
   const [viewOnly, setviewOnly] = useState(false);
@@ -28,6 +30,12 @@ const TimeSlots = ({
   const [currentSlot, setcurrentSlot] = useState({});
   const startDate = moment(eventData.startDateTime, "YYYY-MM-DD");
   const endDate = moment(eventData.endDateTime, "YYYY-MM-DD");
+  const [paginationSize, setPaginationSize] = useState(5);
+  const [gridApi, setGridApi] = useState(null);
+
+  const onGridReady = (params) => {
+    setGridApi(params.api);
+  };
 
   const multiEventCol = !startDate.diff(endDate)
     ? []
@@ -77,7 +85,26 @@ const TimeSlots = ({
     [eventManagementData.eventId, refresh],
     []
   );
-
+  const handleDownload = () => {
+    setLoading(true);
+    try {
+      requestBase({
+        url: `/auth/groupEvent/event/export/timeslot/${eventManagementData.eventId}`, //your url
+        method: "GET",
+        responseType: "blob", // important
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `timeslot.${new Date().toString()}.csv`); //or any other extension
+        document.body.appendChild(link);
+        link.click();
+        setLoading(false);
+      });
+    } catch (e) {
+      setLoading(false);
+    }
+  };
   const pageRefresh = () => {
     setrefresh(!refresh);
   };
@@ -102,7 +129,15 @@ const TimeSlots = ({
     setcurrentSlot(rowdata);
     setDeleteDialog(true);
   };
-
+  const onPageSizeChanged = (e) => {
+    console.log("newPageSize", e.target.value);
+    setPaginationSize(e.target.value);
+    if (gridApi) {
+      gridApi.setDomLayout(e.target.value < 11 ? "autoHeight" : "normal");
+      document.querySelector("#myGrid").style.height =
+        e.target.value < 11 ? "" : "500px";
+    }
+  };
   return (
     <>
       <SectionHeader>
@@ -125,12 +160,44 @@ const TimeSlots = ({
           <SubSection></SubSection>
           <Row>
             <Col>
+              <Button
+                isLoading={isloading}
+                onClick={handleDownload}
+                kind={KIND.primary}
+              >
+                Export
+              </Button>
+              Page Size:
+              <select
+                style={{
+                  width: "10%",
+                  marginLeft: "5px",
+                  marginBottom: "5px",
+                }}
+                onChange={onPageSizeChanged}
+                id="page-size"
+              >
+                <option value="5" selected={paginationSize === "5"}>
+                  5
+                </option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
               <Table
+                onGridReady={onGridReady}
                 columns={columns}
                 viewHandler={viewHandler}
                 editHandler={editHandler}
                 deleteHandler={deleteHandler}
                 data={slotResponse.data}
+                pagination={true}
+                paginationPageSize={paginationSize}
+                viewDelete={true}
               ></Table>
             </Col>
           </Row>
