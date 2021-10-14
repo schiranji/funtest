@@ -122,7 +122,34 @@ const EventList = () => {
         <Col>
           <EditEventTitle>Your Events</EditEventTitle>
         </Col>
+
         <CreateEventButtonContainer>
+          <input
+            type="text"
+            placeholder="Filter..."
+            value={searchinItem}
+            onChange={(e) => {
+              if (e.target.value.length > 3) {
+                const data = managedEvents.filter((item) => {
+                  return item.name
+                    .toLowerCase()
+                    .includes(e.target.value.toLowerCase());
+                });
+
+                setFilterManagedEvents(data);
+              } else {
+                setFilterManagedEvents([]);
+              }
+              setSearchingItem(e.target.value);
+            }}
+            style={{
+              height: 40,
+              borderRadius: 0,
+              backgroundColor: "#F6F6F6",
+              color: "#888",
+              margin: "10px",
+            }}
+          />
           <Button
             size="default"
             onClick={() => {
@@ -146,32 +173,6 @@ const EventList = () => {
             </NoEventsContainer>
           ) : (
             <ListContainer>
-              <input
-                type="text"
-                placeholder="Filter..."
-                value={searchinItem}
-                onChange={(e) => {
-                  if (e.target.value.length > 3) {
-                    const data = managedEvents.filter((item) => {
-                      return item.name
-                        .toLowerCase()
-                        .includes(e.target.value.toLowerCase());
-                    });
-
-                    setFilterManagedEvents(data);
-                  } else {
-                    setFilterManagedEvents([]);
-                  }
-                  setSearchingItem(e.target.value);
-                }}
-                style={{
-                  height: 40,
-                  borderRadius: 0,
-                  backgroundColor: "#F6F6F6",
-                  color: "#888",
-                }}
-              />
-              <br />
               <Table
                 editHandler={(data) => {
                   if (data.eventType == "group") {

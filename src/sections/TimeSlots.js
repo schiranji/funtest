@@ -12,6 +12,7 @@ import moment from "moment";
 import { EditTimeSlot } from "./editTimeSlot";
 import { Delete } from "./deleteTimeSlot";
 import { Button, KIND } from "baseui/button";
+import Export from "baseui/icon/arrow-up";
 
 const TimeSlots = ({
   formikProps,
@@ -56,22 +57,33 @@ const TimeSlots = ({
     ...multiEventCol,
     {
       field: "startDateTime",
+      headerName: "Start Time",
       cellRenderer: (props) =>
         moment(new Date(props.data.startDateTime)).format("h:mma"),
     },
     {
       field: "endDateTime",
+      headerName: "End Time",
       cellRenderer: (props) =>
         moment(new Date(props.data.endDateTime)).format("h:mma"),
     },
     {
       field: "signupName",
+      headerName: "Name",
+      cellRenderer: (props) =>
+        props.data.signupName ? props.data.signupName : "Available",
     },
     {
       field: "emailAdddress",
+      headerName: "Email",
+      cellRenderer: (props) =>
+        props.data.emailAdddress ? props.data.emailAdddress : "Available",
     },
     {
       field: "phoneNumber",
+      headerName: "Phone",
+      cellRenderer: (props) =>
+        props.data.emailAdddress ? props.data.emailAdddress : "Available",
     },
   ];
   //const handleWithAny = handleWithAnyFunction(handleChange, whenAny);
@@ -161,9 +173,11 @@ const TimeSlots = ({
           <Row>
             <Col>
               <Button
+                style={{ marginRight: "10px" }}
                 isLoading={isloading}
                 onClick={handleDownload}
                 kind={KIND.primary}
+                endEnhancer={() => <Export size={24} />}
               >
                 Export
               </Button>

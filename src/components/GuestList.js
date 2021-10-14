@@ -16,7 +16,31 @@ import { HiddenRow } from "../utils";
 const GuestListContainer = styled.div`
   margin-bottom: 35px;
 `;
-
+const Field = (props) => {
+  return props.value ? (
+    <span style={{ marginRight: "5px" }}>
+      <strong>
+        {props.title}
+        {" : "}
+      </strong>
+      <span>{props.value}</span>
+    </span>
+  ) : (
+    <span></span>
+  );
+};
+const statusMode = (key) => {
+  switch (key) {
+    case "A":
+      return "Accepted";
+    case "D":
+      return "Declined";
+    case "M":
+      return "Maybe";
+    default:
+      return "";
+  }
+};
 const GuestList = ({ setDirty }) => {
   const { setFieldValue, values } = useFormikContext();
   const { invitees } = values;
@@ -43,20 +67,28 @@ const GuestList = ({ setDirty }) => {
               <Formik
                 enableReinitialize
                 validationSchema={Yup.object().shape({
-                  firstName: Yup.string().required(),
-                  lastName: Yup.string().required(),
-                  phoneNumber: Yup.string().test(function (value) {
-                    const { emailAddress } = this.parent;
-                    if (!emailAddress) return value != null;
-                    return true;
-                  }),
+                  firstName: Yup.string().required("FirstName is required"),
+                  lastName: Yup.string().required("LastName is required"),
+                  phoneNumber: Yup.string().test(
+                    "len",
+                    "Email or Phone number is required",
+                    function (value) {
+                      const { emailAddress } = this.parent;
+                      if (!emailAddress) return value != null;
+                      return true;
+                    }
+                  ),
                   emailAddress: Yup.string()
                     .email()
-                    .test(function (value) {
-                      const { phoneNumber } = this.parent;
-                      if (!phoneNumber) return value != null;
-                      return true;
-                    }),
+                    .test(
+                      "len",
+                      "Email or Phone number is required",
+                      function (value) {
+                        const { phoneNumber } = this.parent;
+                        if (!phoneNumber) return value != null;
+                        return true;
+                      }
+                    ),
                 })}
                 initialValues={{
                   firstName: selectedInvitee.firstName || "",
@@ -317,10 +349,24 @@ const GuestList = ({ setDirty }) => {
                         {invitee.firstName} {invitee.lastName}
                       </strong>
                       <br></br>
-                      {invitee.emailAddress && `Email:${invitee.emailAddress}`}
-                      {"  "}
-                      {invitee.phoneNumber && `Phone:${invitee.phoneNumber}`}
-                      {invitee.viewed ? ", opened invite" : ""}
+                      <Field title="Email" value={invitee.emailAddress} />
+                      <Field title="Phone" value={invitee.phoneNumber} />
+                      <Field
+                        title="Status"
+                        value={statusMode(invitee.rsvpStatus)}
+                      />
+                      <Field
+                        title="No. of Adults"
+                        value={invitee.rsvpAdultCount.toString()}
+                      />
+                      <Field
+                        title="No. of Kids"
+                        value={invitee.rsvpKidCount.toString()}
+                      />
+                      <Field
+                        title="Viewed"
+                        value={invitee.viewed ? "Yes" : "No"}
+                      />
                     </span>
                   </ListItem>
                 ))}

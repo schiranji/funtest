@@ -1,12 +1,12 @@
-import React from 'react'
+import React from "react";
 import { Button } from "baseui/button";
 
-const ActionButton = ({className, children, ...props}) => {
+const ActionButton = ({ className, children, ...props }) => {
   return (
     <Button
       overrides={{
         BaseButton: {
-          style: ({$theme}) => {
+          style: ({ $theme }) => {
             return {
               color: `${$theme.colors.darkAccent}`,
               backgroundColor: $theme.colors.accent,
@@ -18,28 +18,30 @@ const ActionButton = ({className, children, ...props}) => {
               borderRightWidth: `2px`,
               borderBottomWidth: `2px`,
               borderLeftWidth: `2px`,
-              borderColor:  $theme.colors.darkAccent,
+              borderColor: $theme.colors.darkAccent,
               paddingTop: "10px",
               paddingRight: "15px",
               paddingBottom: "10px",
               paddingLeft: "15px",
+              marginRight: "5px",
               fontFamily: "quicksand",
-              ':hover': {
+              ":hover": {
                 backgroundColor: "white",
               },
-              ':focus': {
-                backgroundColor: $theme.colors.accent
-              }
-            }
+              ":focus": {
+                backgroundColor: $theme.colors.accent,
+              },
+            };
           },
-        }
+        },
       }}
-      className={className} 
+      className={className}
       type={props.type || "button"}
-      {...props}>
-        {children}
+      {...props}
+    >
+      {children}
     </Button>
-  )
-}
+  );
+};
 
 export default ActionButton;
