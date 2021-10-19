@@ -14,9 +14,12 @@ const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2
 
 const SignupSchema = Yup.object().shape({
   signupName: Yup.string().required("Name is Required").max(50),
-  phoneNumber: Yup.string().matches(phoneRegExp, {
-    message: "Phone number is not valid",
-  }),
+  phoneNumber: Yup.string()
+    .matches(phoneRegExp, {
+      message: "Phone number is not valid",
+    })
+    .max(15)
+    .min(9),
   emailAdddress: Yup.string().email("Please enter valid email").max(50),
   startDateTime: Yup.string().required("Please provide date and time"),
   endDateTime: Yup.string().required("Please provide date and time"),
