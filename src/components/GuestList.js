@@ -3,8 +3,6 @@ import styled from "styled-components";
 import { Row, Col } from "reactstrap";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import { useFormikContext, Formik } from "formik";
-import { ListItem } from "baseui/list";
-import { Delete } from "baseui/icon";
 import { Button, KIND } from "baseui/button";
 import * as Yup from "yup";
 import { toaster } from "baseui/toast";
@@ -12,7 +10,8 @@ import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import { ListHeader } from "./ListUi";
 import { HiddenRow } from "../utils";
-
+import Table from "../shared/table";
+import { COUNTRY_TYPE } from "../utils";
 const GuestListContainer = styled.div`
   margin-bottom: 35px;
 `;
@@ -41,11 +40,67 @@ const statusMode = (key) => {
       return "";
   }
 };
-const GuestList = ({ setDirty }) => {
+
+const columns = [
+  {
+    headerName: "Name",
+    cellRenderer: (props) => `${props.data.firstName}  ${props.data.lastName}`,
+    width: 180,
+  },
+  {
+    field: "emailAddress",
+    headerName: "Email",
+  },
+  {
+    field: "phoneNumber",
+    headerName: "Phone",
+    width: 150,
+  },
+  {
+    field: "rsvpStatus",
+    headerName: "Status",
+    cellRenderer: (props) => statusMode(props.data.rsvpStatus),
+    width: 150,
+  },
+  {
+    field: "rsvpAdultCount",
+    headerName: "Adult count",
+    width: 150,
+  },
+  {
+    field: "rsvpKidCount",
+    headerName: "Kids Count",
+    width: 150,
+  },
+  {
+    field: "Viewed",
+    headerName: "Viewed",
+    width: 100,
+  },
+];
+
+const GuestList = ({ setDirty, eventManagementData, eventData }) => {
+  debugger;
   const { setFieldValue, values } = useFormikContext();
   const { invitees } = values;
   const [selectedInvitee, setSelectedInvitee] = useState({});
-
+  const editHandler = (invitee) => {
+    setDirty(true);
+    setSelectedInvitee(invitee);
+  };
+  const deleteHandler = (invitee) => {
+    setDirty(true);
+    const newValue = invitees.filter((s) => {
+      return (
+        s.emailAddress !== invitee.emailAddress &&
+        s.phoneNumber !== invitee.phoneNumber
+      );
+    });
+    setFieldValue("invitees", [...newValue]);
+  };
+  const onGridReady = (params) => {
+    //params.api.sizeColumnsToFit();
+  };
   return (
     <GuestListContainer>
       <Row>
@@ -196,6 +251,16 @@ const GuestList = ({ setDirty }) => {
                           ></Input>
                         </FormControl>
                       </Col>
+                      <Col xs="1">
+                        <FormControl label="Country" error={errors.phoneNumber}>
+                          <Input
+                            name="country"
+                            type="tel"
+                            placeholder="Country"
+                            value={COUNTRY_TYPE[eventData.country]}
+                          ></Input>
+                        </FormControl>
+                      </Col>
                       <Col>
                         <FormControl label="Phone" error={errors.phoneNumber}>
                           <Input
@@ -306,70 +371,17 @@ const GuestList = ({ setDirty }) => {
               {invitees && invitees.length > 0 && (
                 <ListHeader>Your guest list</ListHeader>
               )}
-              {invitees &&
-                invitees.map((invitee) => (
-                  <ListItem
-                    key={invitee.emailAddress}
-                    endEnhancer={() => (
-                      <>
-                        <Button
-                          kind={KIND.minimal}
-                          size="compact"
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setDirty(true);
-                            const newValue = invitees.filter((s) => {
-                              return (
-                                s.emailAddress !== invitee.emailAddress &&
-                                s.phoneNumber !== invitee.phoneNumber
-                              );
-                            });
-                            setFieldValue("invitees", [...newValue]);
-                          }}
-                        >
-                          <Delete size={32}></Delete>
-                        </Button>
-                        <Button
-                          size="compact"
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setDirty(true);
-                            setSelectedInvitee(invitee);
-                          }}
-                        >
-                          Edit
-                        </Button>
-                      </>
-                    )}
-                  >
-                    <span>
-                      <strong>
-                        {invitee.firstName} {invitee.lastName}
-                      </strong>
-                      <br></br>
-                      <Field title="Email" value={invitee.emailAddress} />
-                      <Field title="Phone" value={invitee.phoneNumber} />
-                      <Field
-                        title="Status"
-                        value={statusMode(invitee.rsvpStatus)}
-                      />
-                      <Field
-                        title="No. of Adults"
-                        value={invitee.rsvpAdultCount.toString()}
-                      />
-                      <Field
-                        title="No. of Kids"
-                        value={invitee.rsvpKidCount.toString()}
-                      />
-                      <Field
-                        title="Viewed"
-                        value={invitee.viewed ? "Yes" : "No"}
-                      />
-                    </span>
-                  </ListItem>
-                ))}
+              <Table
+                columns={columns}
+                editHandler={editHandler}
+                deleteHandler={deleteHandler}
+                data={invitees}
+                pagination={true}
+                paginationPageSize={5}
+                viewDelete={true}
+                ActionRow="FIRST"
+                onGridReady={onGridReady}
+              ></Table>
             </StyledBody>
           </Card>
         </Col>

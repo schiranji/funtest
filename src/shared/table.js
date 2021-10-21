@@ -8,11 +8,15 @@ const Table = (props) => {
   const BtnCellRenderer = (row) => {
     return (
       <>
-        <Show size={30} onClick={() => props.viewHandler(row.data)} /> |
-        {props.viewDelete && (
+        {props.viewHandler && (
+          <Show size={30} onClick={() => props.viewHandler(row.data)} />
+        )}
+        {props.deleteHandler && (
           <Delete size={35} onClick={() => props.deleteHandler(row.data)} />
         )}
-        <AiFillEdit size={30} onClick={() => props.editHandler(row.data)} />
+        {props.editHandler && (
+          <AiFillEdit size={30} onClick={() => props.editHandler(row.data)} />
+        )}
       </>
     );
   };
@@ -36,6 +40,7 @@ const Table = (props) => {
           ...props.frameworkComponents,
           btnCellRenderer: props.BtnCellRenderer || BtnCellRenderer,
         }}
+        suppressSizeToFit={true}
       >
         {props.ActionRow === "FIRST" && (
           <AgGridColumn

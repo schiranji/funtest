@@ -111,6 +111,14 @@ export const regularNavItems = [
     itemId: "guests",
   },
   {
+    title: "Potluck Menu",
+    itemId: "potluck",
+  },
+  {
+    title: "Time Slots",
+    itemId: "timeslots",
+  },
+  {
     title: "Ticketing and RSVP",
     itemId: "ticketing",
   },
@@ -201,6 +209,11 @@ export const EVENT_TYPE = {
   group: "group",
   regular: "regular",
   private: "private",
+};
+
+export const COUNTRY_TYPE = {
+  US: "+1",
+  IN: "+91",
 };
 
 export const ATTENDANCE_TYPE = {

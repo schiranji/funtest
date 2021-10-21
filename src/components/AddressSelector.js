@@ -1,22 +1,27 @@
-import React, { useState } from 'react'
-import { Input } from 'baseui/input'
-import { Select } from 'baseui/select'
-import { Col, FormGroup, Row } from 'reactstrap'
-import usePlacesAutocomplete, { getDetails } from 'use-places-autocomplete'
+import React, { useState } from "react";
+import { Input } from "baseui/input";
+import { Select } from "baseui/select";
+import { Col, FormGroup, Row } from "reactstrap";
+import usePlacesAutocomplete, { getDetails } from "use-places-autocomplete";
 
 const AddressSelector = ({
-  streetAddress, setStreetAddress,
-  zipCode, setZipCode,
-  address2, setAddress2,
-  city, setCity,
-  country, setCountry,
-  state, setState,
-  lat, setLat,
-  lng, setLng,
-  locationName, setLocationName,
-  selectedPlace, setSelectedPlace,
+  setStreetAddress,
+  zipCode,
+  setZipCode,
+  setAddress2,
+  city,
+  setCity,
+  country,
+  setCountry,
+  state,
+  setState,
+  setLat,
+  setLng,
+  setLocationName,
+  selectedPlace,
+  setSelectedPlace,
   inline,
-  error
+  error,
 }) => {
   const {
     ready,
@@ -30,12 +35,12 @@ const AddressSelector = ({
     },
     debounce: 300,
   });
-  const [selectedAddress, setSelectedAddress] = useState(null)
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const handleSelect = async (o) => {
     if (o[0] === undefined) return;
-    
-    const { description, place_id } = o[0]
+
+    const { description, place_id } = o[0];
     // When user selects a place, we can replace the keyword without request data from API
     // by setting the second parameter as "false"
     setValue(description, false);
@@ -44,42 +49,48 @@ const AddressSelector = ({
     try {
       let details = await getDetails({
         placeId: place_id,
-        fields: ['address_component', "geometry", "name", 'formatted_address']
-      })   
+        fields: ["address_component", "geometry", "name", "formatted_address"],
+      });
 
-      setLocationName(details.name)
-      setStreetAddress(details.formatted_address.substring(0, details.formatted_address.indexOf(",")))
-      setSelectedAddress(details.formatted_address)
+      setLocationName(details.name);
+      setStreetAddress(
+        details.formatted_address.substring(
+          0,
+          details.formatted_address.indexOf(",")
+        )
+      );
+      setSelectedAddress(details.formatted_address);
 
-      setZipCode("")
-      setCity("")
-      setAddress2("")
-      setCountry("")
-      setState("")
+      setZipCode("");
+      setCity("");
+      setAddress2("");
+      setCountry("");
+      setState("");
 
       for (const c of details.address_components) {
         for (const t of c.types) {
           if (t === "locality") {
-            setCity(c.short_name !== undefined ? c.short_name : c.long_name)
+            setCity(c.short_name !== undefined ? c.short_name : c.long_name);
           }
           if (t === "administrative_area_level_1") {
-            setState(c.short_name !== undefined ? c.short_name : c.long_name)
+            setState(c.short_name !== undefined ? c.short_name : c.long_name);
           }
           if (t === "postal_code") {
-            setZipCode(c.short_name !== undefined ? c.short_name : c.long_name)
+            setZipCode(c.short_name !== undefined ? c.short_name : c.long_name);
           }
           if (t === "neighborhood") {
-            setAddress2(c.short_name !== undefined ? c.short_name : c.long_name)
+            setAddress2(
+              c.short_name !== undefined ? c.short_name : c.long_name
+            );
           }
           if (t === "country") {
-            setCountry(c.short_name !== undefined ? c.short_name : c.long_name)
+            setCountry(c.short_name !== undefined ? c.short_name : c.long_name);
           }
         }
       }
 
-      setLat(details.geometry.location.lat())
-      setLng(details.geometry.location.lng())
-
+      setLat(details.geometry.location.lat());
+      setLng(details.geometry.location.lng());
     } catch (e) {
       console.log("😱 Error: ", error);
     }
@@ -91,7 +102,7 @@ const AddressSelector = ({
         <Col sm={inline ? 5 : 12}>
           <FormGroup>
             <label htmlFor="streetAddress">Street address</label>
-            <Select 
+            <Select
               clearable={false}
               error={error}
               noResultsMsg="Start typing..."
@@ -100,25 +111,25 @@ const AddressSelector = ({
               isLoading={loading}
               options={data}
               getValueLabel={(e) => {
-                return e.option.structured_formatting.main_text
+                return e.option.structured_formatting.main_text;
               }}
               getOptionLabel={(e) => {
-                return e.option.description 
+                return e.option.description;
               }}
               onChange={(e) => {
-                setSelectedPlace(e.value)
-                handleSelect(e.value)
+                setSelectedPlace(e.value);
+                handleSelect(e.value);
               }}
-              onInputChange={event => {
-                const target = event.target
-                setValue(target.value)
+              onInputChange={(event) => {
+                const target = event.target;
+                setValue(target.value);
               }}
               onBlurResetsInput={false}
               onCloseResetsInput={false}
               value={selectedPlace}
               valueKey="description"
-              labelKey="description">
-            </Select>
+              labelKey="description"
+            ></Select>
           </FormGroup>
         </Col>
         <Col>
@@ -128,8 +139,9 @@ const AddressSelector = ({
               placeholder="City"
               type="text"
               name="city"
-              onChange={e => setCity(e.target.value)}
-              value={city}></Input>
+              onChange={(e) => setCity(e.target.value)}
+              value={city}
+            ></Input>
           </FormGroup>
         </Col>
         <Col>
@@ -139,8 +151,9 @@ const AddressSelector = ({
               placeholder="Zip Code"
               type="text"
               name="zipCode"
-              onChange={e => setZipCode(e.target.value)}
-              value={zipCode}></Input>
+              onChange={(e) => setZipCode(e.target.value)}
+              value={zipCode}
+            ></Input>
           </FormGroup>
         </Col>
         <Col>
@@ -150,8 +163,20 @@ const AddressSelector = ({
               placeholder="State"
               type="text"
               name="state"
-              onChange={e => setState(e.target.value)}
-              value={state}></Input>
+              onChange={(e) => setState(e.target.value)}
+              value={state}
+            ></Input>
+          </FormGroup>
+        </Col>
+        <Col>
+          <FormGroup htmlFor="Country">
+            <label htmlFor="country">Country</label>
+            <Input
+              name="country"
+              type="tel"
+              placeholder="Country"
+              value={country}
+            ></Input>
           </FormGroup>
         </Col>
       </Row>
@@ -159,12 +184,12 @@ const AddressSelector = ({
       {selectedAddress && (
         <Row>
           <Col>
-              <p className="mb-0">Selected address: {selectedAddress}</p>
+            <p className="mb-0">Selected address: {selectedAddress}</p>
           </Col>
         </Row>
       )}
     </>
-  )
-}
+  );
+};
 
 export default AddressSelector;

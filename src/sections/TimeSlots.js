@@ -13,6 +13,7 @@ import { EditTimeSlot } from "./editTimeSlot";
 import { Delete } from "./deleteTimeSlot";
 import { Button, KIND } from "baseui/button";
 import Export from "baseui/icon/arrow-up";
+import { EVENT_TYPE } from "../utils";
 
 const TimeSlots = ({
   formikProps,
@@ -36,8 +37,10 @@ const TimeSlots = ({
 
   const onGridReady = (params) => {
     setGridApi(params.api);
+    params.api.sizeColumnsToFit();
   };
-
+  const eventTyepe =
+    eventData.eventType === EVENT_TYPE.group ? "groupEvent" : "event";
   const multiEventCol = !startDate.diff(endDate)
     ? []
     : [
@@ -91,7 +94,7 @@ const TimeSlots = ({
   const slotResponse = useCall(
     () =>
       requestBase.get(
-        `/auth/groupEvent/event/search/timeslot/${eventManagementData.eventId}`,
+        `/auth/${eventTyepe}/event/search/timeslot/${eventManagementData.eventId}`,
         {}
       ),
     [eventManagementData.eventId, refresh],
@@ -101,7 +104,7 @@ const TimeSlots = ({
     setLoading(true);
     try {
       requestBase({
-        url: `/auth/groupEvent/event/export/timeslot/${eventManagementData.eventId}`, //your url
+        url: `/auth/${eventTyepe}/event/export/timeslot/${eventManagementData.eventId}`, //your url
         method: "GET",
         responseType: "blob", // important
       }).then((response) => {
@@ -212,6 +215,7 @@ const TimeSlots = ({
                 pagination={true}
                 paginationPageSize={paginationSize}
                 viewDelete={true}
+                ActionRow="FIRST"
               ></Table>
             </Col>
           </Row>

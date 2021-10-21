@@ -7,10 +7,13 @@ import SubSection from "../components/Subsection";
 import ActionButton from "../components/ActionButton";
 import GuestList from "../components/GuestList";
 import { toaster } from "baseui/toast";
+import { EVENT_TYPE } from "../utils";
 
-const Guests = ({ formikProps, whenAny, eventManagementData }) => {
+const Guests = ({ formikProps, whenAny, eventManagementData, eventData }) => {
   const { handleSubmit } = formikProps;
   const [isloading, setLoading] = useState(false);
+  const eventTyepe =
+    eventData.eventType === EVENT_TYPE.group ? "groupEvent" : "event";
 
   const [isloadinghandleSendReminder, setLoadinghandleSendReminder] = useState(
     false
@@ -21,7 +24,7 @@ const Guests = ({ formikProps, whenAny, eventManagementData }) => {
     setLoadinghandleReminder(true);
     try {
       requestBase({
-        url: `/auth/event/eventManagement/update/remindRSVP/${eventManagementData.eventId}`, //your url
+        url: `/auth/${eventTyepe}/eventManagement/update/remindRSVP/${eventManagementData.eventId}`, //your url
         method: "POST",
       }).then((response) => {
         setLoadinghandleReminder(false);
@@ -35,7 +38,7 @@ const Guests = ({ formikProps, whenAny, eventManagementData }) => {
     setLoadinghandleSendReminder(true);
     try {
       requestBase({
-        url: `/auth/event/eventManagement/update/remindEvent/${eventManagementData.eventId}`, //your url
+        url: `/auth/${eventTyepe}/eventManagement/update/remindEvent/${eventManagementData.eventId}`, //your url
         method: "POST",
       }).then((response) => {
         setLoadinghandleSendReminder(false);
@@ -49,7 +52,7 @@ const Guests = ({ formikProps, whenAny, eventManagementData }) => {
     setLoading(true);
     try {
       requestBase({
-        url: `/auth/event/eventManagement/view/exportInvitees/${eventManagementData.eventId}`, //your url
+        url: `/auth/${eventTyepe}/eventManagement/view/exportInvitees/${eventManagementData.eventId}`, //your url
         method: "POST",
         responseType: "blob", // important
       }).then((response) => {
@@ -75,7 +78,10 @@ const Guests = ({ formikProps, whenAny, eventManagementData }) => {
       <SectionBody>
         <form onSubmit={submitWithAny}>
           <SubSection>
-            <GuestList setDirty={whenAny}></GuestList>
+            <GuestList
+              eventManagementData={eventManagementData}
+              eventData={eventData}
+            ></GuestList>
           </SubSection>
           <Row>
             <Col>
