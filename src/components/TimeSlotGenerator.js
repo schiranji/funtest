@@ -14,6 +14,7 @@ import { Textarea } from "baseui/textarea";
 import { requestBase } from "../utils";
 import { toaster } from "baseui/toast";
 import { TimePicker } from "baseui/timepicker";
+import { EVENT_TYPE } from "../utils";
 
 const TimeSlotGeneratorContainer = styled.div`
   margin-bottom: 35px;
@@ -32,7 +33,10 @@ const TimeSlotGenerator = ({
 }) => {
   const { setFieldValue, values } = useFormikContext();
   const { startTime, endTime } = values;
-
+  const eventTyepe =
+    eventData && eventData.eventType === EVENT_TYPE.group
+      ? "groupEvent"
+      : "event";
   return (
     <TimeSlotGeneratorContainer>
       <Row>
@@ -70,23 +74,27 @@ const TimeSlotGenerator = ({
                 }}
                 onSubmit={async (newGiftValues, { resetForm }) => {
                   setDirty(true);
-                  const r = await requestBase.post(
-                    `/auth/groupEvent/event/create/generateTimeSlots/${eventManagementData.eventId}`,
-                    newGiftValues,
-                    {}
-                  );
-                  const response = r.data;
 
-                  if (response.statusCode === 15) {
-                    toaster.warning(
-                      "More than 100 slots! Check start and end dates and try again."
+                  try {
+                    const r = await requestBase.post(
+                      `/auth/${eventTyepe}/event/create/generateTimeSlots/${eventManagementData.eventId}`,
+                      newGiftValues,
+                      {}
                     );
-                    return;
-                  }
+                    const response = r.data;
+                    if (response.statusCode === 15) {
+                      toaster.warning(
+                        "More than 100 slots! Check start and end dates and try again."
+                      );
+                      return;
+                    }
 
-                  if (response.statusCode === 0) {
-                    pageRefresh();
-                    setFieldValue("timeSlots", response.data.results);
+                    if (response.statusCode === 0) {
+                      pageRefresh();
+                      setFieldValue("timeSlots", response.data.results);
+                    }
+                  } catch (e) {
+                    toaster.negative(e.response.data.messages.join(","));
                   }
                 }}
               >

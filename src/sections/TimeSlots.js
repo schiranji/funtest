@@ -164,6 +164,7 @@ const TimeSlots = ({
             <TimeSlotGenerator
               eventManagementData={eventManagementData}
               setDirty={whenAny}
+              eventData={eventData}
               pageRefresh={pageRefresh}
               handleNew={() => {
                 setIsNew(true);
