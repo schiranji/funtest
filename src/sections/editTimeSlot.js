@@ -9,11 +9,13 @@ import { Input } from "baseui/input";
 import * as Yup from "yup";
 import { requestBase } from "../utils";
 import { toaster } from "baseui/toast";
+import { TimePicker } from "baseui/timepicker";
+import moment from "moment";
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const SignupSchema = Yup.object().shape({
-  signupName: Yup.string().required("Name is Required").max(50),
+  signupName: Yup.string().max(50),
   phoneNumber: Yup.string()
     .matches(phoneRegExp, {
       message: "Phone number is not valid",
@@ -21,13 +23,26 @@ const SignupSchema = Yup.object().shape({
     .max(15)
     .min(9),
   emailAdddress: Yup.string().email("Please enter valid email").max(50),
-  startDateTime: Yup.string().required("Please provide date and time"),
-  endDateTime: Yup.string().required("Please provide date and time"),
+  startDateTime: Yup.string().required("Please provide date"),
+  endDateTime: Yup.string().required("Please provide date"),
+  startTime: Yup.string().required("Please provide time"),
+  endTime: Yup.string().required("Please provide time"),
 });
 
 export const EditTimeSlot = (props) => {
   const [isloading, setLoading] = useState(false);
   const HandleSave = async (values) => {
+    values.startDateTime = new Date(
+      moment(values.startDateTime).format("DD MMM YYYY") +
+        " " +
+        moment(values.startTime).format("HH:mm")
+    );
+    values.endDateTime = new Date(
+      moment(values.endDateTime).format("DD MMM YYYY") +
+        " " +
+        moment(values.endTime).format("HH:mm")
+    );
+
     setLoading(true);
     const url = props.isNew
       ? `/auth/groupEvent/event/create/timeslot/${props.eventManagementData.eventId}`
@@ -70,6 +85,8 @@ export const EditTimeSlot = (props) => {
                 emailAdddress: "",
                 startDateTime: "",
                 endDateTime: "",
+                startTime: "",
+                endTime: "",
               }
             : {
                 ...props.data,
@@ -78,6 +95,8 @@ export const EditTimeSlot = (props) => {
                 emailAdddress: props.data.emailAdddress,
                 startDateTime: new Date(props.data.startDateTime),
                 endDateTime: new Date(props.data.endDateTime),
+                startTime: new Date(props.data.startDateTime),
+                endTime: new Date(props.data.endDateTime),
               }
         }
         validationSchema={SignupSchema}
@@ -147,17 +166,47 @@ export const EditTimeSlot = (props) => {
             <Row>
               <Col>
                 <FormControl
-                  label="Start Time"
+                  label="Start Date"
                   error={touched.startDateTime ? errors.startDateTime : null}
                 >
                   <Datepicker
-                    formatString="MM/dd/yyyy HH:mm"
+                    formatString="MM/dd/yyyy"
                     onChange={({ time, date }) => {
                       setFieldValue("startDateTime", date);
                     }}
                     onBlur={handleBlur}
                     value={value.startDateTime}
-                    timeSelectStart
+                    disabled={props.viewOnly}
+                    minDate={startTime}
+                    maxDate={endTime}
+                  ></Datepicker>
+                </FormControl>
+              </Col>
+              <Col>
+                <FormControl
+                  label="Start Time"
+                  error={touched.startTime ? errors.startTime : null}
+                >
+                  <TimePicker
+                    error={errors.startTime && touched.startTime}
+                    value={value.startTime}
+                    onChange={(time) => setFieldValue("startTime", time)}
+                    creatable
+                  ></TimePicker>
+                </FormControl>
+              </Col>
+              <Col>
+                <FormControl
+                  label="End Date"
+                  error={touched.endDateTime ? errors.endDateTime : null}
+                >
+                  <Datepicker
+                    formatString="MM/dd/yyyy"
+                    onChange={({ time, date }) => {
+                      setFieldValue("endDateTime", date);
+                    }}
+                    onBlur={handleBlur}
+                    value={value.endDateTime}
                     disabled={props.viewOnly}
                     minDate={startTime}
                     maxDate={endTime}
@@ -167,20 +216,14 @@ export const EditTimeSlot = (props) => {
               <Col>
                 <FormControl
                   label="End Time"
-                  error={touched.endDateTime ? errors.endDateTime : null}
+                  error={touched.endTime ? errors.endTime : null}
                 >
-                  <Datepicker
-                    formatString="MM/dd/yyyy HH:mm"
-                    onChange={({ time, date }) => {
-                      setFieldValue("endDateTime", date);
-                    }}
-                    onBlur={handleBlur}
-                    value={value.endDateTime}
-                    timeSelectStart
-                    disabled={props.viewOnly}
-                    minDate={startTime}
-                    maxDate={endTime}
-                  ></Datepicker>
+                  <TimePicker
+                    error={errors.endTime && touched.endTime}
+                    value={value.endTime}
+                    onChange={(time) => setFieldValue("endTime", time)}
+                    creatable
+                  ></TimePicker>
                 </FormControl>
               </Col>
             </Row>

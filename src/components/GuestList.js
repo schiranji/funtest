@@ -12,6 +12,9 @@ import { ListHeader } from "./ListUi";
 import { HiddenRow } from "../utils";
 import Table from "../shared/table";
 import { COUNTRY_TYPE } from "../utils";
+import { PhoneInput, COUNTRIES } from "baseui/phone-input";
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
 const GuestListContainer = styled.div`
   margin-bottom: 35px;
 `;
@@ -80,7 +83,6 @@ const columns = [
 ];
 
 const GuestList = ({ setDirty, eventManagementData, eventData }) => {
-  debugger;
   const { setFieldValue, values } = useFormikContext();
   const { invitees } = values;
   const [selectedInvitee, setSelectedInvitee] = useState({});
@@ -124,15 +126,17 @@ const GuestList = ({ setDirty, eventManagementData, eventData }) => {
                 validationSchema={Yup.object().shape({
                   firstName: Yup.string().required("FirstName is required"),
                   lastName: Yup.string().required("LastName is required"),
-                  phoneNumber: Yup.string().test(
-                    "len",
-                    "Email or Phone number is required",
-                    function (value) {
-                      const { emailAddress } = this.parent;
-                      if (!emailAddress) return value != null;
-                      return true;
-                    }
-                  ),
+                  phoneNumber: Yup.string()
+                    .matches(phoneRegExp, "Phone number is not valid")
+                    .test(
+                      "len",
+                      "Email or Phone number is required",
+                      function (value) {
+                        const { emailAddress } = this.parent;
+                        if (!emailAddress) return value != null;
+                        return true;
+                      }
+                    ),
                   emailAddress: Yup.string()
                     .email()
                     .test(
@@ -251,26 +255,19 @@ const GuestList = ({ setDirty, eventManagementData, eventData }) => {
                           ></Input>
                         </FormControl>
                       </Col>
-                      <Col xs="1">
-                        <FormControl label="Country" error={errors.phoneNumber}>
-                          <Input
-                            name="country"
-                            type="tel"
-                            placeholder="Country"
-                            value={COUNTRY_TYPE[eventData.country]}
-                          ></Input>
-                        </FormControl>
-                      </Col>
                       <Col>
                         <FormControl label="Phone" error={errors.phoneNumber}>
-                          <Input
+                          <PhoneInput
                             name="phoneNumber"
-                            type="tel"
-                            placeholder="Phone Number"
-                            value={newInviteeValues.phoneNumber}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                          ></Input>
+                            country={COUNTRIES[eventData.country]}
+                            text={newInviteeValues.phoneNumber}
+                            onTextChange={(event) => {
+                              setNewinviteeFieldValue(
+                                "phoneNumber",
+                                event.currentTarget.value
+                              );
+                            }}
+                          />
                         </FormControl>
                       </Col>
                     </Row>

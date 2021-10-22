@@ -91,7 +91,7 @@ const TimeSlotGenerator = ({
 
                     if (response.statusCode === 0) {
                       pageRefresh();
-                      setFieldValue("timeSlots", response.data.results);
+                      //setFieldValue("timeSlots", response.data.results);
                     }
                   } catch (e) {
                     toaster.negative(e.response.data.messages.join(","));

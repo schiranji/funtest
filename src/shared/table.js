@@ -42,7 +42,7 @@ const Table = (props) => {
         }}
         suppressSizeToFit={true}
       >
-        {props.ActionRow === "FIRST" && (
+        {!props.isNoAction && props.ActionRow === "FIRST" && (
           <AgGridColumn
             field="Action"
             cellClass="custom-athlete-cell"
@@ -54,7 +54,7 @@ const Table = (props) => {
         {props.columns.map((column) => (
           <AgGridColumn {...column} key={column.field} />
         ))}
-        {props.ActionRow !== "FIRST" && (
+        {!props.isNoAction && props.ActionRow !== "FIRST" && (
           <AgGridColumn
             field="Action"
             cellClass="custom-athlete-cell"

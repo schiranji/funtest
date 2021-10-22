@@ -18,6 +18,9 @@ const DashboardHeader = styled.div`
 `;
 
 const Dashboard = ({ eventData }) => {
+  const onGridReady = (params) => {
+    params.api.sizeColumnsToFit();
+  };
   const { id: eventId } = eventData;
   const [refresh, setRefresh] = useState(false);
 
@@ -41,24 +44,42 @@ const Dashboard = ({ eventData }) => {
     []
   );
 
+  const rsvpCount = useCall(
+    () =>
+      requestBase.post(
+        `/auth/event/eventManagement/view/rsvpCounts/${eventId}`,
+        {}
+      ),
+    [eventId, refresh],
+    []
+  );
+
   const columns = [
     {
-      field: "signupName",
-      headerName: "Name",
-      cellRenderer: (props) =>
-        props.data.signupName ? props.data.signupName : "Available",
+      field: "invitedCount",
+      headerName: "Invited",
     },
     {
-      field: "emailAdddress",
-      headerName: "Email",
-      cellRenderer: (props) =>
-        props.data.emailAdddress ? props.data.emailAdddress : "Available",
+      field: "acceptCount",
+      headerName: "Accepted",
+    },
+
+    {
+      field: "adultCount",
+      headerName: "Adult Count",
     },
     {
-      field: "phoneNumber",
-      headerName: "Phone",
-      cellRenderer: (props) =>
-        props.data.emailAdddress ? props.data.emailAdddress : "Available",
+      field: "kidsCount",
+      headerName: "Kids Count",
+    },
+
+    {
+      field: "declineCount",
+      headerName: "Declined",
+    },
+    {
+      field: "tentativeCount",
+      headerName: "Tentative",
     },
   ];
 
@@ -84,12 +105,16 @@ const Dashboard = ({ eventData }) => {
         {!dailyViews.isLoading && dailyViews.data.results.length > 0 && (
           <Chart data={dailyViews.data.results}></Chart>
         )}
-        <Table
-          columns={columns}
-          data={ticketSales.data}
-          pagination={true}
-          viewDelete={true}
-        ></Table>
+        {!rsvpCount.isLoading && (
+          <Table
+            height={100}
+            columns={columns}
+            data={[rsvpCount.data.data]}
+            viewDelete={true}
+            onGridReady={onGridReady}
+            isNoAction={true}
+          ></Table>
+        )}
       </SectionBody>
     </>
   );
