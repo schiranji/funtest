@@ -236,7 +236,7 @@ export const EditTimeSlot = (props) => {
                 style={{ "margin-right": "10px" }}
                 type="button"
                 onClick={props.handleClose}
-                kind={KIND.primary}
+                kind={KIND.minimal}
               >
                 Cancel
               </Button>

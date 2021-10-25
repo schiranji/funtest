@@ -20,6 +20,7 @@ import { Row, Container, Col, Nav } from "reactstrap";
 import { Button, KIND } from "baseui/button";
 import styled from "styled-components";
 import ChevronLeft from "baseui/icon/chevron-left";
+import { BreadCrumbComponent } from "./Breadcrumb";
 import {
   requestBase,
   getEventDetailUrl,
@@ -247,51 +248,60 @@ const Manage = ({ eventType }) => {
   });
 
   return (
-    <Container fluid className="manage-event-container">
-      {eventData && editorStateFromEventData ? (
-        <>
-          <Prompt
-            when={isDirty}
-            message={(location) =>
-              `You have unsaved changes, are you sure you want to leave this page?`
-            }
-          />
-          <ManageTitle className="manage-title">
-            <div>
-              <Link to="/">
-                <Button
-                  startEnhancer={ChevronLeft}
-                  size="compact"
-                  kind="secondary"
-                  shape="pill"
-                >
-                  Your Events
-                </Button>
-              </Link>
-              <h1>Editing Event: {eventData.name}</h1>
-            </div>
-          </ManageTitle>
-
-          <Row>
-            <Col md="3">
-              <Navigation
-                activeItemId={currentSection}
-                onChange={({ item, event }) => {
-                  event.preventDefault();
-                  if (isDirty) {
-                    toaster.warning(<p>Please save your changes!</p>);
-                  }
-                  setCurrentSection(item.itemId);
-                }}
+    <>
+      <Container fluid className="manage-event-container">
+        {eventData && editorStateFromEventData ? (
+          <>
+            <Prompt
+              when={isDirty}
+              message={(location) =>
+                `You have unsaved changes, are you sure you want to leave this page?`
+              }
+            />
+            <ManageTitle className="manage-title">
+              <div>
+                <h1>Editing Event: {eventData.name}</h1>
+              </div>
+            </ManageTitle>
+            <div style={{ margin: "20px" }}>
+              <BreadCrumbComponent
                 items={
                   eventType === EVENT_TYPE.group
                     ? groupNavItems
                     : regularNavItems
                 }
-                overrides={{
-                  NavLink: {
-                    style: ({ $active, $theme }) => {
-                      if (!$active) {
+                currentSection={currentSection}
+                setCurrentSection={setCurrentSection}
+              ></BreadCrumbComponent>
+            </div>
+            <Row>
+              <Col md="3">
+                <Navigation
+                  activeItemId={currentSection}
+                  onChange={({ item, event }) => {
+                    event.preventDefault();
+                    if (isDirty) {
+                      toaster.warning(<p>Please save your changes!</p>);
+                    }
+                    setCurrentSection(item.itemId);
+                  }}
+                  items={
+                    eventType === EVENT_TYPE.group
+                      ? groupNavItems
+                      : regularNavItems
+                  }
+                  overrides={{
+                    NavLink: {
+                      style: ({ $active, $theme }) => {
+                        if (!$active) {
+                          return {
+                            transition: "color .2s ease",
+                            ":hover": {
+                              textDecoration: "none",
+                              color: $theme.colors.primary300,
+                            },
+                          };
+                        }
                         return {
                           transition: "color .2s ease",
                           ":hover": {
@@ -299,411 +309,411 @@ const Manage = ({ eventType }) => {
                             color: $theme.colors.primary300,
                           },
                         };
-                      }
-                      return {
-                        transition: "color .2s ease",
-                        ":hover": {
-                          textDecoration: "none",
-                          color: $theme.colors.primary300,
-                        },
-                      };
+                      },
                     },
-                  },
-                  NavItem: {
-                    style: ({ $active, $theme }) => {
-                      if ($active) {
+                    NavItem: {
+                      style: ({ $active, $theme }) => {
+                        if ($active) {
+                          return {
+                            transition:
+                              "background-color .2s ease, color .2s ease",
+                            backgroundColor: $theme.colors.primary300,
+                            borderLeftColor: $theme.colors.primary500,
+                            color: $theme.colors.mono900,
+                            ":hover": {
+                              color: $theme.colors.primary300,
+                            },
+                          };
+                        }
                         return {
                           transition:
-                            "background-color .2s ease, color .2s ease",
-                          backgroundColor: $theme.colors.primary300,
-                          borderLeftColor: $theme.colors.primary500,
-                          color: $theme.colors.mono900,
+                            "color .2s ease, border-left-color .2s ease",
                           ":hover": {
                             color: $theme.colors.primary300,
+                            borderLeftColor: $theme.colors.primary500,
                           },
                         };
-                      }
-                      return {
-                        transition:
-                          "color .2s ease, border-left-color .2s ease",
-                        ":hover": {
-                          color: $theme.colors.primary300,
-                          borderLeftColor: $theme.colors.primary500,
-                        },
-                      };
+                      },
                     },
-                  },
-                }}
-              ></Navigation>
-            </Col>
-            <Col className="event-preview">
-              <Formik
-                validationSchema={validationSchema}
-                onSubmit={async (values) => {
-                  const startDateTime = combineDateAndTime(
-                    values.startDate,
-                    values.startTime
-                  ).toUTCString();
-
-                  let endDateTime = null;
-                  if (values.endDate !== null && values.endTime !== null) {
-                    endDateTime = combineDateAndTime(
-                      values.endDate,
-                      values.endTime
+                  }}
+                ></Navigation>
+              </Col>
+              <Col className="event-preview">
+                <Formik
+                  validationSchema={validationSchema}
+                  onSubmit={async (values) => {
+                    const startDateTime = combineDateAndTime(
+                      values.startDate,
+                      values.startTime
                     ).toUTCString();
 
-                    if (new Date(endDateTime) <= new Date(startDateTime)) {
-                      toaster.negative(
-                        <p>Event end should happen after event start.</p>
-                      );
-                      return;
-                    }
-                  }
+                    let endDateTime = null;
+                    if (values.endDate !== null && values.endTime !== null) {
+                      endDateTime = combineDateAndTime(
+                        values.endDate,
+                        values.endTime
+                      ).toUTCString();
 
-                  let formattedTickets = values.ticketCategories.map((t) => {
-                    let newT = { ...t };
-
-                    if (newT.attendeeType) {
-                      newT.attendeeType = [...t.attendeeType];
-
-                      if (newT.attendeeType.length > 0) {
-                        newT.attendeeType = newT.attendeeType[0].value;
-                      } else {
-                        delete newT.attendeeType;
+                      if (new Date(endDateTime) <= new Date(startDateTime)) {
+                        toaster.negative(
+                          <p>Event end should happen after event start.</p>
+                        );
+                        return;
                       }
                     }
 
-                    return newT;
-                  });
-
-                  let formattedTags = values.searchTags.map((t) => {
-                    let newTag = { ...t };
-                    return newTag.label;
-                  });
-                  let body = {
-                    ...eventData,
-                    name: values.event_name,
-                    attendanceMode: values.attendanceMode,
-                    startDateTime: formatTimeToServer(new Date(startDateTime)),
-                    endDateTime: endDateTime
-                      ? formatTimeToServer(new Date(endDateTime))
-                      : null,
-                    description: draftToHtml(values.summary)
-                      .trim()
-                      .replace(/\n/g, "<br>")
-                      .replace(/\"/g, "'"),
-                    transport: values.transportation,
-                    parking: values.parking,
-                    stateProvince: values.stateProvince,
-                    postalCode: values.postalCode,
-                    address2: values.address2,
-                    address1: values.address1,
-                    city: values.city,
-                    country: values.country,
-                    state: values.state,
-                    locationName: values.locationName,
-                    placesToStay: values.placesToStay,
-                    category1: values.category1[0].value,
-                    category2: values.category2
-                      ? values.category2[0].value
-                      : null,
-                    rsvpRequired:
-                      values.rsvpOrTicketed === "rsvp" ? true : false,
-                    rsvpMaxCount:
-                      values.rsvpOrTicketed === "rsvp"
-                        ? values.rsvpMaxCount
-                        : 0,
-                    ticketUrls: values.ticketUrls,
-                    videosUrls: values.videosUrls,
-                    ticketCategories: formattedTickets,
-                    contacts: values.contacts,
-                    sponsorCategories: values.sponsorCategories,
-                    boothCategories: values.boothCategories,
-                    participants: values.participants,
-                    searchTags: formattedTags,
-                    summaryPicture: values.summaryPicture,
-                    latitude: values.latitude,
-                    longitude: values.longitude,
-                    liveStream: values.liveStreamType === "funzippy",
-                    timeSlots: values.timeSlots,
-                  };
-
-                  if (body.longLat) {
-                    delete body.longLat;
-                  }
-
-                  // if event was livestream and is not now, set livestream to false,
-                  // send custom liveVideoUrl, delete liveStreamId, liveStreamServerAddress, liveVideoUploadUrl
-                  // if it was not livestream and is now, set livestream to true,
-                  // delete liveVideoUrl, send
-
-                  // if it was livestream and is still livestream, do nothing
-                  // if it was not livestream and is still not livestream, send liveVideoUrl
-
-                  if (eventData.attendanceMode === ATTENDANCE_TYPE.online) {
-                    if (eventData.liveStreamType === "funzippy") {
-                      // event was livestream
-                      if (values.liveStreamType === "custom") {
-                        // it is now not livestream
-                        body.liveStream = false;
-
-                        delete body.liveStreamId;
-                        delete body.liveStreamServerAddress;
-                        delete body.liveVideoUploadUrl;
-                        body.liveVideoUrl = values.liveVideoUrl;
-                      }
-                    } else {
-                      // event was not livestream
-                      if (values.liveStreamType === "funzippy") {
-                        // it is now livestream
-                        body.liveStream = true;
-                        if (body.liveVideoUrl) {
-                          delete body.liveVideoUrl;
-                        }
-                      } else {
-                        // is still not livestream
-                        body.liveVideoUrl = values.liveVideoUrl;
-                      }
-                    }
-                  }
-
-                  console.log(body);
-
-                  if (eventType === EVENT_TYPE.group) {
-                    body.giftItems = values.giftItems;
-                    let formattedPotluckItems = values.potluckItems.map((t) => {
+                    let formattedTickets = values.ticketCategories.map((t) => {
                       let newT = { ...t };
 
-                      if (newT.category && newT.category.length > 0) {
-                        newT.category = newT.category[0].value;
+                      if (newT.attendeeType) {
+                        newT.attendeeType = [...t.attendeeType];
+
+                        if (newT.attendeeType.length > 0) {
+                          newT.attendeeType = newT.attendeeType[0].value;
+                        } else {
+                          delete newT.attendeeType;
+                        }
                       }
+
                       return newT;
                     });
 
-                    body.potluckItems = formattedPotluckItems;
-                  }
+                    let formattedTags = values.searchTags.map((t) => {
+                      let newTag = { ...t };
+                      return newTag.label;
+                    });
+                    let body = {
+                      ...eventData,
+                      name: values.event_name,
+                      attendanceMode: values.attendanceMode,
+                      startDateTime: formatTimeToServer(
+                        new Date(startDateTime)
+                      ),
+                      endDateTime: endDateTime
+                        ? formatTimeToServer(new Date(endDateTime))
+                        : null,
+                      description: draftToHtml(values.summary)
+                        .trim()
+                        .replace(/\n/g, "<br>")
+                        .replace(/\"/g, "'"),
+                      transport: values.transportation,
+                      parking: values.parking,
+                      stateProvince: values.stateProvince,
+                      postalCode: values.postalCode,
+                      address2: values.address2,
+                      address1: values.address1,
+                      city: values.city,
+                      country: values.country,
+                      state: values.state,
+                      locationName: values.locationName,
+                      placesToStay: values.placesToStay,
+                      category1: values.category1[0].value,
+                      category2: values.category2
+                        ? values.category2[0].value
+                        : null,
+                      rsvpRequired:
+                        values.rsvpOrTicketed === "rsvp" ? true : false,
+                      rsvpMaxCount:
+                        values.rsvpOrTicketed === "rsvp"
+                          ? values.rsvpMaxCount
+                          : 0,
+                      ticketUrls: values.ticketUrls,
+                      videosUrls: values.videosUrls,
+                      ticketCategories: formattedTickets,
+                      contacts: values.contacts,
+                      sponsorCategories: values.sponsorCategories,
+                      boothCategories: values.boothCategories,
+                      participants: values.participants,
+                      searchTags: formattedTags,
+                      summaryPicture: values.summaryPicture,
+                      latitude: values.latitude,
+                      longitude: values.longitude,
+                      liveStream: values.liveStreamType === "funzippy",
+                      timeSlots: values.timeSlots,
+                    };
 
-                  // {id: "role", value: "role"} -> "role" for each team member
-                  // in each of these formatting, we do a deep copy where necessary
-                  // to avoid mutating the values in Formik - those values
-                  // should be accessible to UI elements, while formatted values
-                  // should be what goes into API call.
-                  let formattedTeamMembers = values.eventTeamMembers.map(
-                    (t) => {
-                      let newT = { ...t };
+                    if (body.longLat) {
+                      delete body.longLat;
+                    }
 
-                      if (t.roles) {
-                        newT.roles = [...t.roles];
-                        newT.roles = newT.roles.map((r) => {
-                          return r.value;
-                        });
+                    // if event was livestream and is not now, set livestream to false,
+                    // send custom liveVideoUrl, delete liveStreamId, liveStreamServerAddress, liveVideoUploadUrl
+                    // if it was not livestream and is now, set livestream to true,
+                    // delete liveVideoUrl, send
+
+                    // if it was livestream and is still livestream, do nothing
+                    // if it was not livestream and is still not livestream, send liveVideoUrl
+
+                    if (eventData.attendanceMode === ATTENDANCE_TYPE.online) {
+                      if (eventData.liveStreamType === "funzippy") {
+                        // event was livestream
+                        if (values.liveStreamType === "custom") {
+                          // it is now not livestream
+                          body.liveStream = false;
+
+                          delete body.liveStreamId;
+                          delete body.liveStreamServerAddress;
+                          delete body.liveVideoUploadUrl;
+                          body.liveVideoUrl = values.liveVideoUrl;
+                        }
+                      } else {
+                        // event was not livestream
+                        if (values.liveStreamType === "funzippy") {
+                          // it is now livestream
+                          body.liveStream = true;
+                          if (body.liveVideoUrl) {
+                            delete body.liveVideoUrl;
+                          }
+                        } else {
+                          // is still not livestream
+                          body.liveVideoUrl = values.liveVideoUrl;
+                        }
                       }
-                      if (t.groups) {
-                        newT.groups = [...t.groups];
-                        newT.groups = newT.groups.map((g) => {
-                          return g.value;
+                    }
+
+                    console.log(body);
+
+                    if (eventType === EVENT_TYPE.group) {
+                      body.giftItems = values.giftItems;
+                      let formattedPotluckItems = values.potluckItems.map(
+                        (t) => {
+                          let newT = { ...t };
+
+                          if (newT.category && newT.category.length > 0) {
+                            newT.category = newT.category[0].value;
+                          }
+                          return newT;
+                        }
+                      );
+
+                      body.potluckItems = formattedPotluckItems;
+                    }
+
+                    // {id: "role", value: "role"} -> "role" for each team member
+                    // in each of these formatting, we do a deep copy where necessary
+                    // to avoid mutating the values in Formik - those values
+                    // should be accessible to UI elements, while formatted values
+                    // should be what goes into API call.
+                    let formattedTeamMembers = values.eventTeamMembers.map(
+                      (t) => {
+                        let newT = { ...t };
+
+                        if (t.roles) {
+                          newT.roles = [...t.roles];
+                          newT.roles = newT.roles.map((r) => {
+                            return r.value;
+                          });
+                        }
+                        if (t.groups) {
+                          newT.groups = [...t.groups];
+                          newT.groups = newT.groups.map((g) => {
+                            return g.value;
+                          });
+                        }
+
+                        return newT;
+                      }
+                    );
+
+                    let formattedEventTasks = values.eventTasks.map((t) => {
+                      let newT = { ...t };
+                      if (t.memberGroup && t.memberGroup.length > 0) {
+                        newT.memberGroup = [...t.memberGroup];
+                        newT.memberGroup = newT.memberGroup[0].value;
+                      }
+
+                      if (t.ownerUserId && t.ownerUserId.length > 0) {
+                        newT.ownerUserId = [...t.ownerUserId];
+                        newT.ownerUserId = newT.ownerUserId[0].emailAddress;
+                      }
+
+                      if (t.taskMembers && t.taskMembers.length > 0) {
+                        newT.taskMembers = [...newT.taskMembers];
+                        newT.taskMembers = newT.taskMembers.map((i) => {
+                          return i.emailAddress;
                         });
                       }
 
                       return newT;
-                    }
-                  );
+                    });
 
-                  let formattedEventTasks = values.eventTasks.map((t) => {
-                    let newT = { ...t };
-                    if (t.memberGroup && t.memberGroup.length > 0) {
-                      newT.memberGroup = [...t.memberGroup];
-                      newT.memberGroup = newT.memberGroup[0].value;
-                    }
+                    let eventManagementBody = {
+                      ...eventManagementData,
+                      eventTasks: formattedEventTasks,
+                      eventTeamMembers: formattedTeamMembers,
+                    };
 
-                    if (t.ownerUserId && t.ownerUserId.length > 0) {
-                      newT.ownerUserId = [...t.ownerUserId];
-                      newT.ownerUserId = newT.ownerUserId[0].emailAddress;
-                    }
+                    let inviteesBody = [...values.invitees];
 
-                    if (t.taskMembers && t.taskMembers.length > 0) {
-                      newT.taskMembers = [...newT.taskMembers];
-                      newT.taskMembers = newT.taskMembers.map((i) => {
-                        return i.emailAddress;
-                      });
-                    }
-
-                    return newT;
-                  });
-
-                  let eventManagementBody = {
-                    ...eventManagementData,
-                    eventTasks: formattedEventTasks,
-                    eventTeamMembers: formattedTeamMembers,
-                  };
-
-                  let inviteesBody = [...values.invitees];
-
-                  try {
-                    if (eventType === EVENT_TYPE.group) {
-                      await Promise.all([
-                        requestBase.post(
-                          `/auth/grpEvent/event/edit/updateEvent/${eventData.id}`,
-                          JSON.parse(JSON.stringify(body)),
-                          {}
-                        ),
-                        requestBase.post(
-                          `/auth/grpEvent/eventManagement/edit/updateEventManagement/${eventData.id}`,
-                          JSON.parse(JSON.stringify(eventManagementBody)),
-                          {}
-                        ),
-                        requestBase.post(
-                          `/auth/grpEvent/eventUser/create/invitees/${eventData.id}`,
-                          JSON.parse(JSON.stringify(inviteesBody)),
-                          {}
-                        ),
-                      ]);
-                      toaster.positive(<p>Successfully saved changes!</p>);
-                    } else if (eventType === EVENT_TYPE.regular) {
-                      console.log(
-                        "DADADAD",
-                        JSON.parse(JSON.stringify(eventManagementBody))
+                    try {
+                      if (eventType === EVENT_TYPE.group) {
+                        await Promise.all([
+                          requestBase.post(
+                            `/auth/grpEvent/event/edit/updateEvent/${eventData.id}`,
+                            JSON.parse(JSON.stringify(body)),
+                            {}
+                          ),
+                          requestBase.post(
+                            `/auth/grpEvent/eventManagement/edit/updateEventManagement/${eventData.id}`,
+                            JSON.parse(JSON.stringify(eventManagementBody)),
+                            {}
+                          ),
+                          requestBase.post(
+                            `/auth/grpEvent/eventUser/create/invitees/${eventData.id}`,
+                            JSON.parse(JSON.stringify(inviteesBody)),
+                            {}
+                          ),
+                        ]);
+                        toaster.positive(<p>Successfully saved changes!</p>);
+                      } else if (eventType === EVENT_TYPE.regular) {
+                        console.log(
+                          "DADADAD",
+                          JSON.parse(JSON.stringify(eventManagementBody))
+                        );
+                        await Promise.all([
+                          requestBase.post(
+                            `/auth/event/event/edit/updateEvent/${eventData.id}`,
+                            JSON.parse(JSON.stringify(body)),
+                            {}
+                          ),
+                          requestBase.post(
+                            `/auth/event/event/edit/updateEventManagement/${eventData.id}`,
+                            JSON.parse(JSON.stringify(eventManagementBody)),
+                            {}
+                          ),
+                          requestBase.post(
+                            `/auth/event/eventManagement/create/invitees/${eventData.id}`,
+                            JSON.parse(JSON.stringify(inviteesBody)),
+                            {}
+                          ),
+                        ]);
+                        toaster.positive(<p>Successfully saved changes!</p>);
+                      }
+                    } catch (e) {
+                      console.log(e);
+                      toaster.negative(
+                        <p>Couldn't submit form, please try again.</p>
                       );
-                      await Promise.all([
-                        requestBase.post(
-                          `/auth/event/event/edit/updateEvent/${eventData.id}`,
-                          JSON.parse(JSON.stringify(body)),
-                          {}
-                        ),
-                        requestBase.post(
-                          `/auth/event/event/edit/updateEventManagement/${eventData.id}`,
-                          JSON.parse(JSON.stringify(eventManagementBody)),
-                          {}
-                        ),
-                        requestBase.post(
-                          `/auth/event/eventManagement/create/invitees/${eventData.id}`,
-                          JSON.parse(JSON.stringify(inviteesBody)),
-                          {}
-                        ),
-                      ]);
-                      toaster.positive(<p>Successfully saved changes!</p>);
                     }
-                  } catch (e) {
-                    console.log(e);
-                    toaster.negative(
-                      <p>Couldn't submit form, please try again.</p>
-                    );
-                  }
-                }}
-                initialValues={{
-                  event_name: eventData.name,
-                  attendanceMode: eventData.attendanceMode,
-                  summary: editorStateFromEventData,
-                  placesToStay: eventData.placesToStay || "",
-                  parking: eventData.parking || "",
-                  address1: eventData.address1 || "",
-                  postalCode: eventData.postalCode || "",
-                  address2: eventData.address2 || "",
-                  city: eventData.city || "",
-                  country: eventData.country || "",
-                  stateProvince: eventData.stateProvince || "",
-                  latitude: eventData.latitude || "",
-                  longitude: eventData.longitude || "",
-                  locationName: eventData.locationName || "",
-                  selectedPlace: eventData.address1
-                    ? [
-                        {
-                          description: eventData.address1,
-                          structured_formatting: {
-                            main_text: eventData.address1,
+                  }}
+                  initialValues={{
+                    event_name: eventData.name,
+                    attendanceMode: eventData.attendanceMode,
+                    summary: editorStateFromEventData,
+                    placesToStay: eventData.placesToStay || "",
+                    parking: eventData.parking || "",
+                    address1: eventData.address1 || "",
+                    postalCode: eventData.postalCode || "",
+                    address2: eventData.address2 || "",
+                    city: eventData.city || "",
+                    country: eventData.country || "",
+                    stateProvince: eventData.stateProvince || "",
+                    latitude: eventData.latitude || "",
+                    longitude: eventData.longitude || "",
+                    locationName: eventData.locationName || "",
+                    selectedPlace: eventData.address1
+                      ? [
+                          {
+                            description: eventData.address1,
+                            structured_formatting: {
+                              main_text: eventData.address1,
+                            },
                           },
-                        },
-                      ]
-                    : [],
-                  transportation: eventData.transport || "",
-                  category1: [{ value: eventData.category1 }],
-                  category2: eventData.category2
-                    ? [{ value: eventData.category2 }]
-                    : null,
-                  category3: null,
-                  startDate: new Date(
-                    formatTimeFromServer(new Date(eventData.startDateTime))
-                  ),
-                  startTime: new Date(
-                    formatTimeFromServer(new Date(eventData.startDateTime))
-                  ),
-                  endDate: eventData.endDateTime
-                    ? new Date(
-                        formatTimeFromServer(new Date(eventData.endDateTime))
-                      )
-                    : null,
-                  endTime: eventData.endDateTime
-                    ? new Date(
-                        formatTimeFromServer(new Date(eventData.endDateTime))
-                      )
-                    : null,
-                  timeRange: [
-                    new Date(eventData.startDateTime),
-                    new Date(eventData.endDateTime),
-                  ],
-                  rsvpMaxCount: 1,
-                  rsvpOrTicketed:
-                    eventData.rsvpMaxCount > 0 || eventData.rsvpRequired
-                      ? "rsvp"
-                      : (eventData.ticketUrls &&
-                          eventData.ticketUrls.length > 0) ||
-                        (eventData.ticketCategories &&
-                          eventData.ticketCategories.length > 0)
-                      ? "ticketed"
-                      : "open",
-                  rsvpRequired: false,
-                  summaryPicture: eventData.summaryPicture || null,
-                  contacts: eventData.contacts || [],
-                  ticketUrls: eventData.ticketUrls || [],
-                  videosUrls: eventData.videosUrls || [],
-                  ticketCategories: eventData.ticketCategories || [],
-                  sponsorCategories: eventData.sponsorCategories || [],
-                  boothCategories: eventData.boothCategories || [],
-                  participants: eventData.participants || [],
-                  searchTags: eventData.searchTags || [],
-                  giftItems: eventData.giftItems || [],
-                  potluckItems: eventData.potluckItems || [],
-                  timeSlots: eventData.timeSlots || [],
-                  eventTeamMembers: eventManagementData.eventTeamMembers || [],
-                  eventTasks: eventManagementData.eventTasks || [],
-                  invitees: invitees,
-                  timezone: eventData.timezone || null,
-                  liveStream: eventData.liveStream,
-                  liveVideoUrl: eventData.liveVideoUrl,
-                  liveStreamType: eventData.liveStream ? "funzippy" : "custom",
-                }}
-              >
-                {(formikProps) => (
-                  <>
-                    <EventActions
-                      isDirty={isDirty}
-                      setDirty={setDirty}
-                      eventData={eventData}
-                      eventType={eventType}
-                    ></EventActions>
+                        ]
+                      : [],
+                    transportation: eventData.transport || "",
+                    category1: [{ value: eventData.category1 }],
+                    category2: eventData.category2
+                      ? [{ value: eventData.category2 }]
+                      : null,
+                    category3: null,
+                    startDate: new Date(
+                      formatTimeFromServer(new Date(eventData.startDateTime))
+                    ),
+                    startTime: new Date(
+                      formatTimeFromServer(new Date(eventData.startDateTime))
+                    ),
+                    endDate: eventData.endDateTime
+                      ? new Date(
+                          formatTimeFromServer(new Date(eventData.endDateTime))
+                        )
+                      : null,
+                    endTime: eventData.endDateTime
+                      ? new Date(
+                          formatTimeFromServer(new Date(eventData.endDateTime))
+                        )
+                      : null,
+                    timeRange: [
+                      new Date(eventData.startDateTime),
+                      new Date(eventData.endDateTime),
+                    ],
+                    rsvpMaxCount: 1,
+                    rsvpOrTicketed:
+                      eventData.rsvpMaxCount > 0 || eventData.rsvpRequired
+                        ? "rsvp"
+                        : (eventData.ticketUrls &&
+                            eventData.ticketUrls.length > 0) ||
+                          (eventData.ticketCategories &&
+                            eventData.ticketCategories.length > 0)
+                        ? "ticketed"
+                        : "open",
+                    rsvpRequired: false,
+                    summaryPicture: eventData.summaryPicture || null,
+                    contacts: eventData.contacts || [],
+                    ticketUrls: eventData.ticketUrls || [],
+                    videosUrls: eventData.videosUrls || [],
+                    ticketCategories: eventData.ticketCategories || [],
+                    sponsorCategories: eventData.sponsorCategories || [],
+                    boothCategories: eventData.boothCategories || [],
+                    participants: eventData.participants || [],
+                    searchTags: eventData.searchTags || [],
+                    giftItems: eventData.giftItems || [],
+                    potluckItems: eventData.potluckItems || [],
+                    timeSlots: eventData.timeSlots || [],
+                    eventTeamMembers:
+                      eventManagementData.eventTeamMembers || [],
+                    eventTasks: eventManagementData.eventTasks || [],
+                    invitees: invitees,
+                    timezone: eventData.timezone || null,
+                    liveStream: eventData.liveStream,
+                    liveVideoUrl: eventData.liveVideoUrl,
+                    liveStreamType: eventData.liveStream
+                      ? "funzippy"
+                      : "custom",
+                  }}
+                >
+                  {(formikProps) => (
+                    <>
+                      <EventActions
+                        isDirty={isDirty}
+                        setDirty={setDirty}
+                        eventData={eventData}
+                        eventType={eventType}
+                      ></EventActions>
 
-                    <TagName
-                      eventType={eventType}
-                      eventData={eventData}
-                      eventManagementData={eventManagementData}
-                      whenAny={setDirty}
-                      values={formikProps.values}
-                      formikProps={formikProps}
-                    ></TagName>
-                  </>
-                )}
-              </Formik>
+                      <TagName
+                        eventType={eventType}
+                        eventData={eventData}
+                        eventManagementData={eventManagementData}
+                        whenAny={setDirty}
+                        values={formikProps.values}
+                        formikProps={formikProps}
+                      ></TagName>
+                    </>
+                  )}
+                </Formik>
+              </Col>
+            </Row>
+          </>
+        ) : (
+          <Row>
+            <Col>
+              <Spinner></Spinner>
             </Col>
           </Row>
-        </>
-      ) : (
-        <Row>
-          <Col>
-            <Spinner></Spinner>
-          </Col>
-        </Row>
-      )}
-    </Container>
+        )}
+      </Container>
+    </>
   );
 };
 

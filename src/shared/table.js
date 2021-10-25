@@ -32,6 +32,21 @@ const Table = (props) => {
     >
       <AgGridReact
         {...props}
+        defaultColDef={{
+          flex: 1,
+          minWidth: 100,
+        }}
+        autoGroupColumnDef={{
+          headerName: "Action",
+          field: "Action",
+          minWidth: 250,
+          cellRenderer: "agGroupCellRenderer",
+          cellRendererParams: { checkbox: true },
+        }}
+        rowSelection={"multiple"}
+        groupSelectsChildren={true}
+        suppressRowClickSelection={true}
+        suppressAggFuncInHeader={true}
         onGridReady={props.onGridReady}
         pagination={props.pagination}
         paginationPageSize={props.paginationPageSize}
@@ -49,6 +64,9 @@ const Table = (props) => {
             cellRenderer="btnCellRenderer"
             filter="agNumberColumnFilter"
             floatingFilter={false}
+            headerCheckboxSelection={props.IsCheckBox}
+            headerCheckboxSelectionFilteredOnly={props.IsCheckBox}
+            checkboxSelection={props.IsCheckBox}
           />
         )}
         {props.columns.map((column) => (
@@ -56,6 +74,8 @@ const Table = (props) => {
         ))}
         {!props.isNoAction && props.ActionRow !== "FIRST" && (
           <AgGridColumn
+            headerCheckboxSelection={true}
+            checkboxSelection={true}
             field="Action"
             cellClass="custom-athlete-cell"
             cellRenderer="btnCellRenderer"

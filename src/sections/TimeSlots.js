@@ -46,6 +46,7 @@ const TimeSlots = ({
     : [
         {
           field: "startDate",
+
           cellRenderer: (props) =>
             moment(new Date(props.data.startDateTime)).format("DD MMM YYYY"),
         },
@@ -144,6 +145,7 @@ const TimeSlots = ({
     setcurrentSlot(rowdata);
     setDeleteDialog(true);
   };
+
   const onPageSizeChanged = (e) => {
     console.log("newPageSize", e.target.value);
     setPaginationSize(e.target.value);
@@ -211,18 +213,20 @@ const TimeSlots = ({
                 columns={columns}
                 viewHandler={viewHandler}
                 editHandler={editHandler}
-                deleteHandler={deleteHandler}
                 data={slotResponse.data}
                 pagination={true}
                 paginationPageSize={paginationSize}
                 viewDelete={true}
                 ActionRow="FIRST"
+                IsCheckBox={true}
+                rowSelection="multiple"
               ></Table>
             </Col>
           </Row>
           <Row>
             <Col>
               <ActionButton type="submit">Save Changes</ActionButton>
+              <ActionButton onClick={deleteHandler}>Delete</ActionButton>
             </Col>
           </Row>
           <EditTimeSlot
@@ -237,12 +241,13 @@ const TimeSlots = ({
             pageRefresh={pageRefresh}
           />
           <Delete
+            gridApi={gridApi}
             data={currentSlot}
-            handleClose={() => setDeleteDialog(!showDeleteDialog)}
             isOpen={showDeleteDialog}
             viewOnly={viewOnly}
             pageRefresh={pageRefresh}
             eventManagementData={eventManagementData}
+            handleClose={() => setDeleteDialog(!showDeleteDialog)}
           />
         </form>
       </SectionBody>

@@ -129,7 +129,11 @@ const EventList = () => {
             placeholder="Filter..."
             value={searchinItem}
             onChange={(e) => {
-              if (e.target.value.length > 3) {
+              if (
+                e.target.value.length > 3 &&
+                managedEvents &&
+                managedEvents.length > 0
+              ) {
                 const data = managedEvents.filter((item) => {
                   return item.name
                     .toLowerCase()
@@ -182,11 +186,11 @@ const EventList = () => {
                   }
                 }}
                 viewHandler={(data) => {
-                  window.location.href = getEventDetailUrl(data);
+                  window.open(getEventDetailUrl(data));
                 }}
                 columns={columns}
                 data={
-                  managedEventsFilter.length === 0
+                  searchinItem.trim().length === 0
                     ? managedEvents
                     : managedEventsFilter
                 }
