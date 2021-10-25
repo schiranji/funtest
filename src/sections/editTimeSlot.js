@@ -116,56 +116,6 @@ export const EditTimeSlot = (props) => {
             <Row>
               <Col>
                 <FormControl
-                  label="Name"
-                  error={touched.signupName ? errors.signupName : null}
-                >
-                  <Input
-                    error={errors.signupName && touched.signupName}
-                    name="signupName"
-                    type="text"
-                    onChange={handleChange}
-                    value={value.signupName}
-                    placeholder={"Enter Name"}
-                    disabled={props.viewOnly}
-                  ></Input>
-                </FormControl>
-              </Col>
-              <Col>
-                <FormControl
-                  label="Phone"
-                  error={touched.phoneNumber ? errors.phoneNumber : null}
-                >
-                  <Input
-                    error={errors.phoneNumber && touched.phoneNumber}
-                    name="phoneNumber"
-                    type="text"
-                    onChange={handleChange}
-                    value={value.phoneNumber}
-                    placeholder={"Enter Phone"}
-                    disabled={props.viewOnly}
-                  ></Input>
-                </FormControl>
-              </Col>
-              <Col>
-                <FormControl
-                  label="Email"
-                  error={touched.emailAdddress ? errors.emailAdddress : null}
-                >
-                  <Input
-                    error={errors.emailAdddress && touched.emailAdddress}
-                    type="email"
-                    name="emailAdddress"
-                    onChange={handleChange}
-                    value={value.emailAdddress}
-                    placeholder={"Enter Email"}
-                    disabled={props.viewOnly}
-                  ></Input>
-                </FormControl>
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <FormControl
                   label="Start Date"
                   error={touched.startDateTime ? errors.startDateTime : null}
                 >
@@ -224,6 +174,56 @@ export const EditTimeSlot = (props) => {
                     onChange={(time) => setFieldValue("endTime", time)}
                     creatable
                   ></TimePicker>
+                </FormControl>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <FormControl
+                  label="Name"
+                  error={touched.signupName ? errors.signupName : null}
+                >
+                  <Input
+                    error={errors.signupName && touched.signupName}
+                    name="signupName"
+                    type="text"
+                    onChange={handleChange}
+                    value={value.signupName}
+                    placeholder={"Enter Name"}
+                    disabled={props.viewOnly}
+                  ></Input>
+                </FormControl>
+              </Col>
+              <Col>
+                <FormControl
+                  label="Phone"
+                  error={touched.phoneNumber ? errors.phoneNumber : null}
+                >
+                  <Input
+                    error={errors.phoneNumber && touched.phoneNumber}
+                    name="phoneNumber"
+                    type="text"
+                    onChange={handleChange}
+                    value={value.phoneNumber}
+                    placeholder={"Enter Phone"}
+                    disabled={props.viewOnly}
+                  ></Input>
+                </FormControl>
+              </Col>
+              <Col>
+                <FormControl
+                  label="Email"
+                  error={touched.emailAdddress ? errors.emailAdddress : null}
+                >
+                  <Input
+                    error={errors.emailAdddress && touched.emailAdddress}
+                    type="email"
+                    name="emailAdddress"
+                    onChange={handleChange}
+                    value={value.emailAdddress}
+                    placeholder={"Enter Email"}
+                    disabled={props.viewOnly}
+                  ></Input>
                 </FormControl>
               </Col>
             </Row>

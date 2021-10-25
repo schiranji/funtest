@@ -27,7 +27,7 @@ const Dashboard = ({ eventData }) => {
   const dailyViews = useCall(
     () =>
       requestBase.post(
-        `/auth/event/eventManagement/view/dailyViews/${eventId}`,
+        `/auth/event/eventManagement/view/dailyViews/${eventData.uid}`,
         {}
       ),
     [eventId, refresh],
