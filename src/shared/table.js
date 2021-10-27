@@ -56,6 +56,7 @@ const Table = (props) => {
           btnCellRenderer: props.BtnCellRenderer || BtnCellRenderer,
         }}
         suppressSizeToFit={true}
+        onSelectionChanged={props.onSelectionChanged}
       >
         {!props.isNoAction && props.ActionRow === "FIRST" && (
           <AgGridColumn
@@ -74,8 +75,8 @@ const Table = (props) => {
         ))}
         {!props.isNoAction && props.ActionRow !== "FIRST" && (
           <AgGridColumn
-            headerCheckboxSelection={true}
-            checkboxSelection={true}
+            headerCheckboxSelection={props.IsCheckBox}
+            checkboxSelection={props.IsCheckBox}
             field="Action"
             cellClass="custom-athlete-cell"
             cellRenderer="btnCellRenderer"

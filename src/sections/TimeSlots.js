@@ -27,6 +27,8 @@ const TimeSlots = ({
   const [isloading, setLoading] = useState(false);
 
   const [showDeleteDialog, setDeleteDialog] = useState(false);
+  const [disbaleDelete, setDeleteButton] = useState(true);
+
   const [viewOnly, setviewOnly] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const [currentSlot, setcurrentSlot] = useState({});
@@ -120,6 +122,11 @@ const TimeSlots = ({
     } catch (e) {
       setLoading(false);
     }
+  };
+
+  const onSelectionChanged = () => {
+    gridApi.getSelectedNodes &&
+      setDeleteButton(gridApi.getSelectedNodes().length < 1);
   };
   const pageRefresh = () => {
     setrefresh(!refresh);
@@ -220,13 +227,16 @@ const TimeSlots = ({
                 ActionRow="FIRST"
                 IsCheckBox={true}
                 rowSelection="multiple"
+                onSelectionChanged={onSelectionChanged}
               ></Table>
             </Col>
           </Row>
           <Row>
             <Col>
               <ActionButton type="submit">Save Changes</ActionButton>
-              <ActionButton onClick={deleteHandler}>Delete</ActionButton>
+              <ActionButton disabled={disbaleDelete} onClick={deleteHandler}>
+                Delete
+              </ActionButton>
             </Col>
           </Row>
           <EditTimeSlot

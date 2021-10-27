@@ -3,12 +3,27 @@
 @import "single";
 @import "manageEvent";
 
+.ag-header-row {
+  background-color: rgb(79, 68, 87);
+  color: white !important;
+}
+
+.ag-header-viewport {
+  background-color: rgb(79, 68, 87);
+  color: white !important;
+}
+
 footer {
   background: $color-dark-bg;
   color: $color-primary-text;
   padding: 50px 0 0 0;
 
-  h2, h3, h4, h5, h6, p {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
     color: $color-light-text;
   }
 
@@ -45,7 +60,7 @@ footer {
 
   a {
     color: $color-primary-bg;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
     border-bottom: 1px solid transparent;
     &:hover {
       color: $color-light-text;
@@ -63,12 +78,12 @@ footer {
 .btn-action {
   padding: 5px 15px;
   margin: 0 5px;
-  transition: all .2s ease;
+  transition: all 0.2s ease;
 
   border: 2px solid $color-darker-bg;
   background: $color-primary-bg;
   color: $color-dark-text;
-  
+
   &:hover {
     color: $color-dark-text;
     background: transparent;
@@ -80,7 +95,7 @@ footer {
   @extend .btn-action;
   background: $color-primary-bg;
   color: $color-darker-bg;
-  
+
   &:hover {
     color: $color-primary-bg;
     background: transparent;
@@ -104,8 +119,12 @@ footer {
 }
 
 .home-search-header {
-  background: linear-gradient(to bottom, rgba(30, 30, 30, 0.72), rgba(30, 30, 30, 0.43)),
-  url("../images/crown-raising-hands-during-performance-1652353.jpg");
+  background: linear-gradient(
+      to bottom,
+      rgba(30, 30, 30, 0.72),
+      rgba(30, 30, 30, 0.43)
+    ),
+    url("../images/crown-raising-hands-during-performance-1652353.jpg");
   background-size: cover;
   background-position: center center;
 }
@@ -136,7 +155,7 @@ footer {
   }
 
   #city {
-    flex: 1
+    flex: 1;
   }
 
   #dateRange {
@@ -149,7 +168,7 @@ footer {
     border-bottom-right-radius: 0;
     appearance: none;
     border-radius: 0;
-    
+
     &:focus {
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
@@ -170,7 +189,7 @@ footer {
     border-bottom: 3px solid $color-dark-bg;
     width: 100%;
     color: $color-dark-text;
-    
+
     &:focus {
       border: none;
       border-bottom: 3px solid $color-dark-bg;
@@ -199,7 +218,7 @@ $header-negative-margin: -225;
 
 .header-image-container {
   @media (min-width: $md) {
-    margin-top: $header-negative-margin + 0px;  
+    margin-top: $header-negative-margin + 0px;
   }
 
   margin-top: 25px;
@@ -210,7 +229,7 @@ $header-negative-margin: -225;
   }
 
   .secondary-header-image {
-    @media(min-width: $md) {
+    @media (min-width: $md) {
       margin-top: $header-negative-margin * -1px + 25px;
     }
     margin-top: 25px;
@@ -240,7 +259,7 @@ $header-negative-margin: -225;
     }
 
     button {
-      display: block
+      display: block;
     }
   }
 }
@@ -251,13 +270,13 @@ $header-negative-margin: -225;
 
 .event-card-extended {
   margin-bottom: 35px;
-  
+
   .event-card-extended-wrapper {
     display: block;
     box-shadow: $box-shadow, 0px 0px 0px 2px #eaeaea;
     border-radius: 5px;
-    transition: all .3s ease;
-    
+    transition: all 0.3s ease;
+
     &:hover {
       box-shadow: $box-shadow, 0px 0px 0px 2px $color-dark-bg;
       cursor: pointer;
@@ -293,18 +312,18 @@ $header-negative-margin: -225;
       margin-bottom: 0;
       padding-bottom: 0;
     }
-    
+
     .event-card-details {
       background: $color-lighter-gray;
       border-bottom-left-radius: 5px;
       border-bottom-right-radius: 5px;
     }
-    
+
     .event-card-title-info {
       padding-right: 15px;
-      flex: 1
+      flex: 1;
     }
-  
+
     .event-location {
       flex: 1;
 
@@ -333,7 +352,7 @@ $header-negative-margin: -225;
 .event-date-calendar {
   min-width: 75px;
   text-align: center;
-  
+
   .cal-graphic {
     min-width: 75px;
     border: 2px solid $color-dark-bg;
@@ -361,7 +380,7 @@ $header-negative-margin: -225;
 #see-more-anchor {
   color: $color-dark-bg;
   cursor: pointer;
-  
+
   &:hover {
     color: $color-primary-bg;
   }
@@ -374,7 +393,7 @@ $header-negative-margin: -225;
   margin-bottom: 100px;
   color: $color-light-text;
   box-shadow: $box-shadow;
-  
+
   h2 {
     margin-bottom: 25px;
   }
@@ -392,7 +411,7 @@ $header-negative-margin: -225;
       margin-left: -15px;
       margin-right: -5px;
       opacity: 0;
-      transition: all .2s ease;
+      transition: all 0.2s ease;
     }
 
     &:hover {
@@ -402,7 +421,7 @@ $header-negative-margin: -225;
         margin-left: 5px;
         opacity: 1;
         fill: $color-primary-bg;
-      } 
+      }
     }
   }
 }
@@ -415,7 +434,8 @@ p {
   font-size: 18px;
 }
 
-p.lead, span.lead {
+p.lead,
+span.lead {
   font-size: 22px;
   font-weight: 300;
   font-family: $quicksand;
@@ -453,16 +473,16 @@ p.lead, span.lead {
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
     border-radius: 16px;
     width: 32px;
     height: 32px;
     border: 2px solid $color-dark-bg-indicator;
-    
+
     &:disabled {
       border: 2px solid $color-light-gray;
     }
-    
+
     &:hover {
       &:not(:disabled) {
         background: $color-dark-bg-hover;
@@ -470,7 +490,7 @@ p.lead, span.lead {
       }
     }
     &:focus {
-      outline: none
+      outline: none;
     }
   }
 }
@@ -486,7 +506,7 @@ p.lead, span.lead {
   cursor: pointer;
   font-size: 18px;
   user-select: none;
-  
+
   input {
     position: absolute;
     opacity: 0;
@@ -495,22 +515,20 @@ p.lead, span.lead {
     width: 100%;
   }
 
-  
   .option {
     display: block;
     padding: 2px 12px;
     background-color: #fff;
     border: 2px solid $color-dark-bg-indicator;
-    transition: all .2s ease;
+    transition: all 0.2s ease;
     font-family: $quicksand;
     font-size: 16px;
-    
   }
   .icon {
     padding: 5px;
     display: flex;
     svg {
-      transition: all .2s ease;
+      transition: all 0.2s ease;
       fill: rgba($color-dark-bg-hover, 0.75);
     }
   }
@@ -528,12 +546,12 @@ p.lead, span.lead {
   color: #2b2b2b;
 
   svg {
-    fill: #2b2b2b
+    fill: #2b2b2b;
   }
 }
 
 .heart-icon {
-  fill: $color-dark-bg
+  fill: $color-dark-bg;
 }
 
 img.img-circle {
@@ -549,7 +567,7 @@ img.img-circle {
     margin-bottom: 10px;
     font-size: 18px;
     font-family: $quicksand;
-  } 
+  }
 }
 
 .form-group.inline-form-group {
@@ -561,18 +579,21 @@ img.img-circle {
     margin-bottom: 0;
   }
 
-  input, textarea {
-    flex: 1
+  input,
+  textarea {
+    flex: 1;
   }
 }
 
-input, textarea, select {
+input,
+textarea,
+select {
   border: 2px solid $color-dark-bg-indicator;
   border-radius: 5px;
   padding: 5px 10px;
-  transition: all .2s ease;
+  transition: all 0.2s ease;
   background-color: transparent;
-  
+
   &:focus {
     outline: none;
     // border: 2px solid $color-dark-bg;
@@ -580,7 +601,7 @@ input, textarea, select {
 }
 
 .modal {
-  z-index: 99999999
+  z-index: 99999999;
 }
 
 .modal-footer {
@@ -602,5 +623,5 @@ input, textarea, select {
 }
 
 .customInput {
-  border: 1px solid red !important
+  border: 1px solid red !important;
 }

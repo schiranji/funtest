@@ -6,6 +6,10 @@
   height: 40vmin;
   pointer-events: none;
 }
+.ag-header-row {
+  background-color: gray;
+  color: white;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
