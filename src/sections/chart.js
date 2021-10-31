@@ -1,35 +1,27 @@
 import React from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 
-const data = {
-  labels: [
-    "10/12/2021",
-    "12/12/2021",
-    "13/12/2021",
-    "14/12/2021",
-    "15/12/2021",
-    "16/12/2021",
-  ],
-  datasets: [
-    {
-      label: "# of Counts",
-      data: [12, 19, 3, 5, 2, 3],
-      fill: false,
-      backgroundColor: "rgb(255, 99, 132)",
-      borderColor: "rgba(255, 99, 132, 0.2)",
+import { summaryData } from "./summaryChartTemp";
+
+const options = (title) => ({
+  plugins: {
+    legend: {
+      position: "top",
     },
-  ],
-};
-
-const options = {
+    title: {
+      display: true,
+      text: title,
+    },
+  },
   scales: {
     y: {
       beginAtZero: true,
     },
   },
-};
+});
 
 const LineChart = (props) => {
+  debugger;
   const data = {
     labels: props.data.map((item) => item.date),
     datasets: [
@@ -43,9 +35,51 @@ const LineChart = (props) => {
     ],
   };
 
+  const ticketssummaryData = {
+    labels: summaryData.data.ticketsSummary.map((item) => item.name),
+    datasets: [
+      {
+        label: "# of Quantity",
+        data: summaryData.data.ticketsSummary.map((item) => item.quantity),
+        fill: false,
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
+      },
+    ],
+  };
+
+  const boothsSummary = {
+    labels: summaryData.data.boothsSummary.map((item) => item.name),
+    datasets: [
+      {
+        label: "# of Quantity",
+        data: summaryData.data.boothsSummary.map((item) => item.quantity),
+        fill: false,
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
+      },
+    ],
+  };
+
+  const sponsorsSummary = {
+    labels: summaryData.data.sponsorsSummary.map((item) => item.name),
+    datasets: [
+      {
+        label: "# of Quantity",
+        data: summaryData.data.sponsorsSummary.map((item) => item.quantity),
+        fill: false,
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
+      },
+    ],
+  };
+
   return (
     <>
-      <Line data={data} options={options} />
+      <Line data={data} options={options("")} />
+      <Bar data={ticketssummaryData} options={options("Tickets Summary")} />
+      <Bar data={boothsSummary} options={options("Booths Summary")} />
+      <Bar data={sponsorsSummary} options={options("Sponsors Summary")} />
     </>
   );
 };
