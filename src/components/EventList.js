@@ -63,21 +63,26 @@ const EventList = () => {
   const columns = [
     {
       field: "name",
+      flex: 7,
     },
     {
       field: "likes",
+      flex: 1,
     },
     {
       field: "eventType",
       cellRenderer: "eventCellRenderer",
+      flex: 2,
     },
     {
       field: "attendanceMode",
       cellRenderer: "attendanceMode",
+      flex: 2,
     },
     {
       field: "status",
       cellRenderer: "statusMode",
+      flex: 2,
     },
   ];
 
@@ -178,6 +183,7 @@ const EventList = () => {
           ) : (
             <ListContainer>
               <Table
+                flex={2}
                 editHandler={(data) => {
                   if (data.eventType == "group") {
                     history.push(`/groupEvent/${data.id}`);

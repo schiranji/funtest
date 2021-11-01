@@ -48,37 +48,38 @@ const columns = [
   {
     headerName: "Name",
     cellRenderer: (props) => `${props.data.firstName}  ${props.data.lastName}`,
-    width: 180,
+    flex: 2,
   },
   {
     field: "emailAddress",
     headerName: "Email",
+    flex: 2,
   },
   {
     field: "phoneNumber",
     headerName: "Phone",
-    width: 150,
+    flex: 2,
   },
   {
     field: "rsvpStatus",
     headerName: "Status",
+    flex: 1,
     cellRenderer: (props) => statusMode(props.data.rsvpStatus),
-    width: 150,
   },
   {
     field: "rsvpAdultCount",
+    flex: 2,
     headerName: "Adult count",
-    width: 150,
   },
   {
     field: "rsvpKidCount",
     headerName: "Kids Count",
-    width: 150,
+    width: 2,
   },
   {
     field: "Viewed",
     headerName: "Viewed",
-    width: 100,
+    flex: 1,
   },
 ];
 
@@ -378,6 +379,7 @@ const GuestList = ({ setDirty, eventManagementData, eventData }) => {
                 viewDelete={true}
                 ActionRow="FIRST"
                 onGridReady={onGridReady}
+                flex={1.5}
               ></Table>
             </StyledBody>
           </Card>

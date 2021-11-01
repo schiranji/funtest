@@ -129,5 +129,7 @@ $inputBackground: rgb(238, 238, 238);
 button:focus {
   outline: none;
 }
-
+.ag-cell {
+  padding-right: 0px;
+}
 @import "manageExtra";

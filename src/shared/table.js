@@ -34,12 +34,11 @@ const Table = (props) => {
         {...props}
         defaultColDef={{
           flex: 1,
-          minWidth: 100,
         }}
         autoGroupColumnDef={{
           headerName: "Action",
           field: "Action",
-          minWidth: 250,
+          minWidth: 200,
           cellRenderer: "agGroupCellRenderer",
           cellRendererParams: { checkbox: true },
         }}
@@ -68,6 +67,7 @@ const Table = (props) => {
             headerCheckboxSelection={props.IsCheckBox}
             headerCheckboxSelectionFilteredOnly={props.IsCheckBox}
             checkboxSelection={props.IsCheckBox}
+            flex={props.flex || 3}
           />
         )}
         {props.columns.map((column) => (
@@ -75,13 +75,15 @@ const Table = (props) => {
         ))}
         {!props.isNoAction && props.ActionRow !== "FIRST" && (
           <AgGridColumn
-            headerCheckboxSelection={props.IsCheckBox}
-            checkboxSelection={props.IsCheckBox}
             field="Action"
             cellClass="custom-athlete-cell"
             cellRenderer="btnCellRenderer"
             filter="agNumberColumnFilter"
             floatingFilter={false}
+            headerCheckboxSelection={props.IsCheckBox}
+            headerCheckboxSelectionFilteredOnly={props.IsCheckBox}
+            checkboxSelection={props.IsCheckBox}
+            flex={props.flex || 3}
           />
         )}
       </AgGridReact>

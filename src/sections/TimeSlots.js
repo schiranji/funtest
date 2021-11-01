@@ -39,7 +39,7 @@ const TimeSlots = ({
 
   const onGridReady = (params) => {
     setGridApi(params.api);
-    params.api.sizeColumnsToFit();
+    // params.api.sizeColumnsToFit();
   };
   const eventTyepe =
     eventData.eventType === EVENT_TYPE.group ? "groupEvent" : "event";
@@ -48,12 +48,13 @@ const TimeSlots = ({
     : [
         {
           field: "startDate",
-
+          flex: 3,
           cellRenderer: (props) =>
             moment(new Date(props.data.startDateTime)).format("DD MMM YYYY"),
         },
         {
           field: "endDate",
+          flex: 3,
           cellRenderer: (props) =>
             moment(new Date(props.data.endDateTime)).format("DD MMM YYYY"),
         },
@@ -64,30 +65,35 @@ const TimeSlots = ({
     {
       field: "startDateTime",
       headerName: "Start Time",
+      flex: 2,
       cellRenderer: (props) =>
         moment(new Date(props.data.startDateTime)).format("h:mma"),
     },
     {
       field: "endDateTime",
       headerName: "End Time",
+      flex: 2,
       cellRenderer: (props) =>
         moment(new Date(props.data.endDateTime)).format("h:mma"),
     },
     {
       field: "signupName",
       headerName: "Name",
+      flex: 2,
       cellRenderer: (props) =>
         props.data.signupName ? props.data.signupName : "Available",
     },
     {
       field: "emailAdddress",
       headerName: "Email",
+      flex: 2,
       cellRenderer: (props) =>
         props.data.emailAdddress ? props.data.emailAdddress : "Available",
     },
     {
       field: "phoneNumber",
       headerName: "Phone",
+      flex: 2,
       cellRenderer: (props) =>
         props.data.emailAdddress ? props.data.emailAdddress : "Available",
     },

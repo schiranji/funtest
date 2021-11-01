@@ -16,6 +16,8 @@ import { toaster } from "baseui/toast";
 import { TimePicker } from "baseui/timepicker";
 import { EVENT_TYPE } from "../utils";
 
+import ActionButton from "../components/ActionButton";
+
 const TimeSlotGeneratorContainer = styled.div`
   margin-bottom: 35px;
 `;
@@ -179,22 +181,12 @@ const TimeSlotGenerator = ({
 
                     <Row>
                       <Col>
-                        <Button
-                          type="button"
-                          onClick={handleSubmit}
-                          kind={KIND.primary}
-                          style={{ "margin-right": "10px" }}
-                        >
+                        <ActionButton onClick={handleSubmit} type="submit">
                           Generate
-                        </Button>
-
-                        <Button
-                          type="button"
-                          onClick={handleNew}
-                          kind={KIND.primary}
-                        >
+                        </ActionButton>
+                        <ActionButton onClick={handleNew} type="submit">
                           Create Timeslot
-                        </Button>
+                        </ActionButton>
                       </Col>
                     </Row>
                   </>
