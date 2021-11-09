@@ -104,6 +104,7 @@ function PrivateRoute({ children, ...rest }) {
 export default function Root() {
   return (
     <StyletronProvider value={engine}>
+ 
       <BaseProvider theme={theme}>
         <ToasterContainer
           overrides={{
@@ -120,21 +121,26 @@ export default function Root() {
           placement={PLACEMENT.bottomRight} 
           autoHideDuration={5000}>
             <Router basename="/event/manageEvent">
-              <Header></Header>
+            
               <Switch>
                 <Route exact path="/login">
+                <Header></Header>
                   <Login></Login>
                 </Route>
                 <PrivateRoute exact path="/newEvent">
+                <Header></Header>
                   <CreateNewEvent></CreateNewEvent>
                 </PrivateRoute>
                 <PrivateRoute path="/event/:eventId">
+                <Header></Header>
                   <Manage eventType="regular"></Manage>
                 </PrivateRoute>
                 <PrivateRoute path="/groupEvent/:eventId">
+                <Header></Header>
                   <Manage eventType="group"></Manage>
                 </PrivateRoute>
                 <PrivateRoute exact path="/">
+                <Header></Header>
                   <EventList></EventList>
                 </PrivateRoute>
               </Switch>

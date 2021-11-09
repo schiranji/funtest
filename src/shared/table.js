@@ -3,6 +3,7 @@ import { AgGridColumn, AgGridReact } from "ag-grid-react";
 import { Delete } from "baseui/icon";
 import Show from "baseui/icon/show";
 import { AiFillEdit } from "react-icons/ai";
+import logo from '../send.png';
 
 const Table = (props) => {
   const BtnCellRenderer = (row) => {
@@ -14,9 +15,15 @@ const Table = (props) => {
         {props.deleteHandler && (
           <Delete size={35} onClick={() => props.deleteHandler(row.data)} />
         )}
+        {props.sendHandler && (
+          <img style={{
+            height: "20px"
+          }} size={30} src={logo} onClick={() => props.sendHandler(row.data)} />
+        )}
         {props.editHandler && (
           <AiFillEdit size={30} onClick={() => props.editHandler(row.data)} />
         )}
+
       </>
     );
   };
@@ -27,9 +34,12 @@ const Table = (props) => {
       style={{
         height: props.height || 300,
         width: "100%",
+        marginBottom: props.title && "60px"
+
       }}
       className="ag-theme-alpine"
     >
+      {props.title && <h1>{props.title}</h1>}
       <AgGridReact
         {...props}
         defaultColDef={{

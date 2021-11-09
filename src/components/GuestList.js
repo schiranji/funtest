@@ -13,6 +13,7 @@ import { HiddenRow } from "../utils";
 import Table from "../shared/table";
 import { COUNTRY_TYPE } from "../utils";
 import { PhoneInput, COUNTRIES } from "baseui/phone-input";
+import {requestBase } from '../utils';
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
 const GuestListContainer = styled.div`
@@ -104,6 +105,19 @@ const GuestList = ({ setDirty, eventManagementData, eventData }) => {
   const onGridReady = (params) => {
     //params.api.sizeColumnsToFit();
   };
+  const sendHandler  = async (invitee)=>{
+    const url = `/auth/event/eventManagement/update/resendRSVP/${eventManagementData.eventId}`
+    try {
+      const getReq = await requestBase.post(url,invitee);
+      if (getReq.data) {
+        toaster.positive("Send Successfully")
+      } else {
+        toaster.negative("Fail to send")
+      }
+    } catch (e) {
+      toaster.negative("Fail to send")
+    }
+  }
   return (
     <GuestListContainer>
       <Row>
@@ -373,6 +387,7 @@ const GuestList = ({ setDirty, eventManagementData, eventData }) => {
                 columns={columns}
                 editHandler={editHandler}
                 deleteHandler={deleteHandler}
+                sendHandler={sendHandler}
                 data={invitees}
                 pagination={true}
                 paginationPageSize={5}
