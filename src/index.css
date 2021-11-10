@@ -18,3 +18,14 @@ code {
   background-color: gray;
   color: white;
 }
+
+table > thead > tr > th {
+  background-color: #4f4457 !important;
+  color: white  !important;
+}
+
+table > tbody {
+  border: 1px solid gray !important;
+}
+
+

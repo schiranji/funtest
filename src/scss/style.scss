@@ -7,6 +7,13 @@
   background-color: rgb(79, 68, 87);
   color: white !important;
 }
+table > thead > tr > th {
+  background-color: #4f4457 !important;
+  color: white  !important;
+}
+table > tbody {
+  border: 1px solid gray !important;
+}
 
 .ag-cell {
   padding-right: 0px !important;
