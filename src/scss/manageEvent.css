@@ -1,29 +1,29 @@
 @import "constants";
-  
+
 $inputBackground: rgb(238, 238, 238);
 
 .manage-event-container {
   padding: 0 50px;
   margin-top: 50px;
   background-color: transparent;
-  
+
   .btn {
     border-radius: 0;
   }
 
-  input, textarea {
+  input,
+  textarea {
     border: none;
     border-radius: 0;
 
     &:focus {
-      border: none
+      border: none;
     }
   }
 }
 
 .manage-title {
   background-color: #fff;
-  padding: 0 10px 50px 10px;
   z-index: 9999;
   text-align: center;
 
@@ -35,13 +35,12 @@ $inputBackground: rgb(238, 238, 238);
 .manage-sidebar {
   display: flex;
   flex-direction: column;
-  border: 2px solid $color-light-gray;
   border-radius: 5px;
   padding: 0;
   height: 100%;
-  
+
   > button {
-    transition: all .2s ease;
+    transition: all 0.2s ease;
 
     &:hover {
       background: $color-dark-bg-hover;
@@ -49,21 +48,26 @@ $inputBackground: rgb(238, 238, 238);
     }
   }
 
-  > button, > div {
+  > button,
+  > div {
     display: block;
     background: none;
     outline: none;
     border: none;
-    padding: 20px 0; 
+    padding: 20px 0;
     text-align: center;
-    
-    p, h1, h2, h3 {
+
+    p,
+    h1,
+    h2,
+    h3 {
       margin-bottom: 0;
     }
   }
 
-  > button:not(:last-child), > div:not(:last-child) {
-    border-bottom: 1px solid $color-light-gray;  
+  > button:not(:last-child),
+  > div:not(:last-child) {
+    border-bottom: 1px solid $color-light-gray;
   }
 }
 
@@ -88,7 +92,7 @@ $inputBackground: rgb(238, 238, 238);
 
 .rdw-editor-main {
   background: $inputBackground;
-  padding: 0 15px; 
+  padding: 0 15px;
   min-height: 200px;
   blockquote {
     border-left: 5px solid $color-dark-bg;
@@ -104,7 +108,7 @@ $inputBackground: rgb(238, 238, 238);
 }
 .rdw-link-modal-input {
   background-color: $inputBackground;
-  height: auto
+  height: auto;
 }
 
 .rdw-option-active {
@@ -115,7 +119,7 @@ $inputBackground: rgb(238, 238, 238);
   border-radius: 0;
   height: 35px;
   width: 35px;
-  transition: all .2s ease;
+  transition: all 0.2s ease;
   &:hover {
     background: rgb(246, 246, 246);
     box-shadow: 0 0 0 2px lighten($color-dark-bg, 10);
@@ -123,7 +127,9 @@ $inputBackground: rgb(238, 238, 238);
 }
 
 button:focus {
-  outline: none
+  outline: none;
 }
-
+.ag-cell {
+  padding-right: 0px;
+}
 @import "manageExtra";

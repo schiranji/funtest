@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useEffect , useState} from 'react';
 import styled from 'styled-components';
 import {Container, Row, Col} from 'reactstrap';
 import {requestBase} from '../utils';
@@ -38,10 +38,20 @@ const HeaderContainer = styled(Container)`
 
 const Header = () => {
   const history = useHistory();
-
+  const [text, setText] = useState("Sign In");
   const activeLinkStyle = {
     fontWeight: "bold",
   }
+ useEffect(()=>{
+
+   if(window.location.pathname === '/event/manageEvent/login'){
+      setText("Sign In")
+   }
+   else{
+     setText("Logout")
+   }
+
+ })
 
   return (
     <HeaderContainer fluid className="dashboardHeaderContainer">
@@ -62,9 +72,10 @@ const Header = () => {
             </a>
           
             <Button kind={KIND.minimal} onClick={() => {
-              requestBase.post(`/user/logout`, {}, {});
-              history.push("/login")
-            }}>Logout</Button>
+              setTimeout(()=>{           requestBase.post(`/user/logout`, {}, {});
+              history.push("/login")},100)
+   
+            }}>{text}</Button>
           </nav>
         </Col>
       </Row>

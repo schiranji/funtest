@@ -1,24 +1,28 @@
-import React, {useState, useEffect} from 'react';
-import {Client as Styletron} from 'styletron-engine-atomic';
-import {Provider as StyletronProvider} from 'styletron-react';
+import React, { useState, useEffect } from 'react';
+import { Client as Styletron } from 'styletron-engine-atomic';
+import { Provider as StyletronProvider } from 'styletron-react';
 import { BaseProvider } from 'baseui';
-import {createTheme, lightThemePrimitives} from 'baseui';
-import {requestBase} from '../utils'
+import { createTheme, lightThemePrimitives } from 'baseui';
+import { requestBase } from '../utils'
 import Login from './Login';
 import {
   ToasterContainer,
   PLACEMENT
 } from "baseui/toast";
-import { 
-  Route, 
+import {
+  Route,
   Switch,
-  Redirect, 
-  BrowserRouter as Router } from 'react-router-dom'
-  import { StyledSpinnerNext } from "baseui/spinner"
+  Redirect,
+  BrowserRouter as Router
+} from 'react-router-dom'
+import { StyledSpinnerNext } from "baseui/spinner"
 import Header from './Header';
 import CreateNewEvent from './CreateNewEvent';
 import EventList from './EventList';
 import Manage from './Manage';
+import { Summary } from "../sections/eventsummary"
+
+
 
 const primitives = {
   ...lightThemePrimitives,
@@ -86,16 +90,16 @@ function PrivateRoute({ children, ...rest }) {
       {...rest}
       render={({ location }) =>
         loggedIn === null ? (<StyledSpinnerNext></StyledSpinnerNext>)
-        : loggedIn === true ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
+          : loggedIn === true ? (
+            children
+          ) : (
+            <Redirect
+              to={{
+                pathname: "/login",
+                state: { from: location }
+              }}
+            />
+          )
       }
     />
   );
@@ -104,6 +108,7 @@ function PrivateRoute({ children, ...rest }) {
 export default function Root() {
   return (
     <StyletronProvider value={engine}>
+
       <BaseProvider theme={theme}>
         <ToasterContainer
           overrides={{
@@ -116,31 +121,40 @@ export default function Root() {
               })
             }
           }}
-          usePortal={true} 
-          placement={PLACEMENT.bottomRight} 
+          usePortal={true}
+          placement={PLACEMENT.bottomRight}
           autoHideDuration={5000}>
-            <Router basename="/event/manageEvent">
-              <Header></Header>
-              <Switch>
-                <Route exact path="/login">
-                  <Login></Login>
-                </Route>
-                <PrivateRoute exact path="/newEvent">
-                  <CreateNewEvent></CreateNewEvent>
-                </PrivateRoute>
-                <PrivateRoute path="/event/:eventId">
-                  <Manage eventType="regular"></Manage>
-                </PrivateRoute>
-                <PrivateRoute path="/groupEvent/:eventId">
-                  <Manage eventType="group"></Manage>
-                </PrivateRoute>
-                <PrivateRoute exact path="/">
-                  <EventList></EventList>
-                </PrivateRoute>
-              </Switch>
-            </Router>
+          <Router basename="/event/manageEvent">
+
+            <Switch>
+              <Route exact path="/login">
+                <Header></Header>
+                <Login></Login>
+              </Route>
+              <PrivateRoute exact path="/newEvent">
+                <Header></Header>
+                <CreateNewEvent></CreateNewEvent>
+              </PrivateRoute>
+              <PrivateRoute path="/event/:eventId">
+                <Header></Header>
+                <Manage eventType="regular"></Manage>
+              </PrivateRoute>
+              <PrivateRoute path="/groupEvent/:eventId">
+                <Header></Header>
+                <Manage eventType="group"></Manage>
+              </PrivateRoute>
+              <PrivateRoute exact path="/">
+                <Header></Header>
+                <EventList></EventList>
+              </PrivateRoute>
+              <PrivateRoute exact path="/summary">
+                <Header></Header>
+                <Summary></Summary>
+              </PrivateRoute>
+            </Switch>
+          </Router>
         </ToasterContainer>
       </BaseProvider>
     </StyletronProvider>
-  );
+  )
 }
