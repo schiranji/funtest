@@ -21,6 +21,7 @@ import CreateNewEvent from './CreateNewEvent';
 import EventList from './EventList';
 import Manage from './Manage';
 import { Summary } from "../sections/eventsummary"
+import {Profile} from "../sections/profile"
 
 
 
@@ -151,6 +152,11 @@ export default function Root() {
                 <Header></Header>
                 <Summary></Summary>
               </PrivateRoute>
+              <PrivateRoute exact path="/profile">
+                <Header></Header>
+                <Profile></Profile>
+              </PrivateRoute>
+              
             </Switch>
           </Router>
         </ToasterContainer>

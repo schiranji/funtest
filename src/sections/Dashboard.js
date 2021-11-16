@@ -103,7 +103,7 @@ const Dashboard = ({ eventData }) => {
           <p>All the latest stats for your event</p>
         </SubSection>
         {!dailyViews.isLoading && dailyViews.data.results.length > 0 && (
-          <Chart data={dailyViews.data.results}></Chart>
+          <Chart ticketSales={ticketSales} data={dailyViews.data.results}></Chart>
         )}
         {!rsvpCount.isLoading && (
           <Table
