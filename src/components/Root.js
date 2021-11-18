@@ -5,6 +5,7 @@ import { BaseProvider } from 'baseui';
 import { createTheme, lightThemePrimitives } from 'baseui';
 import { requestBase } from '../utils'
 import Login from './Login';
+import { Helmet } from 'react-helmet';
 import {
   ToasterContainer,
   PLACEMENT
@@ -109,7 +110,11 @@ function PrivateRoute({ children, ...rest }) {
 export default function Root() {
   return (
     <StyletronProvider value={engine}>
-
+      <Helmet>
+        <title>Manage your events | Funzippy</title>
+        <meta name="description" content="App Description" />
+        <meta name="theme-color" content="#008f68" />
+      </Helmet>
       <BaseProvider theme={theme}>
         <ToasterContainer
           overrides={{

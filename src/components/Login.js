@@ -7,6 +7,7 @@ import {requestBase} from '../utils';
 import { useStyletron } from 'styletron-react';
 import { useHistory, useLocation } from 'react-router-dom'
 import { toaster } from 'baseui/toast';
+import { Helmet } from 'react-helmet';
 
 const LoginFormGroup = ({children}) => {
   const [css] = useStyletron();
@@ -30,6 +31,11 @@ function Login() {
 
   return(
     <Container>
+      <Helmet>
+        <title>Login | FunZippy</title>
+        <meta name="description" content="App Description" />
+        <meta name="theme-color" content="#008f68" />
+      </Helmet>
       <Row className={css({
         margin: "100px 0 50px 0",
       })}>
