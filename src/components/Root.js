@@ -21,8 +21,8 @@ import CreateNewEvent from './CreateNewEvent';
 import EventList from './EventList';
 import Manage from './Manage';
 import { Summary } from "../sections/eventsummary"
-import {Profile} from "../sections/profile"
-
+import { Profile } from "../sections/profile"
+import { Cart } from "../sections/shoppingCart"
 
 
 const primitives = {
@@ -156,7 +156,12 @@ export default function Root() {
                 <Header></Header>
                 <Profile></Profile>
               </PrivateRoute>
-              
+              <PrivateRoute exact path="/cart">
+                <Header></Header>
+                <Cart ></Cart>
+              </PrivateRoute>
+
+        
             </Switch>
           </Router>
         </ToasterContainer>
