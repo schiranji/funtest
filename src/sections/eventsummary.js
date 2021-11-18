@@ -13,8 +13,7 @@ export const Summary = (props) => {
                                 <div className="title-detail">
                                     <div className="event-tags">
                                         <span className="event-tag" data-ng-show="event.category1"><a data-ng-click="showCategory1($index)" title="Search For Music" property="category" data-ng-bind="event.category1" aria-label="Open Events for this category" className="ng-binding">Music</a></span>
-                                        <span className="event-tag ng-hide" data-ng-show="event.category2"><a data-ng-click="showCategory2($index)" title="Search For " data-ng-bind="event.category2" aria-label="Open Events for this category" className="ng-binding" /></span>
-                                        <span className="event-tag ng-hide" data-ng-show="event.category3"><a data-ng-click="showCategory3($index)" title="Search For " data-ng-bind="event.category3" aria-label="Open Events for this category" className="ng-binding" /></span>
+
                                     </div>
                                     <h1 className="single-event-title ng-binding" data-ng-bind="event.name">Carnatic Music Concert 2020</h1>
                                 </div>
@@ -851,10 +850,39 @@ export const Summary = (props) => {
                             </div>
                         </div>
                     </div>
-                    <Table
-                                columns={["Start Date", "End Date", "Start TIme", "End Time", "Name", "Email", "Phone"]}
-                                data={[[] ]}
-                            />
+                    <div className="table100 ver3 m-b-110">
+                            <div className="table100-head">
+                                <table>
+                                    <thead>
+                                        <tr className="row100 head">
+                                            <th className="cell100 column1">Name</th>
+                                            <th className="cell100 column2">Start Date</th>
+                                            <th className="cell100 column3">Start Time</th>
+                                            <th className="cell100 column4">Duration</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div className="table100-body js-pscroll ps ps--active-y">
+                                <table>
+                                    <tbody>
+
+                                        <tr className="row100 body">
+                                            <td className="cell100 column1">Yoga for Divas</td>
+                                            <td className="cell100 column2">Yoga</td>
+                                            <td className="cell100 column3">9:00 AM - 11:00 AM</td>
+                                            <td className="cell100 column4">Donna Wilson</td>
+                                        </tr>
+                                        <tr className="row100 body">
+                                            <td className="cell100 column1">Virtual Cycle</td>
+                                            <td className="cell100 column2">Gym</td>
+                                            <td className="cell100 column3">8:00 AM - 9:00 AM</td>
+                                            <td className="cell100 column4">Randy Porter</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className="ps__rail-x" style={{ left: '0px', bottom: '0px' }}><div className="ps__thumb-x" tabIndex={0} style={{ left: '0px', width: '0px' }} /></div><div className="ps__rail-y" style={{ top: '0px', right: '5px' }}><div className="ps__thumb-y" tabIndex={0} style={{ top: '0px' }} /></div></div>
+                        </div>
                     <div className="row social-section event-footer-section">
                         <h4>Share event</h4>
                         <div className="col-sm-12 social-icons">
