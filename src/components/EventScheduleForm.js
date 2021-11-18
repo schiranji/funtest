@@ -1,28 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Input } from "baseui/input";
-import FormControl from "../components/FormControl";
-import SectionBody from "../components/SectionBody";
-import SectionHeader from "../components/SectionHeader";
-import { Row, Col, Table, Button } from "reactstrap";
-import { Delete } from "baseui/icon";
-import { Datepicker, TimezonePicker } from "baseui/datepicker";
-import { TimePicker } from "baseui/timepicker";
-import SubSection from "../components/Subsection";
-import ActionButton from "../components/ActionButton";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import moment from "moment";
-import { AiFillEdit } from "react-icons/ai";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalButton,
-  SIZE,
-  ROLE,
-} from "baseui/modal";
 import { KIND as ButtonKind } from "baseui/button";
+import { Datepicker } from "baseui/datepicker";
+import { Input } from "baseui/input";
+import {
+  ModalButton, ModalFooter
+} from "baseui/modal";
+import { TimePicker } from "baseui/timepicker";
+import { Form, Formik } from "formik";
+import moment from "moment";
+import React, { useState } from "react";
+import { Col, Row } from "reactstrap";
+import * as Yup from "yup";
+import ActionButton from "../components/ActionButton";
+import FormControl from "../components/FormControl";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string().required("Name is Required"),
@@ -35,11 +24,7 @@ const SignupSchema = Yup.object().shape({
 
 export default function EventScheduleForm(props) {
   const [update, setUpdate] = useState(props.update);
-//   const [datass, setDatasss] = useState([]);
-
-
-
-  console.log("adadad",props.update)
+  const [datass, setDatasss] = useState([]);
 
   const onSubmit = (values, { resetForm }) => {
     resetForm({});
@@ -59,7 +44,7 @@ export default function EventScheduleForm(props) {
     values.endTime = moment(values.endTime).format("HH:mm");
     console.log("DATAT", values);
     const filterData = datass.map((item) => {
-      if (item.id == values.id) {
+      if (item.id === values.id) {
         item = values;
       }
       return item;

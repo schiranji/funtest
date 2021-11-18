@@ -82,7 +82,7 @@ debugger;
         title={"Booths Summary"}
         isNoAction={true}
         columns={columns}
-        data={props.ticketSales.data.data.boothsSummary}
+        data={props.ticketSales.data.data?.boothsSummary}
         pagination={true}
         paginationPageSize={5}
         ActionRow="FIRST"
@@ -92,7 +92,7 @@ debugger;
         title={"Sponsors Summary"}
         isNoAction={true}
         columns={columns}
-        data={props.ticketSales.data.data.sponsorsSummary}
+        data={props.ticketSales.data?.data?.sponsorsSummary}
         pagination={true}
         paginationPageSize={5}
         ActionRow="FIRST"

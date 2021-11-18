@@ -395,7 +395,7 @@ const Manage = ({ eventType }) => {
                       description: draftToHtml(values.summary)
                         .trim()
                         .replace(/\n/g, "<br>")
-                        .replace(/\"/g, "'"),
+                        .replace(/"/g, "'"),
                       transport: values.transportation,
                       parking: values.parking,
                       stateProvince: values.stateProvince,

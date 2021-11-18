@@ -58,7 +58,7 @@ function Login() {
 
               console.log(loginReq.headers);
           
-              if (loginReq.data.success == false) {
+              if (loginReq.data.success === false) {
                 toaster.negative(<p>"Failed to login, please try again"</p>)
                 return
               }

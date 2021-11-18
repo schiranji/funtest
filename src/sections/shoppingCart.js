@@ -248,7 +248,7 @@ export const Cart = (props) => {
                                         <input id="ticketBuyerPhone" data-ng-bind="eventUser.phoneNumber" required placeholder="Phone" type="tel" className="ng-binding" style={{ borderColor: 'rgb(204, 204, 204)', backgroundColor: 'rgb(255, 255, 255)' }} />
                                     </div>
                                     <div className="form-group inline-form-group submit-rsvp">
-                                        {/* ngIf: event.ticketCategories == null */}
+                                        {/* ngIf: event.ticketCategories === null */}
                                         {/* ngIf: event.ticketCategories != null */}<a className="btn btn-action ng-scope" data-ng-if="event.ticketCategories != null" data-ng-click="addToCart()" aria-label="Checkout">Checkout</a>{/* end ngIf: event.ticketCategories != null */}
                                     </div>
                                     <span className="dashed-decoration-dark" />
@@ -259,7 +259,7 @@ export const Cart = (props) => {
                                     <div className="form-group inline-form-group">
                                         <label className="ticket-category">Adults</label>
                                         <div className="number-selector">
-                                            <button className="minus" id="rsvpAdultMinus" disabled="disabled" data-ng-click="rsvpAdultMinus()" data-ng-disabled="eventUser.rsvpAdultCount == undefined || eventUser.rsvpAdultCount == null || eventUser.rsvpAdultCount == 0" style={{ borderColor: 'rgb(204, 204, 204)', backgroundColor: 'rgb(255, 255, 255)' }}>
+                                            <button className="minus" id="rsvpAdultMinus" disabled="disabled" data-ng-click="rsvpAdultMinus()" data-ng-disabled="eventUser.rsvpAdultCount === undefined || eventUser.rsvpAdultCount === null || eventUser.rsvpAdultCount === 0" style={{ borderColor: 'rgb(204, 204, 204)', backgroundColor: 'rgb(255, 255, 255)' }}>
                                                 <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style={{ height: '22px', width: '22px', display: 'block', fill: 'currentcolor' }}>
                                                     <rect height={2} rx={1} width={12} x={6} y={11} />
                                                 </svg> </button>
@@ -276,7 +276,7 @@ export const Cart = (props) => {
                                     <div className="form-group inline-form-group">
                                         <label className="ticket-category">Kids</label>
                                         <div className="number-selector">
-                                            <button className="minus" id="rsvpKidMinus" disabled="disabled" data-ng-click="rsvpKidMinus()" data-ng-disabled="eventUser.rsvpKidCount == undefined || eventUser.rsvpKidCount == null || eventUser.rsvpKidCount == 0" style={{ borderColor: 'rgb(204, 204, 204)', backgroundColor: 'rgb(255, 255, 255)' }}>
+                                            <button className="minus" id="rsvpKidMinus" disabled="disabled" data-ng-click="rsvpKidMinus()" data-ng-disabled="eventUser.rsvpKidCount === undefined || eventUser.rsvpKidCount === null || eventUser.rsvpKidCount === 0" style={{ borderColor: 'rgb(204, 204, 204)', backgroundColor: 'rgb(255, 255, 255)' }}>
                                                 <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style={{ height: '22px', width: '22px', display: 'block', fill: 'currentcolor' }}>
                                                     <rect height={2} rx={1} width={12} x={6} y={11} />
                                                 </svg> </button>
@@ -327,12 +327,12 @@ export const Cart = (props) => {
                                         <ul className="list-group list-group-flush participants">
                                             {/* ngRepeat: contact in event.contacts */}<li className="list-group-item contact-info participant ng-scope" data-ng-repeat="contact in event.contacts"><img className="img-fluid img-circle" src="/images/user.png" alt="" />
                                                 <div className="contact-details">
-                                                    <p className="name"><span data-ng-hide="contact.firstName == null" data-ng-bind="(contact.firstName) + &quot; &quot;" className="ng-binding">Chiranji </span><span data-ng-hide="contact.lastName == null" data-ng-bind="contact.lastName" className="ng-binding">chiranji</span></p>
+                                                    <p className="name"><span data-ng-hide="contact.firstName === null" data-ng-bind="(contact.firstName) + &quot; &quot;" className="ng-binding">Chiranji </span><span data-ng-hide="contact.lastName === null" data-ng-bind="contact.lastName" className="ng-binding">chiranji</span></p>
                                                     <div className="number">
-                                                        <a data-ng-hide="contact.phoneNumber == null" data-ng-bind="contact.phoneNumber" href="tel:1455555" className="ng-binding">1455555</a>
+                                                        <a data-ng-hide="contact.phoneNumber === null" data-ng-bind="contact.phoneNumber" href="tel:1455555" className="ng-binding">1455555</a>
                                                     </div>
                                                     <div className="email">
-                                                        <a data-ng-hide="contact.emailAddress == null" data-ng-bind="contact.emailAddress" href="mailto:test@test.com" className="ng-binding">test@test.com</a>
+                                                        <a data-ng-hide="contact.emailAddress === null" data-ng-bind="contact.emailAddress" href="mailto:test@test.com" className="ng-binding">test@test.com</a>
                                                     </div>
                                                 </div> </li>{/* end ngRepeat: contact in event.contacts */}
                                         </ul>

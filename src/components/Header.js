@@ -43,15 +43,13 @@ const Header = () => {
     fontWeight: "bold",
   }
  useEffect(()=>{
-
    if(window.location.pathname === '/event/manageEvent/login'){
       setText("Sign In")
    }
    else{
      setText("Logout")
    }
-
- })
+ }, [])
 
   return (
     <HeaderContainer fluid className="dashboardHeaderContainer">
