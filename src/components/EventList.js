@@ -185,7 +185,7 @@ const EventList = () => {
               <Table
                 flex={2}
                 editHandler={(data) => {
-                  if (data.eventType == "group") {
+                  if (data.eventType === "group") {
                     history.push(`/groupEvent/${data.id}`);
                   } else {
                     history.push(`/event/${data.id}`);

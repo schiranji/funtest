@@ -13,8 +13,7 @@ export const Summary = (props) => {
                                 <div className="title-detail">
                                     <div className="event-tags">
                                         <span className="event-tag" data-ng-show="event.category1"><a data-ng-click="showCategory1($index)" title="Search For Music" property="category" data-ng-bind="event.category1" aria-label="Open Events for this category" className="ng-binding">Music</a></span>
-                                        <span className="event-tag ng-hide" data-ng-show="event.category2"><a data-ng-click="showCategory2($index)" title="Search For " data-ng-bind="event.category2" aria-label="Open Events for this category" className="ng-binding" /></span>
-                                        <span className="event-tag ng-hide" data-ng-show="event.category3"><a data-ng-click="showCategory3($index)" title="Search For " data-ng-bind="event.category3" aria-label="Open Events for this category" className="ng-binding" /></span>
+
                                     </div>
                                     <h1 className="single-event-title ng-binding" data-ng-bind="event.name">Carnatic Music Concert 2020</h1>
                                 </div>
@@ -642,7 +641,7 @@ export const Summary = (props) => {
                                     <input id="ticketBuyerPhone" data-ng-bind="eventUser.phoneNumber" required placeholder="Phone" type="tel" className="ng-binding" />
                                 </div>
                                 <div className="form-group inline-form-group submit-rsvp">
-                                    {/* ngIf: event.ticketCategories == null */}
+                                    {/* ngIf: event.ticketCategories === null */}
                                     {/* ngIf: event.ticketCategories != null */}<a className="btn btn-action ng-scope" data-ng-if="event.ticketCategories != null" data-ng-click="addToCart()" aria-label="Checkout">Checkout</a>{/* end ngIf: event.ticketCategories != null */}
                                 </div>
                                 <span className="dashed-decoration-dark" />
@@ -653,7 +652,7 @@ export const Summary = (props) => {
                                 <div className="form-group inline-form-group">
                                     <label className="ticket-category">Adults</label>
                                     <div className="number-selector">
-                                        <button className="minus" id="rsvpAdultMinus" disabled="disabled" data-ng-click="rsvpAdultMinus()" data-ng-disabled="eventUser.rsvpAdultCount == undefined || eventUser.rsvpAdultCount == null || eventUser.rsvpAdultCount == 0">
+                                        <button className="minus" id="rsvpAdultMinus" disabled="disabled" data-ng-click="rsvpAdultMinus()" data-ng-disabled="eventUser.rsvpAdultCount === undefined || eventUser.rsvpAdultCount === null || eventUser.rsvpAdultCount === 0">
                                             <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style={{ height: '22px', width: '22px', display: 'block', fill: 'currentcolor' }}>
                                                 <rect height={2} rx={1} width={12} x={6} y={11} />
                                             </svg> </button>
@@ -670,7 +669,7 @@ export const Summary = (props) => {
                                 <div className="form-group inline-form-group">
                                     <label className="ticket-category">Kids</label>
                                     <div className="number-selector">
-                                        <button className="minus" id="rsvpKidMinus" disabled="disabled" data-ng-click="rsvpKidMinus()" data-ng-disabled="eventUser.rsvpKidCount == undefined || eventUser.rsvpKidCount == null || eventUser.rsvpKidCount == 0">
+                                        <button className="minus" id="rsvpKidMinus" disabled="disabled" data-ng-click="rsvpKidMinus()" data-ng-disabled="eventUser.rsvpKidCount === undefined || eventUser.rsvpKidCount === null || eventUser.rsvpKidCount === 0">
                                             <svg viewBox="0 0 24 24" role="presentation" aria-hidden="true" focusable="false" style={{ height: '22px', width: '22px', display: 'block', fill: 'currentcolor' }}>
                                                 <rect height={2} rx={1} width={12} x={6} y={11} />
                                             </svg> </button>
@@ -721,21 +720,21 @@ export const Summary = (props) => {
                                     <ul className="list-group list-group-flush participants">
                                         {/* ngRepeat: contact in event.contacts */}<li className="list-group-item contact-info participant ng-scope" data-ng-repeat="contact in event.contacts"><img className="img-fluid img-circle" data-ng-src="/images/user.png" alt="vasantha" src="/images/user.png" />
                                             <div className="contact-details">
-                                                <p className="name"><span data-ng-hide="contact.firstName == null" data-ng-bind="(contact.firstName) + &quot; &quot;" className="ng-binding">vasantha </span><span data-ng-hide="contact.lastName == null" data-ng-bind="contact.lastName" className="ng-binding">Dacha</span></p>
+                                                <p className="name"><span data-ng-hide="contact.firstName === null" data-ng-bind="(contact.firstName) + &quot; &quot;" className="ng-binding">vasantha </span><span data-ng-hide="contact.lastName === null" data-ng-bind="contact.lastName" className="ng-binding">Dacha</span></p>
                                                 <div className="number">
-                                                    <a data-ng-hide="contact.phoneNumber == null" data-ng-bind="contact.phoneNumber" href="tel:3609917711" className="ng-binding">3609917711</a>
+                                                    <a data-ng-hide="contact.phoneNumber === null" data-ng-bind="contact.phoneNumber" href="tel:3609917711" className="ng-binding">3609917711</a>
                                                 </div>
                                                 <div className="email">
-                                                    <a data-ng-hide="contact.emailAddress == null" data-ng-bind="contact.emailAddress" href="mailto:admin@funzippy.com" className="ng-binding">admin@funzippy.com</a>
+                                                    <a data-ng-hide="contact.emailAddress === null" data-ng-bind="contact.emailAddress" href="mailto:admin@funzippy.com" className="ng-binding">admin@funzippy.com</a>
                                                 </div>
                                             </div> </li>{/* end ngRepeat: contact in event.contacts */}<li className="list-group-item contact-info participant ng-scope" data-ng-repeat="contact in event.contacts"><img className="img-fluid img-circle" data-ng-src="/images/user.png" alt="REVHI" src="/images/user.png" />
                                             <div className="contact-details">
-                                                <p className="name"><span data-ng-hide="contact.firstName == null" data-ng-bind="(contact.firstName) + &quot; &quot;" className="ng-binding">REVHI </span><span data-ng-hide="contact.lastName == null" data-ng-bind="contact.lastName" className="ng-binding">hijk</span></p>
+                                                <p className="name"><span data-ng-hide="contact.firstName === null" data-ng-bind="(contact.firstName) + &quot; &quot;" className="ng-binding">REVHI </span><span data-ng-hide="contact.lastName === null" data-ng-bind="contact.lastName" className="ng-binding">hijk</span></p>
                                                 <div className="number">
-                                                    <a data-ng-hide="contact.phoneNumber == null" data-ng-bind="contact.phoneNumber" href="tel:3585644782" className="ng-binding">3585644782</a>
+                                                    <a data-ng-hide="contact.phoneNumber === null" data-ng-bind="contact.phoneNumber" href="tel:3585644782" className="ng-binding">3585644782</a>
                                                 </div>
                                                 <div className="email">
-                                                    <a data-ng-hide="contact.emailAddress == null" data-ng-bind="contact.emailAddress" href="mailto:vfx@gmail.com" className="ng-binding">vfx@gmail.com</a>
+                                                    <a data-ng-hide="contact.emailAddress === null" data-ng-bind="contact.emailAddress" href="mailto:vfx@gmail.com" className="ng-binding">vfx@gmail.com</a>
                                                 </div>
                                             </div> </li>{/* end ngRepeat: contact in event.contacts */}
                                     </ul>
@@ -851,10 +850,39 @@ export const Summary = (props) => {
                             </div>
                         </div>
                     </div>
-                    <Table
-                                columns={["Start Date", "End Date", "Start TIme", "End Time", "Name", "Email", "Phone"]}
-                                data={[[] ]}
-                            />
+                    <div className="table100 ver3 m-b-110">
+                            <div className="table100-head">
+                                <table>
+                                    <thead>
+                                        <tr className="row100 head">
+                                            <th className="cell100 column1">Name</th>
+                                            <th className="cell100 column2">Start Date</th>
+                                            <th className="cell100 column3">Start Time</th>
+                                            <th className="cell100 column4">Duration</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                            <div className="table100-body js-pscroll ps ps--active-y">
+                                <table>
+                                    <tbody>
+
+                                        <tr className="row100 body">
+                                            <td className="cell100 column1">Yoga for Divas</td>
+                                            <td className="cell100 column2">Yoga</td>
+                                            <td className="cell100 column3">9:00 AM - 11:00 AM</td>
+                                            <td className="cell100 column4">Donna Wilson</td>
+                                        </tr>
+                                        <tr className="row100 body">
+                                            <td className="cell100 column1">Virtual Cycle</td>
+                                            <td className="cell100 column2">Gym</td>
+                                            <td className="cell100 column3">8:00 AM - 9:00 AM</td>
+                                            <td className="cell100 column4">Randy Porter</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div className="ps__rail-x" style={{ left: '0px', bottom: '0px' }}><div className="ps__thumb-x" tabIndex={0} style={{ left: '0px', width: '0px' }} /></div><div className="ps__rail-y" style={{ top: '0px', right: '5px' }}><div className="ps__thumb-y" tabIndex={0} style={{ top: '0px' }} /></div></div>
+                        </div>
                     <div className="row social-section event-footer-section">
                         <h4>Share event</h4>
                         <div className="col-sm-12 social-icons">

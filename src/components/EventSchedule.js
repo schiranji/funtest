@@ -1,40 +1,33 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Input } from "baseui/input";
-import { Textarea } from "baseui/textarea";
-import { FormControl } from "baseui/form-control";
-import SectionBody from "../components/SectionBody";
-import SectionHeader from "../components/SectionHeader";
-import { Row, Col } from "reactstrap";
-import { Delete } from "baseui/icon";
-import Show from "baseui/icon/show";
-import { Datepicker, TimezonePicker } from "baseui/datepicker";
-import { TimePicker } from "baseui/timepicker";
-import SubSection from "../components/Subsection";
-import ActionButton from "../components/ActionButton";
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import moment from "moment";
-import { AiFillEdit } from "react-icons/ai";
-import * as XLSX from "xlsx";
-import { toaster } from "baseui/toast";
-import { EVENT_TYPE } from "../utils";
-import {
-  Modal,
-  ModalHeader,
-  ModalFooter,
-  ModalButton,
-  SIZE,
-  ROLE,
-} from "baseui/modal";
-import { KIND as ButtonKind } from "baseui/button";
-import { AgGridReact, AgGridColumn } from "ag-grid-react";
-import "ag-grid-enterprise";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import { CSVLink, CSVDownload } from "react-csv";
-import { requestBase } from "../utils";
-import { useParams } from "react-router-dom";
+import "ag-grid-enterprise";
+import { AgGridColumn, AgGridReact } from "ag-grid-react";
+import { KIND as ButtonKind } from "baseui/button";
 import { Checkbox } from "baseui/checkbox";
+import { Datepicker } from "baseui/datepicker";
+import { FormControl } from "baseui/form-control";
+import { Delete } from "baseui/icon";
+import Show from "baseui/icon/show";
+import { Input } from "baseui/input";
+import {
+  Modal, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE
+} from "baseui/modal";
+import { Textarea } from "baseui/textarea";
+import { TimePicker } from "baseui/timepicker";
+import { toaster } from "baseui/toast";
+import { Form, Formik } from "formik";
+import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
+import { AiFillEdit } from "react-icons/ai";
+import { useParams } from "react-router-dom";
+import { Col, Row } from "reactstrap";
+import * as XLSX from "xlsx";
+import * as Yup from "yup";
+import ActionButton from "../components/ActionButton";
+import SectionBody from "../components/SectionBody";
+import SectionHeader from "../components/SectionHeader";
+import SubSection from "../components/Subsection";
+import { EVENT_TYPE, requestBase } from "../utils";
 
 const headers = [
   { label: "Name", key: "name" },
@@ -106,6 +99,7 @@ const EventSchedule = (props) => {
     const Array = [];
     datass &&
       datass.map &&
+      // eslint-disable-next-line array-callback-return
       datass.map((values) => {
         let myValue = { ...values };
         myValue.startDate =
@@ -120,6 +114,7 @@ const EventSchedule = (props) => {
         Array.push(myValue);
       });
     setGetDownload(Array);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datass && datass.length]);
 
   // const onSubmitData = async() => {
@@ -155,13 +150,13 @@ const EventSchedule = (props) => {
       const row = dataStringLines[i].split(
         /,(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/
       );
-      if (headers && row.length == headers.length) {
+      if (headers && row.length === headers.length) {
         const obj = {};
         for (let j = 0; j < headers.length; j++) {
           let d = row[j];
           if (d.length > 0) {
-            if (d[0] == '"') d = d.substring(1, d.length - 1);
-            if (d[d.length - 1] == '"') d = d.substring(d.length - 2, 1);
+            if (d[0] === '"') d = d.substring(1, d.length - 1);
+            if (d[d.length - 1] === '"') d = d.substring(d.length - 2, 1);
           }
           if (headers[j]) {
             obj[headers[j]] = d;

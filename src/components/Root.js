@@ -5,6 +5,7 @@ import { BaseProvider } from 'baseui';
 import { createTheme, lightThemePrimitives } from 'baseui';
 import { requestBase } from '../utils'
 import Login from './Login';
+import { Helmet } from 'react-helmet';
 import {
   ToasterContainer,
   PLACEMENT
@@ -21,7 +22,8 @@ import CreateNewEvent from './CreateNewEvent';
 import EventList from './EventList';
 import Manage from './Manage';
 import { Summary } from "../sections/eventsummary"
-
+import { Profile } from "../sections/profile"
+import { Cart } from "../sections/shoppingCart"
 
 
 const primitives = {
@@ -108,7 +110,11 @@ function PrivateRoute({ children, ...rest }) {
 export default function Root() {
   return (
     <StyletronProvider value={engine}>
-
+      <Helmet>
+        <title>Manage your events | Funzippy</title>
+        <meta name="description" content="App Description" />
+        <meta name="theme-color" content="#008f68" />
+      </Helmet>
       <BaseProvider theme={theme}>
         <ToasterContainer
           overrides={{
@@ -151,6 +157,16 @@ export default function Root() {
                 <Header></Header>
                 <Summary></Summary>
               </PrivateRoute>
+              <PrivateRoute exact path="/profile">
+                <Header></Header>
+                <Profile></Profile>
+              </PrivateRoute>
+              <PrivateRoute exact path="/cart">
+                <Header></Header>
+                <Cart ></Cart>
+              </PrivateRoute>
+
+        
             </Switch>
           </Router>
         </ToasterContainer>
