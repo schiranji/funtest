@@ -411,7 +411,7 @@ export const Cart = (props) => {
           </table>
         </div>
         <div className="table100-body js-pscroll ps ps--active-y">
-          <table>
+          <table className="table1">
             <tbody>
               
               <tr className="row100 body">
@@ -430,6 +430,41 @@ export const Cart = (props) => {
           </table>
           <div className="ps__rail-x" style={{left: '0px', bottom: '0px'}}><div className="ps__thumb-x" tabIndex={0} style={{left: '0px', width: '0px'}} /></div><div className="ps__rail-y" style={{top: '0px', right: '5px'}}><div className="ps__thumb-y" tabIndex={0} style={{top: '0px'}} /></div></div>
       </div>
+      <br/><br/>
+      
+        <table className="table2">
+            <tr>
+                <th>Event</th>
+                <th>Ticket</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+            <tr>
+                <td>Ticketed Event</td>
+                <td>VIP : Veteran</td>
+                <td>$100 : $1</td>
+                <td><input value="1" name="remove" type="text"/> <a href="#"> Remove</a></td>
+                <td>$1</td>
+            </tr>
+            <tr>
+            <td>Ticketed Event</td>
+                <td>VIP : Veteran</td>
+                <td>$100 : $1</td>
+                <td><input value="1" name="remove" type="text"/> <a href="#"> Remove</a></td>
+                <td>$1</td>
+            </tr>
+            <tr>
+                <td colSpan="3"></td>
+                <td className="textGray"><strong>Total :$</strong></td>
+                <td>28</td>
+            </tr>
+            <tr>
+                <td colSpan="3"></td>
+                <td className="textGray"><strong>You Saved :$</strong></td>
+                <td>75</td>
+            </tr>
+        </table>
                         <div className="row hidden-initially" id="volunteerSignupDiv">
                             <div className="col-sm-12">
                                 <h3>Volunteer Slots</h3>
