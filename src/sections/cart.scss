@@ -1,4 +1,27 @@
+.table2 {
+	// font-family: arial, sans-serif;
+	box-shadow: 1px 0px 2px rgb(196, 192, 192);
+	border-collapse: collapse;
+	width: 100%;
+  }
+  
+  .table2 td, .table2 th {
+	border: 1px solid rgba(0,0,0,.125);
+	text-align: left;
+	padding: 8px;
+  }
 
+  .textGray{
+	color:rgb(83, 80, 80);
+  }
+
+  .table2 th{
+	  color: rgb(83, 80, 80);
+  }
+  .table2 a{
+	  color: #F4E164;
+	  text-decoration: none;
+  }
 
 * {
 	margin: 0;
@@ -129,11 +152,11 @@ table {
 	width: 100%
 }
 
-th,
-td {
-	font-weight: unset;
-	padding-right: 10px
-}
+// th,
+// td {
+// 	font-weight: unset;
+// 	padding-right: 10px
+// }
 
 .column1 {
 	width: 33%;
