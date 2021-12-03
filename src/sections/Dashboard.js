@@ -9,6 +9,7 @@ import { requestBase } from "../utils";
 import Chart from "./chart";
 import useCall from "../shared/useCall";
 import Table from "../shared/table";
+import { EVENT_TYPE } from "../utils";
 
 const DashboardHeader = styled.div`
   display: flex;
@@ -23,11 +24,13 @@ const Dashboard = ({ eventData }) => {
   };
   const { id: eventId } = eventData;
   const [refresh, setRefresh] = useState(false);
+  const eventType =
+    eventData.eventType === EVENT_TYPE.group ? "grpEvent" : "event";
 
   const dailyViews = useCall(
     () =>
       requestBase.post(
-        `/auth/event/eventManagement/view/dailyViews/${eventData.uid}`,
+        `/auth/${eventType}/eventManagement/view/dailyViews/${eventData.uid}`,
         {}
       ),
     [eventId, refresh],
@@ -37,7 +40,7 @@ const Dashboard = ({ eventData }) => {
   const ticketSales = useCall(
     () =>
       requestBase.post(
-        `/auth/event/eventManagement/view/ticketSaleSummary/${eventId}`,
+        `/auth/${eventType}/eventManagement/view/ticketSaleSummary/${eventId}`,
         {}
       ),
     [eventId, refresh],
@@ -47,7 +50,7 @@ const Dashboard = ({ eventData }) => {
   const rsvpCount = useCall(
     () =>
       requestBase.post(
-        `/auth/event/eventManagement/view/rsvpCounts/${eventId}`,
+        `/auth/${eventType}/eventManagement/view/rsvpCounts/${eventId}`,
         {}
       ),
     [eventId, refresh],
@@ -103,7 +106,10 @@ const Dashboard = ({ eventData }) => {
           <p>All the latest stats for your event</p>
         </SubSection>
         {!dailyViews.isLoading && dailyViews.data.results.length > 0 && (
-          <Chart ticketSales={ticketSales} data={dailyViews.data.results}></Chart>
+          <Chart
+            ticketSales={ticketSales}
+            data={dailyViews.data.results}
+          ></Chart>
         )}
         {!rsvpCount.isLoading && (
           <Table
