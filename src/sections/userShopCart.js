@@ -218,6 +218,18 @@ export const UserShopppingCart = (props) => {
           </ul>
         </div>
         <div className="right-col">
+          <label>Enter promo code</label>
+          <div className="cart-header-1">
+            <input type="text" placeholder="Promo Code" />
+            <div
+              className="btn btn-checkout"
+              type="submit"
+              name="checkout"
+              defaultValue="Proceed to Checkout"
+            >
+              Submit
+            </div>
+          </div>
           <div className="cart-header">
             <div className="cart--title summary">Order Summary</div>
           </div>
@@ -237,6 +249,12 @@ export const UserShopppingCart = (props) => {
                   -<span data-cart-discount-amount />
                 </span>
               </div>
+            </div>
+            <div className="total">
+              <span className="label">
+                <span>Discount:</span>
+              </span>
+              <span className="price">$0.00</span>
             </div>
             <div className="total">
               <span className="label">

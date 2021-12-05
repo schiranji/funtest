@@ -12,6 +12,27 @@
   flex: 0 0 340px;
   max-width: 340px;
 }
+.cart-header-1 {
+  display: flex;
+  flex-basis: 1 1 1;
+}
+
+.cart-header-1 > input {
+  flex: 1;
+  border: 1px solid rgb(79, 68, 87) !important;
+  border-radius: 0px;
+  margin-right: 1px;
+}
+
+.cart-header-1 > div {
+  flex: 1;
+  border: 1px solid rgb(79, 68, 87) !important;
+  //border-radius: 0px;
+}
+.total {
+  display: flex;
+  justify-content: space-between;
+}
 .shopify-section {
   padding: 20px 200px;
 }
