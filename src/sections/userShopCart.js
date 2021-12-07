@@ -35,7 +35,7 @@ export const UserShopppingCart = (props) => {
           <div className="cart-header">
             <div className="cart--title">Products</div>
             <div className="cart--price">Price</div>
-            <div className="cart--quantity h-mobile">Quantity</div>
+            <div className="cart--quantity h-mobile">Qty</div>
             <div className="cart--total h-mobile">Total</div>
             <div className="cart--remove h-mobile"></div>
           </div>
