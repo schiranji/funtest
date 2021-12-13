@@ -1,38 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { Client as Styletron } from 'styletron-engine-atomic';
-import { Provider as StyletronProvider } from 'styletron-react';
-import { BaseProvider } from 'baseui';
-import { createTheme, lightThemePrimitives } from 'baseui';
-import { requestBase } from '../utils'
-import Login from './Login';
-import { Helmet } from 'react-helmet';
-import {
-  ToasterContainer,
-  PLACEMENT
-} from "baseui/toast";
+import React, { useState, useEffect } from "react";
+import { Client as Styletron } from "styletron-engine-atomic";
+import { Provider as StyletronProvider } from "styletron-react";
+import { BaseProvider } from "baseui";
+import { createTheme, lightThemePrimitives } from "baseui";
+import { requestBase } from "../utils";
+import Login from "./Login";
+import { Helmet } from "react-helmet";
+import { ToasterContainer, PLACEMENT } from "baseui/toast";
 import {
   Route,
   Switch,
   Redirect,
-  BrowserRouter as Router
-} from 'react-router-dom'
-import { StyledSpinnerNext } from "baseui/spinner"
-import Header from './Header';
-import CreateNewEvent from './CreateNewEvent';
-import EventList from './EventList';
-import Manage from './Manage';
-import { Summary } from "../sections/eventsummary"
-import { Profile } from "../sections/profile"
-import { Cart } from "../sections/shoppingCart"
-
+  BrowserRouter as Router,
+} from "react-router-dom";
+import { StyledSpinnerNext } from "baseui/spinner";
+import Header from "./Header";
+import CreateNewEvent from "./CreateNewEvent";
+import EventList from "./EventList";
+import Manage from "./Manage";
+import { Summary } from "../sections/eventsummary";
+import { Profile } from "../sections/profile";
+import { Cart } from "../sections/shoppingCart";
+import { UserShopppingCart } from "../sections/userShopCart";
 
 const primitives = {
   ...lightThemePrimitives,
   font: {
-    ui: "'quicksand', sans-serif"
+    ui: "'quicksand', sans-serif",
   },
-  primaryFontFamily: 'quicksand',
-  primary: '#4F4457',
+  primaryFontFamily: "quicksand",
+  primary: "#4F4457",
   primary100: "#847c89",
   primary200: "#726979",
   primary300: "#615768",
@@ -40,12 +37,12 @@ const primitives = {
   primary500: "#473d4e",
   primary600: "#3f3646",
   primary700: "#37303d",
-  accent: '#F4E164',
+  accent: "#F4E164",
   darkAccent: "#2B213C",
   lightGray: "#eaeaea",
   danger: "#b71c1c",
-  dangerDark: "#7f0000"
-}
+  dangerDark: "#7f0000",
+};
 
 const overrides = {
   colors: {
@@ -60,13 +57,13 @@ const overrides = {
 
     buttonPrimarySelectedFill: primitives.accent,
     buttonPrimarySelectedText: primitives.darkAccent,
-  }
-}
+  },
+};
 
 const theme = createTheme(primitives, overrides);
 
 const engine = new Styletron({
-  prefix: "bui_"
+  prefix: "bui_",
 });
 
 function PrivateRoute({ children, ...rest }) {
@@ -81,27 +78,28 @@ function PrivateRoute({ children, ...rest }) {
     }
 
     setLoggedIn(true);
-  }
+  };
 
   useEffect(() => {
     checkLoginStatus();
-  }, [])
+  }, []);
 
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        loggedIn === null ? (<StyledSpinnerNext></StyledSpinnerNext>)
-          : loggedIn === true ? (
-            children
-          ) : (
-            <Redirect
-              to={{
-                pathname: "/login",
-                state: { from: location }
-              }}
-            />
-          )
+        loggedIn === null ? (
+          <StyledSpinnerNext></StyledSpinnerNext>
+        ) : loggedIn === true ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: "/login",
+              state: { from: location },
+            }}
+          />
+        )
       }
     />
   );
@@ -123,15 +121,15 @@ export default function Root() {
                 borderBottomLeftRadius: "5px",
                 borderBottomRightRadius: "5px",
                 borderTopLeftRadius: "5px",
-                borderTopRightRadius: "5px"
-              })
-            }
+                borderTopRightRadius: "5px",
+              }),
+            },
           }}
           usePortal={true}
           placement={PLACEMENT.bottomRight}
-          autoHideDuration={5000}>
+          autoHideDuration={5000}
+        >
           <Router basename="/event/manageEvent">
-
             <Switch>
               <Route exact path="/login">
                 <Header></Header>
@@ -163,14 +161,16 @@ export default function Root() {
               </PrivateRoute>
               <PrivateRoute exact path="/cart">
                 <Header></Header>
-                <Cart ></Cart>
+                <Cart></Cart>
               </PrivateRoute>
-
-        
+              <PrivateRoute exact path="/shoppingcart">
+                <Header></Header>
+                <UserShopppingCart></UserShopppingCart>
+              </PrivateRoute>
             </Switch>
           </Router>
         </ToasterContainer>
       </BaseProvider>
     </StyletronProvider>
-  )
+  );
 }
