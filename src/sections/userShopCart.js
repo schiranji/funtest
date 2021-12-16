@@ -33,10 +33,10 @@ export const UserShopppingCart = (props) => {
       >
         <div className="left-col cart_items">
           <div className="cart-header">
-            <div className="cart--title">Products</div>
-            <div className="cart--price">Price</div>
+            <div className="cart--title">Event || Ticket</div>
+            <div className="cart--price">Unit Price</div>
             <div className="cart--quantity h-mobile">Qty</div>
-            <div className="cart--total h-mobile">Total</div>
+            <div className="cart--total h-mobile">Price</div>
             <div className="cart--remove h-mobile"></div>
           </div>
           <ul className="cart-list">
@@ -61,10 +61,10 @@ export const UserShopppingCart = (props) => {
                       href="/products/shoes-slippers-3d-novelty-novelty?variant=40470762848437"
                       className="product-name"
                     >
-                      <span>Space Jam Tweety Bird Slippers</span>
+                      <span>Ticketed Event</span>
                     </a>
                     <div className="size">
-                      <small>S / Yellow</small>
+                      <small>VIP : Veteran</small>
                       <a
                         href="JavaScript:void(0);"
                         className="product-details__edit"
@@ -91,7 +91,7 @@ export const UserShopppingCart = (props) => {
 
                 <div className="cart--price h-mobile">
                   <div className="price-box">
-                    <span>$34.00</span>
+                    <span>$100 : $1</span>
                   </div>
                 </div>
                 <div className="cart--quantity h-mobile">
@@ -109,7 +109,7 @@ export const UserShopppingCart = (props) => {
                 </div>
                 <div className="cart--total h-mobile">
                   <span className="price" data-price={3400}>
-                    $34.00
+                  $1
                   </span>
                 </div>
                 <div className="cart--remove h-mobile">
