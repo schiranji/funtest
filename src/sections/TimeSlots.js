@@ -239,7 +239,7 @@ const TimeSlots = ({
           </Row>
           <Row>
             <Col>
-              <ActionButton type="submit">Save Changes</ActionButton>
+              {/* <ActionButton type="submit">Save Changes</ActionButton> */}
               <ActionButton disabled={disbaleDelete} onClick={deleteHandler}>
                 Delete
               </ActionButton>
