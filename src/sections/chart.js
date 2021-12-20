@@ -1,6 +1,5 @@
 import React from "react";
-import { Line, Bar } from "react-chartjs-2";
-import { summaryData } from "./summaryChartTemp";
+import { Line } from "react-chartjs-2";
 import Table from "../shared/table";
 import useCall from "../shared/useCall";
 import { requestBase } from "../utils";
@@ -22,7 +21,6 @@ const options = (title) => ({
   },
 });
 
-
 const columns = [
   {
     field: "name",
@@ -36,7 +34,7 @@ const columns = [
   {
     field: "lineItemTotal",
     headerName: "Total",
-  }
+  },
 ];
 
 const LineChart = (props) => {
@@ -62,42 +60,48 @@ const LineChart = (props) => {
       },
     ],
   };
-debugger;
+  debugger;
   return (
     <>
       <Line data={data} options={options("")} />
 
-      {!ticketSaleSummary.isLoading &&
-        <Table
-          title={"Tickets Summary"}
-          columns={columns}
-          data={props.ticketSales.data.data.ticketsSummary}
-          pagination={true}
-          paginationPageSize={5}
-          ActionRow="FIRST"
-          flex={1.5}
-          isNoAction={true}
-        ></Table>}
-      <Table
-        title={"Booths Summary"}
-        isNoAction={true}
-        columns={columns}
-        data={props.ticketSales.data.data?.boothsSummary}
-        pagination={true}
-        paginationPageSize={5}
-        ActionRow="FIRST"
-        flex={1.5}
-      ></Table>
-      <Table
-        title={"Sponsors Summary"}
-        isNoAction={true}
-        columns={columns}
-        data={props.ticketSales.data?.data?.sponsorsSummary}
-        pagination={true}
-        paginationPageSize={5}
-        ActionRow="FIRST"
-        flex={1.5}
-      ></Table>
+      {props.ticketSales &&
+        props.ticketSales.data &&
+        props.ticketSales.data.data && (
+          <>
+            <Table
+              title={"Tickets Summary"}
+              columns={columns}
+              data={props.ticketSales.data.data.ticketsSummary}
+              pagination={true}
+              paginationPageSize={5}
+              ActionRow="FIRST"
+              flex={1.5}
+              isNoAction={true}
+            ></Table>
+
+            <Table
+              title={"Booths Summary"}
+              isNoAction={true}
+              columns={columns}
+              data={props.ticketSales.data.data?.boothsSummary}
+              pagination={true}
+              paginationPageSize={5}
+              ActionRow="FIRST"
+              flex={1.5}
+            ></Table>
+            <Table
+              title={"Sponsors Summary"}
+              isNoAction={true}
+              columns={columns}
+              data={props.ticketSales.data?.data?.sponsorsSummary}
+              pagination={true}
+              paginationPageSize={5}
+              ActionRow="FIRST"
+              flex={1.5}
+            ></Table>
+          </>
+        )}
     </>
   );
 };

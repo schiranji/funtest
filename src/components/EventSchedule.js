@@ -9,7 +9,12 @@ import { Delete } from "baseui/icon";
 import Show from "baseui/icon/show";
 import { Input } from "baseui/input";
 import {
-  Modal, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE
+  Modal,
+  ModalButton,
+  ModalFooter,
+  ModalHeader,
+  ROLE,
+  SIZE,
 } from "baseui/modal";
 import { Textarea } from "baseui/textarea";
 import { TimePicker } from "baseui/timepicker";
@@ -113,7 +118,7 @@ const EventSchedule = (props) => {
         Array.push(myValue);
       });
     setGetDownload(Array);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datass && datass.length]);
 
   // const onSubmitData = async() => {
@@ -749,6 +754,7 @@ const EventSchedule = (props) => {
                             error={touched.startDate ? errors.startDate : null}
                           >
                             <Datepicker
+                              formatString={"dd/MM/yyyy"}
                               value={minimumDate || new Date()}
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
