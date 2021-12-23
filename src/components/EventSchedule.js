@@ -83,9 +83,7 @@ const EventSchedule = (props) => {
       try {
         let url = `/auth/${eventTyepe}/event/search/schedule-item/${eventId}`;
         const getReq = await requestBase.get(url);
-        // setMinimumDate(new Date(getReq.data.startDateTime));
-        // setMaximumDate(new Date(getReq.data.endDateTime));
-        console.log(new Date(getReq.data.startDateTime));
+
         if (getReq.data) {
           setGetRequest(false);
           setDatasss(getReq.data);
@@ -375,6 +373,8 @@ const EventSchedule = (props) => {
                 setUpdate(true);
                 setShowData(false);
                 setIsOpened(true);
+
+                debugger;
                 data.startTime = data.startDateTime
                   ? new Date(data.startDateTime)
                   : new Date();
@@ -755,15 +755,19 @@ const EventSchedule = (props) => {
                           >
                             <Datepicker
                               formatString={"dd/MM/yyyy"}
-                              value={minimumDate || new Date()}
+                              value={value.startDate}
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
                               minDate={
-                                minimumDate !== null ? minimumDate : new Date()
+                                startDate.format("YYYY-MM-DD") !== null
+                                  ? new Date(startDate.format("YYYY-MM-DD"))
+                                  : new Date()
                               }
                               maxDate={
-                                maximumDate !== null ? maximumDate : null
+                                endDate.format("YYYY-MM-DD") !== null
+                                  ? new Date(endDate.format("YYYY-MM-DD"))
+                                  : null
                               }
                               disabled={showData}
                             ></Datepicker>
