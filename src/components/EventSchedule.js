@@ -9,7 +9,12 @@ import { Delete } from "baseui/icon";
 import Show from "baseui/icon/show";
 import { Input } from "baseui/input";
 import {
-  Modal, ModalButton, ModalFooter, ModalHeader, ROLE, SIZE
+  Modal,
+  ModalButton,
+  ModalFooter,
+  ModalHeader,
+  ROLE,
+  SIZE,
 } from "baseui/modal";
 import { Textarea } from "baseui/textarea";
 import { TimePicker } from "baseui/timepicker";
@@ -78,9 +83,7 @@ const EventSchedule = (props) => {
       try {
         let url = `/auth/${eventTyepe}/event/search/schedule-item/${eventId}`;
         const getReq = await requestBase.get(url);
-        // setMinimumDate(new Date(getReq.data.startDateTime));
-        // setMaximumDate(new Date(getReq.data.endDateTime));
-        console.log(new Date(getReq.data.startDateTime));
+
         if (getReq.data) {
           setGetRequest(false);
           setDatasss(getReq.data);
@@ -113,7 +116,7 @@ const EventSchedule = (props) => {
         Array.push(myValue);
       });
     setGetDownload(Array);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datass && datass.length]);
 
   // const onSubmitData = async() => {
@@ -370,6 +373,8 @@ const EventSchedule = (props) => {
                 setUpdate(true);
                 setShowData(false);
                 setIsOpened(true);
+
+                debugger;
                 data.startTime = data.startDateTime
                   ? new Date(data.startDateTime)
                   : new Date();
@@ -749,15 +754,20 @@ const EventSchedule = (props) => {
                             error={touched.startDate ? errors.startDate : null}
                           >
                             <Datepicker
-                              value={minimumDate || new Date()}
+                              formatString={"dd/MM/yyyy"}
+                              value={value.startDate}
                               onChange={({ date }) => {
                                 setFieldValue("startDate", date);
                               }}
                               minDate={
-                                minimumDate !== null ? minimumDate : new Date()
+                                startDate.format("YYYY-MM-DD") !== null
+                                  ? new Date(startDate.format("YYYY-MM-DD"))
+                                  : new Date()
                               }
                               maxDate={
-                                maximumDate !== null ? maximumDate : null
+                                endDate.format("YYYY-MM-DD") !== null
+                                  ? new Date(endDate.format("YYYY-MM-DD"))
+                                  : null
                               }
                               disabled={showData}
                             ></Datepicker>
