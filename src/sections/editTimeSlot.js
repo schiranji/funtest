@@ -33,7 +33,7 @@ const SignupSchema = Yup.object().shape({
 export const EditTimeSlot = (props) => {
   const [isloading, setLoading] = useState(false);
   const [close, setClose] = useState(false);
-  const HandleSave = async (values) => {
+  const HandleSave = async (values, { resetForm }) => {
     values.startDateTime = new Date(
       moment(values.startDateTime).format("DD MMM YYYY") +
         " " +
@@ -67,6 +67,12 @@ export const EditTimeSlot = (props) => {
     setTimeout(() => {
       !close && props.handleClose();
       !close && props.pageRefresh();
+
+      if (close) {
+        resetForm();
+      }
+
+      setFieldValue("");
     }, 100);
   };
   const { setFieldValue, values } = useFormikContext();
