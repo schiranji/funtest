@@ -60,7 +60,6 @@ const LineChart = (props) => {
       },
     ],
   };
-  debugger;
   return (
     <>
       <Line data={data} options={options("")} />

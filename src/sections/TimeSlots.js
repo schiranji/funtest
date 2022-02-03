@@ -14,6 +14,7 @@ import { Delete } from "./deleteTimeSlot";
 import { Button, KIND } from "baseui/button";
 import Export from "baseui/icon/arrow-up";
 import { EVENT_TYPE } from "../utils";
+import { useFormikContext, Formik } from "formik";
 
 const TimeSlots = ({
   formikProps,
@@ -36,6 +37,8 @@ const TimeSlots = ({
   const endDate = moment(eventData.endDateTime, "YYYY-MM-DD");
   const [paginationSize, setPaginationSize] = useState(5);
   const [gridApi, setGridApi] = useState(null);
+
+  const { setFieldValue, values } = useFormikContext();
 
   const onGridReady = (params) => {
     setGridApi(params.api);
@@ -109,6 +112,11 @@ const TimeSlots = ({
     [eventManagementData.eventId, refresh],
     []
   );
+
+  useEffect(() => {
+    setFieldValue("timeSlots", slotResponse.data);
+  }, [slotResponse.isLoading]);
+
   const handleDownload = () => {
     setLoading(true);
     try {
@@ -160,7 +168,6 @@ const TimeSlots = ({
   };
 
   const onPageSizeChanged = (e) => {
-    console.log("newPageSize", e.target.value);
     setPaginationSize(e.target.value);
     if (gridApi) {
       gridApi.setDomLayout(e.target.value < 11 ? "autoHeight" : "normal");

@@ -5,6 +5,7 @@ import { Row, Col } from "reactstrap";
 import { Modal, ModalHeader, ModalFooter } from "baseui/modal";
 import { Datepicker } from "baseui/datepicker";
 import { Button, KIND } from "baseui/button";
+import { Checkbox } from "baseui/checkbox";
 import { Input } from "baseui/input";
 import * as Yup from "yup";
 import { requestBase } from "../utils";
@@ -31,6 +32,7 @@ const SignupSchema = Yup.object().shape({
 
 export const EditTimeSlot = (props) => {
   const [isloading, setLoading] = useState(false);
+  const [close, setClose] = useState(false);
   const HandleSave = async (values) => {
     values.startDateTime = new Date(
       moment(values.startDateTime).format("DD MMM YYYY") +
@@ -63,8 +65,8 @@ export const EditTimeSlot = (props) => {
       toaster.negative(<p>something went wrong.</p>);
     }
     setTimeout(() => {
-      props.handleClose();
-      props.pageRefresh();
+      !close && props.handleClose();
+      !close && props.pageRefresh();
     }, 100);
   };
   const { setFieldValue, values } = useFormikContext();
@@ -230,6 +232,15 @@ export const EditTimeSlot = (props) => {
             <Row>
               <Col></Col>
               <Col></Col>
+              <Col></Col>
+              <Col>
+                <Checkbox
+                  checked={close}
+                  onChange={(e) => setClose(e.target.checked)}
+                >
+                  Create another
+                </Checkbox>
+              </Col>
             </Row>
             <ModalFooter>
               <Button
