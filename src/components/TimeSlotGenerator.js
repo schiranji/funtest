@@ -1,21 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Datepicker } from "baseui/datepicker";
 import { Row, Col } from "reactstrap";
 import { Card, StyledBody, StyledAction } from "baseui/card";
 import { useFormikContext, Formik } from "formik";
-import { ListItem } from "baseui/list";
-import { Delete } from "baseui/icon";
-import { Button, KIND } from "baseui/button";
 import * as Yup from "yup";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
-import { Textarea } from "baseui/textarea";
 import { requestBase } from "../utils";
 import { toaster } from "baseui/toast";
-import { TimePicker } from "baseui/timepicker";
 import { EVENT_TYPE } from "../utils";
-
 import ActionButton from "../components/ActionButton";
 
 const TimeSlotGeneratorContainer = styled.div`

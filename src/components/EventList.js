@@ -117,6 +117,7 @@ const EventList = () => {
         allEvents = allEvents.concat(groupMapped);
       }
       setManagedEvents(allEvents);
+      setFilterManagedEvents(allEvents);
     };
     getEvents();
   }, []);
@@ -134,11 +135,12 @@ const EventList = () => {
             placeholder="Filter..."
             value={searchinItem}
             onChange={(e) => {
-              if (
-                e.target.value.length > 3 &&
-                managedEvents &&
-                managedEvents.length > 0
-              ) {
+              if (e.target.value.length < 3) {
+                setSearchingItem(e.target.value);
+                setFilterManagedEvents(managedEvents);
+                return;
+              }
+              if (managedEvents && managedEvents.length > 0) {
                 const data = managedEvents.filter((item) => {
                   return item.name
                     .toLowerCase()

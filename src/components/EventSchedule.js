@@ -374,7 +374,6 @@ const EventSchedule = (props) => {
                 setShowData(false);
                 setIsOpened(true);
 
-                debugger;
                 data.startTime = data.startDateTime
                   ? new Date(data.startDateTime)
                   : new Date();
